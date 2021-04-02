@@ -30,4 +30,4 @@ export function TMX2TODS({ tournament }) {
   return { tournamentRecord };
 }
 
-export default getTournamentRecordTODS;
+export default TMX2TODS;
