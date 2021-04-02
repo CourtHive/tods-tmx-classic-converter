@@ -1,0 +1,25 @@
+{
+  "name": "tods-tmx-legacy-converter",
+  "version": "1.0.0",
+  "description": "converts legacy tmx tournament records to TODS",
+  "node": "src/index.js",
+  "targets": {
+    "node": {
+      "distDir": "dist"
+    }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "parcel build src/index.js --dist-dir build"
+  },
+  "author": "Charles Allen",
+  "license": "MIT",
+  "dependencies": {
+    "d3": "5.16.0",
+    "date-fns": "^2.19.0",
+    "esm": "^3.2.25",
+    "normalize-text": "^2.3.2",
+    "tods-competition-factory": "^0.5.45",
+    "tsdx": "^0.14.1"
+  }
+}
