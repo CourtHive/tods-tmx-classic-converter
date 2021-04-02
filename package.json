@@ -29,7 +29,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "scripts": {
-    "release": "np",
+    "release": "np --no-tests",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "tsdx build",
     "build": "tsdx build"
