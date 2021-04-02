@@ -14,32 +14,21 @@ npm i tods-tmx-classic-converter
 
 ```js
 // node
-
 const { TMX2TODS } = require('tods-tmx-classic-converter');
-const fs = require('fs');
-const tournament = fs.readFileSync('example/CourtHiveChallenge.json', 'UTF-8');
-const classic = JSON.parse(tournament);
-const { tournamentRecord } = TMX2TODS({ tournament: classic });
-```
 
--- or --
-
-```js
 // node -r esm
-
 import { TMX2TODS } from 'tods-tmx-classic-converter';
-const fs = require('fs');
-const tournament = fs.readFileSync('example/CourtHiveChallenge.json', 'UTF-8');
-const classic = JSON.parse(tournament);
-const { tournamentRecord } = TMX2TODS({ tournament: classic });
-```
 
-## NOTE
-
-If you want to work directly in the repo directory...
-
-```js
+// If you want to work directly in the repo directory...
 const { TMX2TODS } = require('./dist');
-// -- or --
-import { TMX2TODS } from './dist';
+
+// convert all files in sourceDir
+
+TMX2TODS({
+  sourceDir: './example',
+  targetDir: './example',
+  /*
+  targetExtension, // optional
+  */
+});
 ```
