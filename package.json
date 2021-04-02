@@ -1,6 +1,6 @@
 {
   "name": "tods-tmx-classic-converter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "converts legacy tmx tournament records to TODS",
   "main": "src/index.js",
   "scripts": {
