@@ -15,11 +15,11 @@ npm i tods-tmx-classic-converter
 ```js
 // node
 
-let { TMX2TODS } = require('tods-tmx-classic-converter');
-let fs = require('fs');
-t = fs.readFileSync('example/CourtHiveChallenge.json', 'UTF-8');
-classic = JSON.parse(t);
-tods = TMX2TODS({ tournament: classic });
+const { TMX2TODS } = require('tods-tmx-classic-converter');
+const fs = require('fs');
+const tournament = fs.readFileSync('example/CourtHiveChallenge.json', 'UTF-8');
+const classic = JSON.parse(tournament);
+const { tournamentRecord } = TMX2TODS({ tournament: classic });
 ```
 
 -- or --
@@ -28,10 +28,10 @@ tods = TMX2TODS({ tournament: classic });
 // node -r esm
 
 import { TMX2TODS } from 'tods-tmx-classic-converter';
-let fs = require('fs');
-t = fs.readFileSync('example/CourtHiveChallenge.json', 'UTF-8');
-classic = JSON.parse(t);
-tods = TMX2TODS({ tournament: classic });
+const fs = require('fs');
+const tournament = fs.readFileSync('example/CourtHiveChallenge.json', 'UTF-8');
+const classic = JSON.parse(tournament);
+const { tournamentRecord } = TMX2TODS({ tournament: classic });
 ```
 
 ## NOTE
@@ -39,7 +39,7 @@ tods = TMX2TODS({ tournament: classic });
 If you want to work directly in the repo directory...
 
 ```js
-let { TMX2TODS } = require('./dist');
+const { TMX2TODS } = require('./dist');
 // -- or --
 import { TMX2TODS } from './dist';
 ```
