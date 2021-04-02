@@ -43,7 +43,7 @@
   "author": "Charles Allen <charles@CourtHive.com> (CourtHive.com)",
   "license": "MIT",
   "dependencies": {
-    "d3": "5.16.0",
+    "d3": "6.6.2",
     "date-fns": "^2.19.0",
     "esm": "^3.2.25",
     "normalize-text": "^2.3.2",
