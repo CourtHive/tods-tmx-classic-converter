@@ -15,9 +15,9 @@ npm i tods-tmx-classic-converter
 ```js
 // node
 
-let { TMX2TODS } = require("tods-tmx-classic-converter");
-let fs = require("fs");
-t = fs.readFileSync('example/CourtHiveChallenge.json", "UTF-8');
+let { TMX2TODS } = require('tods-tmx-classic-converter');
+let fs = require('fs');
+t = fs.readFileSync('example/CourtHiveChallenge.json', 'UTF-8');
 classic = JSON.parse(t);
 tods = TMX2TODS({ tournament: classic });
 ```
@@ -27,9 +27,19 @@ tods = TMX2TODS({ tournament: classic });
 ```js
 // node -r esm
 
-let { TMX2TODS } = import("tods-tmx-classic-converter");
-let fs = import("fs");
-t = fs.readFileSync('example/CourtHiveChallenge.json", "UTF-8');
+import { TMX2TODS } from 'tods-tmx-classic-converter';
+let fs = require('fs');
+t = fs.readFileSync('example/CourtHiveChallenge.json', 'UTF-8');
 classic = JSON.parse(t);
 tods = TMX2TODS({ tournament: classic });
+```
+
+## NOTE
+
+If you want to work directly in the repo directory...
+
+```js
+let { TMX2TODS } = require('./dist');
+// -- or --
+import { TMX2TODS } from './dist';
 ```
