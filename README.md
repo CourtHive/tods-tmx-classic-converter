@@ -7,13 +7,7 @@ Converted files may be used with the [Competition Factory](https://courthive.git
 ## Installation
 
 ```js
-yarn install
-```
-
-## Build
-
-```js
-yarn build
+npm i tods-tmx-classic-converter
 ```
 
 ## Use
@@ -21,7 +15,7 @@ yarn build
 ```js
 // node
 
-let { TMX2TODS } = require("./dist");
+let { TMX2TODS } = require("tods-tmx-classic-converter");
 let fs = require("fs");
 t = fs.readFileSync('example/CourtHiveChallenge.json", "UTF-8');
 classic = JSON.parse(t);
@@ -33,7 +27,7 @@ tods = TMX2TODS({ tournament: classic });
 ```js
 // node -r esm
 
-let { TMX2TODS } = import("./dist");
+let { TMX2TODS } = import("tods-tmx-classic-converter");
 let fs = import("fs");
 t = fs.readFileSync('example/CourtHiveChallenge.json", "UTF-8');
 classic = JSON.parse(t);
