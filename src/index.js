@@ -15,6 +15,8 @@ export function TMX2TODS({
   const sourcePath = sourceDir || '.';
   const targetPath = targetDir || '.';
 
+  const orgs = { no_org: { count: 0 } };
+
   const files = fs
     .readdirSync(sourcePath)
     .filter(
@@ -31,8 +33,27 @@ export function TMX2TODS({
     if (tournament?.tuid) {
       try {
         const { tournamentRecord } = convertTMX2TODS({ tournament });
+        const organisationId =
+          tournamentRecord.parentOrganisationId ||
+          tournamentRecord.unifiedTournamentId?.organisationId ||
+          'no_org';
+        if (tournamentRecord.unifiedTournamentId && !orgs[organisationId]) {
+          orgs[organisationId] = {
+            count: 1,
+            ...tournamentRecord.unifiedTournamentId,
+          };
+          delete orgs[organisationId].tournamentId;
+        } else {
+          orgs[organisationId].count += 1;
+        }
+        const orgPath = organisationId ? `/${organisationId}` : '';
+        if (orgPath) {
+          if (!fs.existsSync(`${targetPath}${orgPath}`)) {
+            fs.mkdirSync(`${targetPath}${orgPath}`);
+          }
+        }
         fs.writeFileSync(
-          `${targetPath}/${tournament.tuid}${targetExtension}`,
+          `${targetPath}${orgPath}/${tournament.tuid}${targetExtension}`,
           JSON.stringify(tournamentRecord, undefined, 2),
           'UTF-8'
         );
@@ -41,6 +62,14 @@ export function TMX2TODS({
       }
     }
   });
+
+  if (Object.keys(orgs).length) {
+    fs.writeFileSync(
+      `${targetPath}/orgs.json`,
+      JSON.stringify(orgs, undefined, 2),
+      'UTF-8'
+    );
+  }
 }
 
 export default TMX2TODS;
