@@ -1,4 +1,7 @@
+import { SingleBar, Presets } from 'cli-progress';
 import { convertTMX2TODS } from './convertTMX2TODS';
+import fs from 'fs';
+
 export { convertTMX2TODS } from './convertTMX2TODS';
 
 // collectionDefinitions, ratings category ranges (event.ratings_filter: { high: #, low: #}), Round Robins
@@ -26,7 +29,10 @@ export function TMX2TODS({
     );
   count = count || files.length;
 
-  files.slice(0, count).forEach(file => {
+  const progressBar = new SingleBar({}, Presets.shades_classic);
+  progressBar.start(count, 0);
+
+  files.slice(0, count).forEach((file, index) => {
     const tournamentRaw = fs.readFileSync(`${sourcePath}/${file}`, 'UTF8');
     const tournament = JSON.parse(tournamentRaw);
 
@@ -61,6 +67,8 @@ export function TMX2TODS({
         console.log({ err });
       }
     }
+
+    progressBar.update(index + 1);
   });
 
   if (Object.keys(orgs).length) {
@@ -70,6 +78,7 @@ export function TMX2TODS({
       'UTF-8'
     );
   }
+  progressBar.stop();
 }
 
 export default TMX2TODS;
