@@ -28,7 +28,7 @@ TMX2TODS({
   sourceDir: './example',
   targetDir: './example',
   /*
-  targetExtension, // optional
+  targetExtension, // optional file extension, defaults to '.tods.json'
   */
 });
 ```
