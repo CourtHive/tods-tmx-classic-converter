@@ -1,10 +1,11 @@
-import { drawDefinitionConstants } from "tods-competition-factory";
-import { tournamentEngine } from "tods-competition-factory";
-import { extractMatchUp } from "./extractMatchUp";
-import { getStage } from "./utilities";
-import { matchFx } from "./matchFx";
-import { drawFx } from "./drawFx";
-import { UUID } from "./UUID";
+import { drawDefinitionConstants } from 'tods-competition-factory';
+import { tournamentEngine } from 'tods-competition-factory';
+import { extractMatchUp } from './extractMatchUp';
+import { getStage } from './utilities';
+import { matchFx } from './matchFx';
+import { drawFx } from './drawFx';
+import { UUID } from './UUID';
+import { getPositionAssignmentHashes } from './getPositionAssignmentHashes';
 
 const { CONTAINER, ITEM, ROUND_OUTCOME, WIN_RATIO } = drawDefinitionConstants;
 
@@ -17,7 +18,7 @@ export function getStructureContent({
   legacyEvent,
   participants,
 }) {
-  const legacyDual = tournament.type === "dual";
+  const legacyDual = tournament.type === 'dual';
   const totalPlayers =
     legacyEvent.approved.length + (legacyEvent.qualifiers || 0) ||
     legacyEvent.feed_base ||
@@ -79,14 +80,17 @@ function eliminationStructure({
 
   const matchUpFormat = legacyEvent.matchFormat;
 
+  const drawPositionHashMap = getPositionAssignmentHashes({ matches });
+
   const matchUps = matches
-    .map((legacyMatch) => {
+    .map(legacyMatch => {
       const result = processLegacyMatch({
         entries,
         tieFormat,
         eventType,
         matchUpFormat,
         seedAssignments,
+        drawPositionHashMap,
 
         tieMatches,
         legacyMatch,
@@ -103,7 +107,7 @@ function eliminationStructure({
       }
       return undefined;
     })
-    .filter((f) => f);
+    .filter(f => f);
 
   positionAssignments.sort((a, b) =>
     a.drawPosition > b.drawPosition ? 1 : -1
@@ -145,7 +149,7 @@ function roundRobinStructure({
     const drawPositionOffset = index * (legacyEvent.draw.bracket_size || 0);
     const positionAssignments = [];
     const matchUps = bracket.matches
-      .map((legacyMatch) => {
+      .map(legacyMatch => {
         const result = processLegacyMatch({
           seedAssignments,
           entries,
@@ -169,7 +173,7 @@ function roundRobinStructure({
         }
         return undefined;
       })
-      .filter((f) => f);
+      .filter(f => f);
     const structureName = bracket.name || `Group ${index + 1}`;
     const structure = {
       structureType: ITEM,
@@ -199,6 +203,7 @@ function processLegacyMatch({
   eventType,
   entries,
 
+  drawPositionHashMap,
   drawPositionOffset,
   participantIds,
   participants,
@@ -236,11 +241,11 @@ function processLegacyMatch({
     legacyMatch.match?.calculated_round_name ||
     legacyMatch.match?.round_name ||
     legacyMatch?.round_name ||
-    "";
+    '';
 
   const tieMatchUps = tieMatches
-    .filter((tieMatch) => tieMatch.dual_match === matchUpId)
-    .map((tieMatch) => {
+    .filter(tieMatch => tieMatch.dual_match === matchUpId)
+    .map(tieMatch => {
       const { matchUp, missingParticipants } = extractMatchUp({
         info,
         tieFormat,
@@ -250,6 +255,7 @@ function processLegacyMatch({
         participants,
         participantIds,
         tournamentEngine,
+        drawPositionHashMap,
         legacyMatch: tieMatch,
       });
       Object.assign(matchUp, { roundName, roundNumber, roundPosition });
@@ -274,26 +280,26 @@ function processLegacyMatch({
     participantIds,
     tournamentEngine,
     drawPositionOffset,
+    drawPositionHashMap,
   });
-  if (missingParticipants?.filter((f) => f).length)
+  if (missingParticipants?.filter(f => f).length)
     console.log({ missingParticipants });
 
   if (tieMatchUps) {
-    tieMatchUps.forEach((tieMatchUp) => {
+    tieMatchUps.forEach(tieMatchUp => {
       const { collectionPosition, matchUpType, sides } = tieMatchUp;
       const collectionDefinition = tieFormat?.collectionDefinitions.find(
-        (collectionDefinition) =>
-          collectionDefinition.matchUpType === matchUpType
+        collectionDefinition => collectionDefinition.matchUpType === matchUpType
       );
       const collectionId = collectionDefinition?.collectionId;
       if (sides?.length) {
         sides.forEach(({ participantId, sideNumber }) => {
           const side = matchUp.sides.find(
-            (side) => side.sideNumber === sideNumber
+            side => side.sideNumber === sideNumber
           );
           if (!side.lineUp) side.lineUp = [];
           const competitor = side.lineUp.find(
-            (competitor) => competitor.participantId === participantId
+            competitor => competitor.participantId === participantId
           );
           if (competitor) {
             competitor.collectionAssignments.push({
@@ -312,13 +318,13 @@ function processLegacyMatch({
     });
   }
 
-  matchUpPositionAssignments.forEach((positionAssignment) =>
+  matchUpPositionAssignments.forEach(positionAssignment =>
     positionAssignments.push(positionAssignment)
   );
-  matchUpSeedAssignments.forEach((seedAssignment) =>
+  matchUpSeedAssignments.forEach(seedAssignment =>
     seedAssignments.push(seedAssignment)
   );
-  matchUpEntries.forEach((entry) => entries.push(entry));
+  matchUpEntries.forEach(entry => entries.push(entry));
 
   Object.assign(matchUp, { roundName, roundNumber, roundPosition });
   if (tieMatchUps.length) {

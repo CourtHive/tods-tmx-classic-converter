@@ -1,13 +1,13 @@
-import { matchFormatCode } from "./matchFormatCode";
-import { scoreFormat } from "./scoreFormat";
-import { dateFx } from "./dateFx";
+import { matchFormatCode } from './matchFormatCode';
+import { scoreFormat } from './scoreFormat';
+import { dateFx } from './dateFx';
 import {
   participantRoles,
   participantConstants,
   entryStatusConstants,
   matchUpStatusConstants,
   mocksEngine,
-} from "tods-competition-factory";
+} from 'tods-competition-factory';
 
 export function extractMatchUp({
   eventType,
@@ -18,6 +18,7 @@ export function extractMatchUp({
   participants,
   matchUpFormat,
   participantIds,
+  drawPositionHashMap,
   drawPositionOffset = 0,
   tournamentEngine, // must pass in tournamentEngine that contains state with participants
 }) {
@@ -36,13 +37,20 @@ export function extractMatchUp({
 
       let participantId;
       const individualParticipantIds = team
-        .map((player) => player?.id)
-        .filter((f) => f);
+        .map(player => player?.id)
+        .filter(f => f);
+      const idHash = team
+        .map(player => player?.id)
+        .filter(f => f)
+        .sort()
+        .join('|');
 
-      const player1 = team && team[0] && typeof team[0] === "object" && team[0];
-      const player2 = team && team[1] && typeof team[1] === "object" && team[1];
+      const player1 = team && team[0] && typeof team[0] === 'object' && team[0];
+      const player2 = team && team[1] && typeof team[1] === 'object' && team[1];
       const drawPosition =
-        (player1?.draw_position || player2?.draw_position) + drawPositionOffset;
+        (player1?.draw_position ||
+          player2?.draw_position ||
+          drawPositionHashMap[idHash]) + drawPositionOffset;
       const seed = player1?.seed;
       const bye = player1?.bye;
 
@@ -56,8 +64,8 @@ export function extractMatchUp({
         if (!participant) {
           ({ participant } = tournamentEngine.addParticipant({
             participant: {
-              participantType: "PAIR",
-              participantRole: "COMPETITOR",
+              participantType: 'PAIR',
+              participantRole: 'COMPETITOR',
               individualParticipantIds: [player1.id, player2.id],
             },
           }));
@@ -103,15 +111,15 @@ export function extractMatchUp({
   }
 
   const matchUpType =
-    eventType === "TEAM" ? legacyMatch.format?.toUpperCase() : eventType;
+    eventType === 'TEAM' ? legacyMatch.format?.toUpperCase() : eventType;
 
   const collectionDefinition = tieFormat?.collectionDefinitions.find(
-    (collectionDefinition) => collectionDefinition.matchUpType === matchUpType
+    collectionDefinition => collectionDefinition.matchUpType === matchUpType
   );
   const collectionId = collectionDefinition?.collectionId;
 
-  const scoreString = legacyMatch.match?.score || legacyMatch.score || "";
-  const reversedScoreString = reverseScore(scoreString) || "";
+  const scoreString = legacyMatch.match?.score || legacyMatch.score || '';
+  const reversedScoreString = reverseScore(scoreString) || '';
 
   let winner_index =
     legacyMatch.match?.winner_index !== undefined &&
@@ -133,15 +141,15 @@ export function extractMatchUp({
     sets,
   };
 
-  const time = scoreString.indexOf("TIME") > 0;
-  const live = scoreString.indexOf("LIVE") > 0;
-  const interrupted = scoreString.indexOf("INT") > 0;
-  const incomplete = scoreString.indexOf("INC") > 0;
-  const walkover = scoreString.indexOf("W.O.") >= 0;
-  const cancelled = scoreString.indexOf("CCL") >= 0;
-  const abandoned = scoreString.indexOf("ABD") >= 0;
-  const defaulted = scoreString.indexOf("DEF") >= 0;
-  const retired = scoreString.indexOf("RET") > 0;
+  const time = scoreString.indexOf('TIME') > 0;
+  const live = scoreString.indexOf('LIVE') > 0;
+  const interrupted = scoreString.indexOf('INT') > 0;
+  const incomplete = scoreString.indexOf('INC') > 0;
+  const walkover = scoreString.indexOf('W.O.') >= 0;
+  const cancelled = scoreString.indexOf('CCL') >= 0;
+  const abandoned = scoreString.indexOf('ABD') >= 0;
+  const defaulted = scoreString.indexOf('DEF') >= 0;
+  const retired = scoreString.indexOf('RET') > 0;
   const matchUpStatus =
     (live && matchUpStatusConstants.IN_PROGRESS) ||
     (interrupted && matchUpStatusConstants.SUSPENDED) ||
@@ -162,9 +170,7 @@ export function extractMatchUp({
     score,
   };
 
-  const drawPositions = sides
-    ?.map((side) => side.drawPosition)
-    .filter((f) => f);
+  const drawPositions = sides?.map(side => side.drawPosition).filter(f => f);
   if (drawPositions?.length) matchUp.drawPositions = drawPositions;
 
   if (sides?.length) matchUp.sides = sides;
@@ -201,14 +207,14 @@ function getTimeItems({ participants, legacyMatch }) {
 
   if (schedule.luid && schedule.index) {
     let timeItem = {
-      itemType: "SCHEDULE.ASSIGNMENT.VENUE",
+      itemType: 'SCHEDULE.ASSIGNMENT.VENUE',
       itemValue: schedule.luid,
       timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
     timeItems.push(timeItem);
 
     timeItem = {
-      itemType: "SCHEDULE.ASSIGNMENT.COURT",
+      itemType: 'SCHEDULE.ASSIGNMENT.COURT',
       itemValue: `${schedule.luid}|${parseInt(schedule.index) - 1}`,
       timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
@@ -217,7 +223,7 @@ function getTimeItems({ participants, legacyMatch }) {
 
   if (schedule.day) {
     const timeItem = {
-      itemType: "SCHEDULED.DATE",
+      itemType: 'SCHEDULED.DATE',
       itemValue: schedule.day,
       timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
@@ -227,7 +233,7 @@ function getTimeItems({ participants, legacyMatch }) {
       const startTime = properTime(schedule.start);
       const startDateTime = `${dateFx.formatDate(schedule.day)}T${startTime}`;
       const timeItem = {
-        itemType: "SCHEDULE.TIME.START",
+        itemType: 'SCHEDULE.TIME.START',
         itemValue: new Date(startDateTime).toISOString(),
         timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
       };
@@ -238,7 +244,7 @@ function getTimeItems({ participants, legacyMatch }) {
       const endTime = properTime(schedule.end);
       const endDateTime = `${dateFx.formatDate(schedule.day)}T${endTime}`;
       const timeItem = {
-        itemType: "SCHEDULE.TIME.END",
+        itemType: 'SCHEDULE.TIME.END',
         itemValue: new Date(endDateTime).toISOString(),
         timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
       };
@@ -249,7 +255,7 @@ function getTimeItems({ participants, legacyMatch }) {
   if (schedule.time) {
     const itemValue = properTime(schedule.time);
     const timeItem = {
-      itemType: "SCHEDULE.TIME.SCHEDULED",
+      itemType: 'SCHEDULE.TIME.SCHEDULED',
       itemValue,
       timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
@@ -258,16 +264,16 @@ function getTimeItems({ participants, legacyMatch }) {
 
   if (umpire) {
     const tournamentOfficials = participants?.filter(
-      (participant) =>
+      participant =>
         participant.participantType === participantConstants.INDIVIDUAL &&
         participant.participantRole === participantRoles.OFFICIAL
     );
     const official = tournamentOfficials.find(
-      (official) => official.name === umpire
+      official => official.name === umpire
     );
     const itemValue = official?.participantId;
     const timeItem = {
-      itemType: "SCHEDULE.ASSIGNMENT.OFFICIAL",
+      itemType: 'SCHEDULE.ASSIGNMENT.OFFICIAL',
       itemValue,
       timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
@@ -279,44 +285,47 @@ function getTimeItems({ participants, legacyMatch }) {
 
 function properTime(time) {
   const military = dateFx.militaryTime(time);
-  const zeroPad = (number) => (number.toString()[1] ? number : "0" + number);
+  const zeroPad = number => (number.toString()[1] ? number : '0' + number);
   return military
-    .split(":")
-    .map((part) => zeroPad(part))
-    .join(":");
+    .split(':')
+    .map(part => zeroPad(part))
+    .join(':');
 }
 
-function matchTiebreakTODS(score = "") {
+function matchTiebreakTODS(score = '') {
   return score
-    .split(" ")
-    .map((set) => {
-      return set.includes("/") ? matchTiebreak(set) : set;
+    .split(' ')
+    .map(set => {
+      return set.includes('/') ? matchTiebreak(set) : set;
     })
-    .join(" ");
+    .join(' ');
 
   function matchTiebreak(set) {
-    return `[${set.split("/").join("-")}]`;
+    return `[${set.split('/').join('-')}]`;
   }
 }
 
-function reverseScore(score, split = " ") {
+function reverseScore(score, split = ' ') {
   let irreversible = null;
   if (score) {
-    let reversed = score.split(split).map(parseSet).join(split);
+    let reversed = score
+      .split(split)
+      .map(parseSet)
+      .join(split);
     let result = irreversible ? `${irreversible} ${reversed}` : reversed;
     return result;
   }
 
   function parseSet(set) {
-    let divider = set.indexOf("/") > 0 ? "/" : "-";
+    let divider = set.indexOf('/') > 0 ? '/' : '-';
     let set_scores = set
       .split(divider)
       .map(parseSetScore)
       .reverse()
-      .filter((f) => f);
-    let set_games = set_scores.map((s) => s.games);
-    let tb_scores = set_scores.map((s) => s.tiebreak).filter((f) => f);
-    let tiebreak = tb_scores.length === 1 ? `(${tb_scores[0]})` : "";
+      .filter(f => f);
+    let set_games = set_scores.map(s => s.games);
+    let tb_scores = set_scores.map(s => s.tiebreak).filter(f => f);
+    let tiebreak = tb_scores.length === 1 ? `(${tb_scores[0]})` : '';
     let set_score =
       tb_scores.length < 2
         ? set_games.join(divider)
