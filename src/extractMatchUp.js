@@ -9,6 +9,8 @@ import {
   mocksEngine,
 } from 'tods-competition-factory';
 
+const getId = p => p?.id || p?.puid;
+
 export function extractMatchUp({
   eventType,
   seedLimit,
@@ -36,22 +38,16 @@ export function extractMatchUp({
       if (!team?.length) return;
 
       let participantId;
-      const individualParticipantIds = team
-        .map(player => player?.id)
-        .filter(f => f);
-      const idHash = team
-        .map(player => player?.id)
-        .filter(f => f)
-        .sort()
-        .join('|');
+      const individualParticipantIds = team.map(getId).filter(f => f);
 
       const player1 = team && team[0] && typeof team[0] === 'object' && team[0];
       const player2 = team && team[1] && typeof team[1] === 'object' && team[1];
       let drawPosition =
         player1?.draw_position ||
         player2?.draw_position ||
-        (drawPositionHashMap && drawPositionHashMap[idHash]);
+        (drawPositionHashMap && drawPositionHashMap[getId(player1)]);
       if (drawPosition) drawPosition += drawPositionOffset;
+      if (!drawPosition) console.log(team);
 
       const seed = player1?.seed;
       const bye = player1?.bye;
@@ -68,7 +64,7 @@ export function extractMatchUp({
             participant: {
               participantType: 'PAIR',
               participantRole: 'COMPETITOR',
-              individualParticipantIds: [player1.id, player2.id],
+              individualParticipantIds: [getId(player1), getId(player2)],
             },
           }));
           missingParticipants.push(participant);

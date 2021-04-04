@@ -70,9 +70,9 @@ function extractPairParticipants({ tournament, participants, file }) {
           .map(player =>
             participants.find(participant => {
               const matchingParticipantId =
-                participant.participantId === player?.id;
+                participant.participantId === getId(player);
               const foundInOtherIds = participant?.person?.personOtherIds?.find(
-                otherId => otherId.personId === player?.id
+                otherId => otherId.personId === getId(player)
               );
               return matchingParticipantId || foundInOtherIds;
             })
@@ -100,6 +100,7 @@ function extractPairParticipants({ tournament, participants, file }) {
   return pairParticipants;
 }
 
+const getId = p => p?.id || p?.puid;
 function extractIndividualParticipants({ tournament }) {
   const individualParticipants = [];
   const individualParticipantIds = [];
@@ -111,7 +112,7 @@ function extractIndividualParticipants({ tournament }) {
   const organisationId = tournament.org?.ouid;
 
   function addParticipant(player) {
-    const participantId = player.id || player.puid;
+    const participantId = getId(player);
     const standardFamilyName = getName(player.last_name);
     const standardGivenName = getName(player.first_name);
     const participantName = `${standardFamilyName.toUpperCase()}, ${standardGivenName}`;
