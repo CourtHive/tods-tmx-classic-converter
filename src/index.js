@@ -13,6 +13,8 @@ export function TMX2TODS({
   count,
   sourceDir,
   targetDir,
+  tournamentId,
+  disableProgress,
   targetExtension = '.tods.json',
 } = {}) {
   const sourcePath = sourceDir || '.';
@@ -30,13 +32,16 @@ export function TMX2TODS({
   count = count || filenames.length;
 
   const progressBar = new SingleBar({}, Presets.shades_classic);
-  progressBar.start(count, 0);
+  if (!disableProgress) progressBar.start(count, 0);
 
   filenames.slice(0, count).forEach((filename, index) => {
     const tournamentRaw = fs.readFileSync(`${sourcePath}/${filename}`, 'UTF8');
     const tournament = JSON.parse(tournamentRaw);
 
-    if (tournament?.tuid) {
+    if (
+      tournament?.tuid &&
+      (!tournamentId || tournamentId === tournament.tuid)
+    ) {
       try {
         const { tournamentRecord } = convertTMX2TODS({ tournament });
         const organisationId =
@@ -68,7 +73,7 @@ export function TMX2TODS({
       }
     }
 
-    progressBar.update(index + 1);
+    if (!disableProgress) progressBar.update(index + 1);
   });
 
   if (Object.keys(orgs).length) {
@@ -78,7 +83,7 @@ export function TMX2TODS({
       'UTF-8'
     );
   }
-  progressBar.stop();
+  if (!disableProgress) progressBar.stop();
 }
 
 export default TMX2TODS;
