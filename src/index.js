@@ -20,20 +20,20 @@ export function TMX2TODS({
 
   const orgs = { no_org: { count: 0 } };
 
-  const files = fs
+  const filenames = fs
     .readdirSync(sourcePath)
     .filter(
       filename =>
         filename.indexOf('.json') > 0 &&
         filename.split('.').reverse()[0] === 'json'
     );
-  count = count || files.length;
+  count = count || filenames.length;
 
   const progressBar = new SingleBar({}, Presets.shades_classic);
   progressBar.start(count, 0);
 
-  files.slice(0, count).forEach((file, index) => {
-    const tournamentRaw = fs.readFileSync(`${sourcePath}/${file}`, 'UTF8');
+  filenames.slice(0, count).forEach((filename, index) => {
+    const tournamentRaw = fs.readFileSync(`${sourcePath}/${filename}`, 'UTF8');
     const tournament = JSON.parse(tournamentRaw);
 
     if (tournament?.tuid) {
