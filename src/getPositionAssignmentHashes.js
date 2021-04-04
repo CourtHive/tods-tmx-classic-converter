@@ -1,9 +1,9 @@
 // handles situation where draw data in legacy tournament is missing draw_position attributes for some matches
 
-export function getPositionAssignmentHashes({ matches }) {
+export function getPositionAssignmentHashes({ matches = [] }) {
   const positionHashMap = {};
   matches.forEach(legacyMatch => {
-    legacyMatch.teams.forEach((team, index) => {
+    legacyMatch.teams?.forEach((team, index) => {
       if (!team?.length) return;
 
       const idHash = team

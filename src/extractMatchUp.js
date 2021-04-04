@@ -18,7 +18,7 @@ export function extractMatchUp({
   participants,
   matchUpFormat,
   participantIds,
-  drawPositionHashMap,
+  drawPositionHashMap = {},
   drawPositionOffset = 0,
   tournamentEngine, // must pass in tournamentEngine that contains state with participants
 }) {
@@ -47,10 +47,12 @@ export function extractMatchUp({
 
       const player1 = team && team[0] && typeof team[0] === 'object' && team[0];
       const player2 = team && team[1] && typeof team[1] === 'object' && team[1];
-      const drawPosition =
-        (player1?.draw_position ||
-          player2?.draw_position ||
-          drawPositionHashMap[idHash]) + drawPositionOffset;
+      let drawPosition =
+        player1?.draw_position ||
+        player2?.draw_position ||
+        (drawPositionHashMap && drawPositionHashMap[idHash]);
+      if (drawPosition) drawPosition += drawPositionOffset;
+
       const seed = player1?.seed;
       const bye = player1?.bye;
 
