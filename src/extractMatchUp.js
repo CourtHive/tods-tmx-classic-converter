@@ -47,7 +47,6 @@ export function extractMatchUp({
         player2?.draw_position ||
         (drawPositionHashMap && drawPositionHashMap[getId(player1)]);
       if (drawPosition) drawPosition += drawPositionOffset;
-      if (!drawPosition) console.log(team);
 
       const seed = player1?.seed;
       const bye = player1?.bye;
