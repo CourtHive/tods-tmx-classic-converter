@@ -1,3 +1,4 @@
+import { getPositionAssignmentHashes } from './getPositionAssignmentHashes';
 import { drawDefinitionConstants } from 'tods-competition-factory';
 import { tournamentEngine } from 'tods-competition-factory';
 import { extractMatchUp } from './extractMatchUp';
@@ -5,7 +6,6 @@ import { getStage } from './utilities';
 import { matchFx } from './matchFx';
 import { drawFx } from './drawFx';
 import { UUID } from './UUID';
-import { getPositionAssignmentHashes } from './getPositionAssignmentHashes';
 
 const { CONTAINER, ITEM, ROUND_OUTCOME, WIN_RATIO } = drawDefinitionConstants;
 
@@ -80,7 +80,12 @@ function eliminationStructure({
 
   const matchUpFormat = legacyEvent.matchFormat;
 
-  const drawPositionHashMap = getPositionAssignmentHashes({ matches });
+  const drawPositionHashMap = getPositionAssignmentHashes({
+    matches,
+    tournament,
+  });
+
+  const isAdhocEvent = legacyEvent.draw_type === 'A';
 
   const matchUps = matches
     .map(legacyMatch => {
@@ -88,6 +93,7 @@ function eliminationStructure({
         entries,
         tieFormat,
         eventType,
+        isAdhocEvent,
         matchUpFormat,
         seedAssignments,
         drawPositionHashMap,
@@ -145,6 +151,14 @@ function roundRobinStructure({
 
   const matchUpFormat = legacyEvent.matchFormat;
 
+  const matches = legacyEvent.draw.brackets
+    .map(bracket => bracket.matches)
+    .flat();
+  const drawPositionHashMap = getPositionAssignmentHashes({
+    matches,
+    tournament,
+  });
+
   legacyEvent.draw.brackets.forEach((bracket, index) => {
     const drawPositionOffset = index * (legacyEvent.draw.bracket_size || 0);
     const positionAssignments = [];
@@ -156,6 +170,7 @@ function roundRobinStructure({
           eventType,
           tieFormat,
           matchUpFormat,
+          drawPositionHashMap,
           drawPositionOffset,
           participantIds,
           participants,
@@ -199,6 +214,7 @@ function roundRobinStructure({
 function processLegacyMatch({
   seedAssignments,
   matchUpFormat,
+  isAdhocEvent,
   tieFormat,
   eventType,
   entries,
@@ -252,6 +268,7 @@ function processLegacyMatch({
         eventType,
         seedLimit,
         entryStage,
+        isAdhocEvent,
         participants,
         participantIds,
         tournamentEngine,
@@ -275,6 +292,7 @@ function processLegacyMatch({
     seedLimit,
     entryStage,
     legacyMatch,
+    isAdhocEvent,
     participants,
     matchUpFormat,
     participantIds,
