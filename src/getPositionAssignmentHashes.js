@@ -2,7 +2,11 @@
 
 const getId = p => p?.id || p?.puid;
 
-export function getPositionAssignmentHashes({ matches = [], tournament }) {
+export function getPositionAssignmentHashes({
+  matches = [],
+  tournament,
+  brackets,
+}) {
   const positionHashMap = {};
   matches.forEach(legacyMatch => {
     legacyMatch.teams?.forEach(team => {
@@ -13,7 +17,7 @@ export function getPositionAssignmentHashes({ matches = [], tournament }) {
     if (legacyMatch.loser) addToHash(legacyMatch.loser);
   });
 
-  function addToHash(side) {
+  function addToHash(side, position) {
     const opponent1 = side && side[0] && typeof side[0] === 'object' && side[0];
     const opponent2 = side && side[1] && typeof side[1] === 'object' && side[1];
     const drawPosition = opponent1?.draw_position || opponent2?.draw_position;
@@ -35,6 +39,17 @@ export function getPositionAssignmentHashes({ matches = [], tournament }) {
       if (opponent1.players) addTeamPlayers(opponent1.players);
       checkTournamentTeams(opponent1?.id);
     }
+  }
+
+  // handle round robins which have no draw positions specified
+  if (brackets && !Object.keys(positionHashMap).length) {
+    brackets.forEach(bracket => {
+      const byePositions = bracket.byes?.map(bye => bye.position) || [];
+      bracket.teams?.forEach((team, index) => {
+        if (!byePositions.includes(index + 1)) addToHash(team, index + 1);
+      });
+    });
+    console.log({ positionHashMap });
   }
 
   return positionHashMap;
