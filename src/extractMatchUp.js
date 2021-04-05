@@ -17,6 +17,7 @@ export function extractMatchUp({
   tieFormat,
   entryStage,
   legacyMatch,
+  isAdhocEvent,
   participants,
   matchUpFormat,
   participantIds,
@@ -32,6 +33,37 @@ export function extractMatchUp({
   const missingParticipants = [];
   const positionAssignments = [];
 
+  const matchUpType =
+    eventType === 'TEAM' ? legacyMatch.format?.toUpperCase() : eventType;
+
+  const collectionDefinition = tieFormat?.collectionDefinitions.find(
+    collectionDefinition => collectionDefinition.matchUpType === matchUpType
+  );
+  const collectionId = collectionDefinition?.collectionId;
+
+  const scoreString = legacyMatch.match?.score || legacyMatch.score || '';
+  const reversedScoreString = reverseScore(scoreString) || '';
+
+  let winner_index =
+    legacyMatch.match?.winner_index !== undefined &&
+    legacyMatch.match.winner_index;
+  if (![0, 1].includes(parseInt(winner_index)))
+    winner_index = legacyMatch.winner_index;
+  const winner = [0, 1].includes(parseInt(winner_index));
+  const winningSide = (winner && winner_index + 1) || undefined;
+  const scoreStringSide1 = matchTiebreakTODS(
+    !winner || winningSide === 1 ? scoreString : reversedScoreString
+  );
+  const scoreStringSide2 = matchTiebreakTODS(
+    !winner || winningSide === 1 ? reversedScoreString : scoreString
+  );
+  const sets = mocksEngine.parseScoreString({ scoreString: scoreStringSide1 });
+  const score = {
+    scoreStringSide1,
+    scoreStringSide2,
+    sets,
+  };
+
   let isBye = false;
   if (Array.isArray(legacyMatch.teams)) {
     legacyMatch.teams.forEach((team, index) => {
@@ -43,10 +75,19 @@ export function extractMatchUp({
       const player1 = team && team[0] && typeof team[0] === 'object' && team[0];
       const player2 = team && team[1] && typeof team[1] === 'object' && team[1];
       let drawPosition =
+        (drawPositionHashMap &&
+          (drawPositionHashMap[player1?.id] ||
+            drawPositionHashMap[player1?.puid] ||
+            drawPositionHashMap[player2?.id] ||
+            drawPositionHashMap[player2?.puid])) ||
         player1?.draw_position ||
-        player2?.draw_position ||
-        (drawPositionHashMap && drawPositionHashMap[getId(player1)]);
+        player2?.draw_position;
+
       if (drawPosition) drawPosition += drawPositionOffset;
+
+      if (winningSide && !drawPosition && !isAdhocEvent) {
+        console.log('missing drawPosition:', player1.id);
+      }
 
       const seed = player1?.seed;
       const bye = player1?.bye;
@@ -79,7 +120,10 @@ export function extractMatchUp({
       }
       if (participantId) {
         side.participantId = participantId;
+      } else {
+        // console.log('no participantId', { team, individualParticipantIds });
       }
+
       sides.push(side);
 
       if (participantId && !participantIds.includes(participantId)) {
@@ -106,37 +150,6 @@ export function extractMatchUp({
       }
     });
   }
-
-  const matchUpType =
-    eventType === 'TEAM' ? legacyMatch.format?.toUpperCase() : eventType;
-
-  const collectionDefinition = tieFormat?.collectionDefinitions.find(
-    collectionDefinition => collectionDefinition.matchUpType === matchUpType
-  );
-  const collectionId = collectionDefinition?.collectionId;
-
-  const scoreString = legacyMatch.match?.score || legacyMatch.score || '';
-  const reversedScoreString = reverseScore(scoreString) || '';
-
-  let winner_index =
-    legacyMatch.match?.winner_index !== undefined &&
-    legacyMatch.match.winner_index;
-  if (![0, 1].includes(parseInt(winner_index)))
-    winner_index = legacyMatch.winner_index;
-  const winner = [0, 1].includes(parseInt(winner_index));
-  const winningSide = (winner && winner_index + 1) || undefined;
-  const scoreStringSide1 = matchTiebreakTODS(
-    !winner || winningSide === 1 ? scoreString : reversedScoreString
-  );
-  const scoreStringSide2 = matchTiebreakTODS(
-    !winner || winningSide === 1 ? reversedScoreString : scoreString
-  );
-  const sets = mocksEngine.parseScoreString({ scoreString: scoreStringSide1 });
-  const score = {
-    scoreStringSide1,
-    scoreStringSide2,
-    sets,
-  };
 
   const time = scoreString.indexOf('TIME') > 0;
   const live = scoreString.indexOf('LIVE') > 0;
