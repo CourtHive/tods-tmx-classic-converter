@@ -41,7 +41,7 @@ export function extractMatchUp({
   );
   const collectionId = collectionDefinition?.collectionId;
 
-  const scoreString = legacyMatch.match?.score || legacyMatch.score || '';
+  let scoreString = legacyMatch.match?.score || legacyMatch.score || '';
 
   const time = scoreString.indexOf('TIME') > 0;
   const live = scoreString.indexOf('LIVE') > 0;
