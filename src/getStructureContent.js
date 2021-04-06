@@ -1,5 +1,5 @@
 import { getPositionAssignmentHashes } from './getPositionAssignmentHashes';
-import { drawDefinitionConstants } from 'tods-competition-factory';
+import { drawDefinitionConstants, drawEngine } from 'tods-competition-factory';
 import { tournamentEngine } from 'tods-competition-factory';
 import { extractMatchUp } from './extractMatchUp';
 import { getStage } from './utilities';
@@ -190,6 +190,25 @@ function roundRobinStructure({
         return undefined;
       })
       .filter(f => f);
+
+    const { participantResults } = drawEngine.tallyParticipantResults({
+      matchUps,
+    });
+    const resultsParticipantIds = Object.keys(participantResults || {});
+    if (resultsParticipantIds?.length) {
+      positionAssignments?.forEach(assignment => {
+        const { participantId } = assignment;
+        if (resultsParticipantIds?.includes(participantId)) {
+          assignment.extensions = [
+            {
+              name: 'tally',
+              value: participantResults[participantId],
+            },
+          ];
+        }
+      });
+    }
+
     const structureName = bracket.name || `Group ${index + 1}`;
     const structure = {
       structureType: ITEM,

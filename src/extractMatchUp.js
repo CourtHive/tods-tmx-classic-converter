@@ -42,6 +42,53 @@ export function extractMatchUp({
   const collectionId = collectionDefinition?.collectionId;
 
   const scoreString = legacyMatch.match?.score || legacyMatch.score || '';
+
+  const time = scoreString.indexOf('TIME') > 0;
+  const live = scoreString.indexOf('LIVE') > 0;
+  const interrupted = scoreString.indexOf('INT') > 0;
+  const incomplete = scoreString.indexOf('INC') > 0;
+  const walkover = scoreString.indexOf('W.O.') >= 0;
+  const cancelled = scoreString.indexOf('CCL') >= 0;
+  const abandoned = scoreString.indexOf('ABD') >= 0;
+  const defaulted = scoreString.indexOf('DEF') >= 0;
+  const retired = scoreString.indexOf('RET') > 0;
+  [
+    'TIME',
+    'LIVE',
+    'INT',
+    'INC',
+    'W.O.',
+    'CCL',
+    'ABD',
+    'DEF',
+    'RET',
+    'INT.',
+    'INC.',
+    'CCL.',
+    'ABD.',
+    'DEF.',
+    'RET.',
+  ].forEach(
+    stringStatus =>
+      (scoreString = (scoreString || '')
+        .split(stringStatus)
+        .join('')
+        .trim())
+  );
+  const matchUpStatus =
+    (live && matchUpStatusConstants.IN_PROGRESS) ||
+    (interrupted && matchUpStatusConstants.SUSPENDED) ||
+    (incomplete && matchUpStatusConstants.INCOMPLETE) ||
+    (walkover && matchUpStatusConstants.WALKOVER) ||
+    (cancelled && matchUpStatusConstants.NOT_PLAYED) ||
+    (abandoned && matchUpStatusConstants.ABANDONED) ||
+    (defaulted && matchUpStatusConstants.DEFAULTED) ||
+    (retired && matchUpStatusConstants.RETIRED) ||
+    (isBye && matchUpStatusConstants.BYE) ||
+    (winningSide && matchUpStatusConstants.COMPLETED) ||
+    (time && matchUpStatusConstants.COMPLETED) ||
+    (!winningSide && matchUpStatusConstants.TO_BE_PLAYED);
+
   const reversedScoreString = reverseScore(scoreString) || '';
 
   let winner_index =
@@ -126,7 +173,7 @@ export function extractMatchUp({
 
       sides.push(side);
 
-      if (participantId && !participantIds.includes(participantId)) {
+      if (participantId && !participantIds?.includes(participantId)) {
         participantIds.push(participantId);
         const entry = {
           entryStage,
@@ -150,29 +197,6 @@ export function extractMatchUp({
       }
     });
   }
-
-  const time = scoreString.indexOf('TIME') > 0;
-  const live = scoreString.indexOf('LIVE') > 0;
-  const interrupted = scoreString.indexOf('INT') > 0;
-  const incomplete = scoreString.indexOf('INC') > 0;
-  const walkover = scoreString.indexOf('W.O.') >= 0;
-  const cancelled = scoreString.indexOf('CCL') >= 0;
-  const abandoned = scoreString.indexOf('ABD') >= 0;
-  const defaulted = scoreString.indexOf('DEF') >= 0;
-  const retired = scoreString.indexOf('RET') > 0;
-  const matchUpStatus =
-    (live && matchUpStatusConstants.IN_PROGRESS) ||
-    (interrupted && matchUpStatusConstants.SUSPENDED) ||
-    (incomplete && matchUpStatusConstants.INCOMPLETE) ||
-    (walkover && matchUpStatusConstants.WALKOVER) ||
-    (cancelled && matchUpStatusConstants.NOT_PLAYED) ||
-    (abandoned && matchUpStatusConstants.ABANDONED) ||
-    (defaulted && matchUpStatusConstants.DEFAULTED) ||
-    (retired && matchUpStatusConstants.RETIRED) ||
-    (isBye && matchUpStatusConstants.BYE) ||
-    (winningSide && matchUpStatusConstants.COMPLETED) ||
-    (time && matchUpStatusConstants.COMPLETED) ||
-    (!winningSide && matchUpStatusConstants.TO_BE_PLAYED);
 
   const timeItems = getTimeItems({ participants, legacyMatch });
   const matchUp = {

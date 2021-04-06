@@ -1,13 +1,13 @@
-import { convertTieFormat } from "./convertTieFormat";
-import { extractStructures } from "./extractStructures";
-import { matchFormatCode } from "./matchFormatCode";
-import { scoreFormat } from "./scoreFormat";
+import { convertTieFormat } from './convertTieFormat';
+import { extractStructures } from './extractStructures';
+import { matchFormatCode } from './matchFormatCode';
+import { scoreFormat } from './scoreFormat';
 import {
   tournamentEngine,
   factoryConstants,
   matchUpTypes,
   utilities,
-} from "tods-competition-factory";
+} from 'tods-competition-factory';
 
 import {
   getGender,
@@ -16,22 +16,22 @@ import {
   getMatchUpType,
   getIndoorOutdoor,
   getAgeCategoryCode,
-} from "./utilities";
+} from './utilities';
 
 export function extractEvents({ tournament, participants }) {
   const eventCategories = {};
   const legacyEvents = tournament.events || [];
-  const tournamentRecord = { participants, tournamentId: "foo" };
+  const tournamentRecord = { participants, tournamentId: 'foo' };
   tournamentEngine.setState(tournamentRecord);
 
   // linkedStructures are events which have explicit links
   const linkedStructures = {};
 
-  legacyEvents.forEach((legacyEvent) => {
+  legacyEvents.forEach(legacyEvent => {
     const euid = legacyEvent.euid;
     const eventIds = [euid];
     legacyEvent.links &&
-      Object.keys(legacyEvent.links).forEach((key) => {
+      Object.keys(legacyEvent.links).forEach(key => {
         const linkedEuid = legacyEvent.links[key];
         eventIds.push(linkedEuid);
       });
@@ -43,28 +43,28 @@ export function extractEvents({ tournament, participants }) {
     }
   });
 
-  Object.keys(linkedStructures).forEach((key) => {
+  Object.keys(linkedStructures).forEach(key => {
     const structureGroup = linkedStructures[key];
     const structureGroupIds = Object.keys(structureGroup);
-    const groupStructures = structureGroupIds.map((id) => structureGroup[id]);
+    const groupStructures = structureGroupIds.map(id => structureGroup[id]);
     const structureGroupDrawTypes = groupStructures.map(
-      (event) => event.draw_type
+      event => event.draw_type
     );
-    const mainDrawTypes = ["E", "S"];
+    const mainDrawTypes = ['E', 'S'];
     if (!intersection(mainDrawTypes, structureGroupDrawTypes).length) {
-      if (structureGroupDrawTypes.includes("R")) mainDrawTypes.push("R");
-      else if (structureGroupDrawTypes.includes("A")) mainDrawTypes.push("A");
-      else if (structureGroupDrawTypes.includes("C")) mainDrawTypes.push("C");
-      else if (structureGroupDrawTypes.includes("Q")) mainDrawTypes.push("Q");
-      else if (structureGroupDrawTypes.includes("P")) mainDrawTypes.push("P");
-      else console.log("unlinked event", { structureGroup });
+      if (structureGroupDrawTypes?.includes('R')) mainDrawTypes.push('R');
+      else if (structureGroupDrawTypes?.includes('A')) mainDrawTypes.push('A');
+      else if (structureGroupDrawTypes?.includes('C')) mainDrawTypes.push('C');
+      else if (structureGroupDrawTypes?.includes('Q')) mainDrawTypes.push('Q');
+      else if (structureGroupDrawTypes?.includes('P')) mainDrawTypes.push('P');
+      else console.log('unlinked event', { structureGroup });
     }
-    const mainLegacyEvent = groupStructures.find((legacyEvent) =>
-      mainDrawTypes.includes(legacyEvent.draw_type)
+    const mainLegacyEvent = groupStructures.find(legacyEvent =>
+      mainDrawTypes?.includes(legacyEvent.draw_type)
     );
     const eventType =
       getMatchUpType(mainLegacyEvent.format) ||
-      ((mainLegacyEvent.matchorder || tournament.type === "dual") &&
+      ((mainLegacyEvent.matchorder || tournament.type === 'dual') &&
         matchUpTypes.TEAM);
     const ageCategoryCode = getAgeCategoryCode(mainLegacyEvent.category);
     const category = { categoryName: mainLegacyEvent.category };
@@ -126,7 +126,7 @@ export function extractEvents({ tournament, participants }) {
     }
 
     const extension = {
-      name: "drawProfile",
+      name: 'drawProfile',
       value: drawProfile,
     };
     tournamentEngine.addDrawDefinitionExtension({ drawDefinition, extension });
@@ -162,10 +162,10 @@ export function extractEvents({ tournament, participants }) {
   });
 
   const events = Object.values(eventCategories);
-  events.forEach((event) => {
+  events.forEach(event => {
     const entriesAccumulator = {};
-    event.drawDefinitions.forEach((drawDefinition) => {
-      drawDefinition.entries.forEach((entry) => {
+    event.drawDefinitions.forEach(drawDefinition => {
+      drawDefinition.entries.forEach(entry => {
         entriesAccumulator[entry.participantId] = entry;
       });
     });

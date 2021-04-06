@@ -149,7 +149,7 @@ function extractIndividualParticipants({ tournament }) {
     addRatings({ player, participant, tournamentStartDate });
     addPenalties({ player, participant, tournamentStartDate });
 
-    if (!individualParticipantIds.includes(participant.participantId)) {
+    if (!individualParticipantIds?.includes(participant.participantId)) {
       individualParticipants.push(participant);
       individualParticipantIds.push(participantId);
     }

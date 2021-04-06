@@ -46,10 +46,9 @@ export function getPositionAssignmentHashes({
     brackets.forEach(bracket => {
       const byePositions = bracket.byes?.map(bye => bye.position) || [];
       bracket.teams?.forEach((team, index) => {
-        if (!byePositions.includes(index + 1)) addToHash(team, index + 1);
+        if (!byePositions?.includes(index + 1)) addToHash(team, index + 1);
       });
     });
-    console.log({ positionHashMap });
   }
 
   return positionHashMap;
