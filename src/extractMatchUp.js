@@ -75,6 +75,14 @@ export function extractMatchUp({
         .join('')
         .trim())
   );
+  let winner_index =
+    legacyMatch.match?.winner_index !== undefined &&
+    legacyMatch.match.winner_index;
+  if (![0, 1].includes(parseInt(winner_index)))
+    winner_index = legacyMatch.winner_index;
+  const winner = [0, 1].includes(parseInt(winner_index));
+  const winningSide = (winner && winner_index + 1) || undefined;
+
   const matchUpStatus =
     (live && matchUpStatusConstants.IN_PROGRESS) ||
     (interrupted && matchUpStatusConstants.SUSPENDED) ||
@@ -90,14 +98,6 @@ export function extractMatchUp({
     (!winningSide && matchUpStatusConstants.TO_BE_PLAYED);
 
   const reversedScoreString = reverseScore(scoreString) || '';
-
-  let winner_index =
-    legacyMatch.match?.winner_index !== undefined &&
-    legacyMatch.match.winner_index;
-  if (![0, 1].includes(parseInt(winner_index)))
-    winner_index = legacyMatch.winner_index;
-  const winner = [0, 1].includes(parseInt(winner_index));
-  const winningSide = (winner && winner_index + 1) || undefined;
   const scoreStringSide1 = matchTiebreakTODS(
     !winner || winningSide === 1 ? scoreString : reversedScoreString
   );
