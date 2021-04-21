@@ -173,7 +173,9 @@ function isValidDate(date) {
   if (!date) return;
   try {
     const dateObject = new Date(date);
-    if (dateObject.trim() === errorConditionConstants.INVALID_DATE) {
+    if (
+      dateObject?.toString()?.trim() === errorConditionConstants.INVALID_DATE
+    ) {
       return false;
     }
     return true;
