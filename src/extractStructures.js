@@ -1,8 +1,8 @@
-import { drawDefinitionConstants } from "tods-competition-factory";
-import { matchFormatCode } from "./matchFormatCode";
-import { scoreFormat } from "./scoreFormat";
-import { getStructureContent } from "./getStructureContent";
-import { getStage } from "./utilities";
+import { drawDefinitionConstants } from 'tods-competition-factory';
+import { matchFormatCode } from './matchFormatCode';
+import { scoreFormat } from './scoreFormat';
+import { getStructureContent } from './getStructureContent';
+import { getStage } from './utilities';
 
 export function extractStructures({
   eventType,
@@ -13,8 +13,9 @@ export function extractStructures({
   matchUpFormat,
   mainStructureId,
 }) {
+  const drawStructures = [];
   const entriesAccumulator = {};
-  const structures = legacyEvents.map((legacyEvent) => {
+  legacyEvents.forEach(legacyEvent => {
     const {
       entries,
       matchUps,
@@ -31,7 +32,7 @@ export function extractStructures({
       legacyEvent,
       participants,
     });
-    entries.forEach((entry) => {
+    entries.forEach(entry => {
       entriesAccumulator[entry.participantId] = entry;
     });
 
@@ -61,9 +62,9 @@ export function extractStructures({
     if (formatCode || matchUpFormat)
       structure.matchUpFormat = formatCode || matchUpFormat;
 
-    return structure;
+    drawStructures.push(structure);
   });
 
   const drawEntries = Object.values(entriesAccumulator);
-  return { structures, drawEntries };
+  return { structures: drawStructures, drawEntries };
 }
