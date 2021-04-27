@@ -32,6 +32,7 @@
     "release": "np --no-tests",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "tsdx build",
+    "start": "tsdx watch",
     "build": "tsdx build"
   },
   "prettier": {
