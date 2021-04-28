@@ -12,23 +12,19 @@ npm i tods-tmx-classic-converter
 
 ## Use
 
+See examples directory...
+
 ```js
-// node
-const { TMX2TODS } = require('tods-tmx-classic-converter');
+cd example
 
-// node -r esm
-import { TMX2TODS } from 'tods-tmx-classic-converter';
+node
 
-// If you want to work directly in the repo directory...
-const { TMX2TODS } = require('./dist');
+const { TMX2TODS } = require('./TMX2TODS');
 
 // convert all files in sourceDir
-
 TMX2TODS({
-  sourceDir: './example',
-  targetDir: './example',
-  /*
+  sourceDir: '.',
+  targetDir: '.',
   targetExtension, // optional file extension, defaults to '.tods.json'
-  */
 });
 ```
