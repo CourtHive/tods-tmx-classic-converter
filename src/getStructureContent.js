@@ -1,17 +1,23 @@
 import { getPositionAssignmentHashes } from './getPositionAssignmentHashes';
-import { drawDefinitionConstants, drawEngine } from 'tods-competition-factory';
 import { tournamentEngine } from 'tods-competition-factory';
 import { extractMatchUp } from './extractMatchUp';
+import { normalizeName } from 'normalize-text';
 import { getStage } from './utilities';
 import { matchFx } from './matchFx';
 import { drawFx } from './drawFx';
-import { UUID } from './UUID';
+
+import {
+  drawDefinitionConstants,
+  drawEngine,
+  utilities,
+} from 'tods-competition-factory';
 
 const { CONTAINER, ITEM, ROUND_OUTCOME, WIN_RATIO } = drawDefinitionConstants;
 
 const dfx = drawFx();
 
 export function getStructureContent({
+  drawType,
   eventType,
   tieFormat,
   tournament,
@@ -43,20 +49,46 @@ export function getStructureContent({
     info,
   };
 
-  const result = legacyEvent?.draw?.brackets
-    ? roundRobinStructure(props)
-    : eliminationStructure(props);
+  const result =
+    drawType === 'ROUND_ROBIN'
+      ? roundRobinStructure(props)
+      : drawType === 'COMPASS'
+      ? compassStructure(props)
+      : eliminationStructure(props);
 
   return result;
 }
 
+const directions = {
+  east: { stageSequence: 1 },
+  west: { stageSequence: 2, roundOffset: 1 },
+  north: { stageSequence: 2, roundOffset: 2 },
+  south: { stageSequence: 3, roundOffset: 2 },
+  northeast: { stageSequence: 2, roundOffset: 3 },
+  northwest: { stageSequence: 3, roundOffset: 3 },
+  southwest: { stageSequence: 3, roundOffset: 3 },
+  southeast: { stageSequence: 4, roundOffset: 3 },
+};
+
+function compassStructure(props) {
+  const directionsPresent = utilities.intersection(
+    Object.keys(directions),
+    Object.keys(props.legacyEvent.draw)
+  );
+  const rawStructures = directionsPresent.map(direction =>
+    eliminationStructure({ direction, ...props })
+  );
+  return rawStructures;
+}
+
 function eliminationStructure({
-  legacyEvent,
   tournament,
+  direction,
   tieFormat,
   legacyDual,
   seedLimit,
   entryStage,
+  legacyEvent,
   participants,
   eventType,
   info,
@@ -71,7 +103,9 @@ function eliminationStructure({
     roundNames.calculated_names,
     true
   );
-  const matches = legacyDual ? dfxMatches : eventMatches;
+  const matches = ((legacyDual ? dfxMatches : eventMatches) || []).filter(
+    match => !direction || match.draw === direction
+  );
   const tieMatches = (legacyDual && eventMatches) || [];
   const positionAssignments = [];
   const seedAssignments = [];
@@ -120,6 +154,24 @@ function eliminationStructure({
   );
   seedAssignments.sort((a, b) => (a.seedNumber > b.seedNumber ? 1 : -1));
 
+  const structureContent = {
+    entries,
+    matchUps,
+    seedLimit,
+    seedAssignments,
+    positionAssignments,
+    finishingPosition: ROUND_OUTCOME,
+  };
+
+  if (direction) {
+    const structureName = normalizeName(direction);
+    structureContent.structureName = structureName;
+    structureContent.structureAbbreviation = structureName[0];
+    Object.assign(structureContent, directions[direction]);
+  }
+
+  return structureContent;
+  /*
   return {
     entries,
     matchUps,
@@ -128,6 +180,7 @@ function eliminationStructure({
     seedAssignments,
     finishingPosition: ROUND_OUTCOME,
   };
+    */
 }
 
 function roundRobinStructure({
@@ -212,7 +265,7 @@ function roundRobinStructure({
     const structureName = bracket.name || `Group ${index + 1}`;
     const structure = {
       structureType: ITEM,
-      structureId: UUID.generate(),
+      structureId: utilities.UUID,
       stageSequence: 1,
       positionAssignments,
       structureName,
