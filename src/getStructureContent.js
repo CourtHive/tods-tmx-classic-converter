@@ -310,12 +310,12 @@ function processLegacyMatch({
   }
 
   const roundNumberString =
+    legacyMatch?.round ||
+    legacyMatch.match?.round ||
     matchFx.roundNumber({
       match: legacyMatch.match,
       info,
-    }) ||
-    legacyMatch.match?.round ||
-    legacyMatch?.round;
+    });
   const roundNumber = !isNaN(parseInt(roundNumberString))
     ? parseInt(roundNumberString)
     : undefined;
