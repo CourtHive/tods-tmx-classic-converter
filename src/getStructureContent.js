@@ -118,7 +118,6 @@ function getCompassComponents(props) {
               structureId: directions[linkedDirection].structureId,
             },
           };
-          console.log('generating link', { direction, linkedDirection });
           compassLinks.push(link);
         }
       });
