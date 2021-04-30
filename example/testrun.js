@@ -1,3 +1,4 @@
+// node -r esm testrun
 const { TMX2TODS } = require('./TMX2TODS');
 
 const sourceDir = `./sourceFiles`;
