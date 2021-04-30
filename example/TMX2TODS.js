@@ -1,5 +1,5 @@
 import { SingleBar, Presets } from 'cli-progress';
-import { convertTMX2TODS } from '../src/convertTMX2TODS';
+import { convertTMX2TODS } from '../dist';
 import fs from 'fs';
 
 export function TMX2TODS({
@@ -34,14 +34,16 @@ export function TMX2TODS({
       console.log(`${index + 1}: ${tournament.name}, ${tournament.tuid}`);
 
     if (
-      tournament?.tuid &&
+      tournament &&
+      tournament.tuid &&
       (!tournamentId || tournamentId === tournament.tuid)
     ) {
       try {
         const { tournamentRecord } = convertTMX2TODS({ tournament });
         const organisationId =
           tournamentRecord.parentOrganisationId ||
-          tournamentRecord.unifiedTournamentId?.organisationId ||
+          (tournamentRecord.unifiedTournamentId &&
+            tournamentRecord.unifiedTournamentId.organisationId) ||
           'no_org';
         if (tournamentRecord.unifiedTournamentId && !orgs[organisationId]) {
           orgs[organisationId] = {
