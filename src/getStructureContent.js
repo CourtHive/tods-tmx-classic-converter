@@ -12,7 +12,14 @@ import {
   utilities,
 } from 'tods-competition-factory';
 
-const { CONTAINER, ITEM, ROUND_OUTCOME, WIN_RATIO } = drawDefinitionConstants;
+const {
+  CONTAINER,
+  ITEM,
+  ROUND_OUTCOME,
+  WIN_RATIO,
+  TOP_DOWN,
+  LOSER,
+} = drawDefinitionConstants;
 
 const dfx = drawFx();
 
@@ -53,37 +60,76 @@ export function getStructureContent({
     drawType === 'ROUND_ROBIN'
       ? roundRobinStructure(props)
       : drawType === 'COMPASS'
-      ? compassStructure(props)
+      ? getCompassComponents(props)
       : eliminationStructure(props);
 
   return result;
 }
 
-const directions = {
-  east: { stageSequence: 1 },
-  west: { stageSequence: 2, roundOffset: 1 },
-  north: { stageSequence: 2, roundOffset: 2 },
-  south: { stageSequence: 3, roundOffset: 2 },
-  northeast: { stageSequence: 2, roundOffset: 3 },
-  northwest: { stageSequence: 3, roundOffset: 3 },
-  southwest: { stageSequence: 3, roundOffset: 3 },
-  southeast: { stageSequence: 4, roundOffset: 3 },
-};
+function getCompassComponents(props) {
+  const directions = {
+    east: { stageSequence: 1 },
+    west: { stageSequence: 2, roundOffset: 1 },
+    north: { stageSequence: 2, roundOffset: 2 },
+    south: { stageSequence: 3, roundOffset: 2 },
+    northeast: { stageSequence: 2, roundOffset: 3 },
+    northwest: { stageSequence: 3, roundOffset: 3 },
+    southwest: { stageSequence: 3, roundOffset: 3 },
+    southeast: { stageSequence: 4, roundOffset: 3 },
+  };
 
-function compassStructure(props) {
+  const legacyDirections = Object.keys(props.legacyEvent.draw);
   const directionsPresent = utilities.intersection(
     Object.keys(directions),
-    Object.keys(props.legacyEvent.draw)
+    legacyDirections.filter(key => props.legacyEvent.draw[key])
   );
-  const rawStructures = directionsPresent.map(direction =>
-    eliminationStructure({ direction, ...props })
-  );
-  return rawStructures;
+
+  directionsPresent.forEach(direction => {
+    directions[direction].structureId = utilities.UUID();
+  });
+
+  const compassStructures = directionsPresent
+    .map(direction => eliminationStructure({ direction, directions, ...props }))
+    .filter(f => f.matchUps?.length);
+
+  const compassLinks = [];
+  const linkProfiles = {
+    east: { west: 1, north: 2, northeast: 3 },
+    west: { south: 1, southwest: 2 },
+    north: { northwest: 1 },
+    south: { southeast: 1 },
+  };
+
+  directionsPresent.forEach(direction => {
+    linkProfiles[direction] &&
+      Object.keys(linkProfiles[direction]).forEach(linkedDirection => {
+        if (directionsPresent.includes(linkedDirection)) {
+          const link = {
+            linkType: LOSER,
+            source: {
+              roundNumber: linkProfiles[direction][linkedDirection],
+              structureName: normalizeName(direction),
+              structureId: directions[direction].structureId,
+            },
+            target: {
+              roundNumber: 1,
+              feedProfile: TOP_DOWN,
+              structureName: normalizeName(linkedDirection),
+              structureId: directions[linkedDirection].structureId,
+            },
+          };
+          console.log('generating link', { direction, linkedDirection });
+          compassLinks.push(link);
+        }
+      });
+  });
+  return { compassStructures, compassLinks };
 }
 
 function eliminationStructure({
   tournament,
   direction,
+  directions,
   tieFormat,
   legacyDual,
   seedLimit,
@@ -171,16 +217,6 @@ function eliminationStructure({
   }
 
   return structureContent;
-  /*
-  return {
-    entries,
-    matchUps,
-    seedLimit,
-    positionAssignments,
-    seedAssignments,
-    finishingPosition: ROUND_OUTCOME,
-  };
-    */
 }
 
 function roundRobinStructure({
@@ -265,7 +301,7 @@ function roundRobinStructure({
     const structureName = bracket.name || `Group ${index + 1}`;
     const structure = {
       structureType: ITEM,
-      structureId: utilities.UUID,
+      structureId: utilities.UUID(),
       stageSequence: 1,
       positionAssignments,
       structureName,

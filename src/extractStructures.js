@@ -13,6 +13,7 @@ export function extractStructures({
   matchUpFormat,
   mainStructureId,
 }) {
+  const links = [];
   const drawStructures = [];
   const entriesAccumulator = {};
   legacyEvents.forEach(legacyEvent => {
@@ -73,7 +74,7 @@ export function extractStructures({
 
       drawStructures.push(structure);
     } else {
-      const compassStructures = getStructureContent({
+      const { compassStructures, compassLinks } = getStructureContent({
         drawType,
         eventType,
         tieFormat,
@@ -81,6 +82,7 @@ export function extractStructures({
         legacyEvent,
         participants,
       });
+      if (compassLinks?.length) links.push(...compassLinks);
       compassStructures.forEach(structure => {
         structure.entries.forEach(entry => {
           entriesAccumulator[entry.participantId] = entry;
@@ -90,7 +92,6 @@ export function extractStructures({
         if (structure.roundOffset) delete structure.seedLimit;
 
         structure.stage = stage;
-        structure.structureId = utilities.UUID();
 
         if (formatCode || matchUpFormat)
           structure.matchUpFormat = formatCode || matchUpFormat;
@@ -101,5 +102,5 @@ export function extractStructures({
   });
 
   const drawEntries = Object.values(entriesAccumulator);
-  return { structures: drawStructures, drawEntries };
+  return { structures: drawStructures, drawEntries, links };
 }

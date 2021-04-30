@@ -89,7 +89,7 @@ export function extractEvents({ tournament, participants }) {
       mainLegacyEvent.matchFormat ||
       (format && matchFormatCode.stringify(scoreFormat.jsonTODS(format)));
 
-    const { structures, drawEntries: entries } = extractStructures({
+    const { drawEntries: entries, links, structures } = extractStructures({
       eventType,
       tieFormat,
       tournament,
@@ -110,6 +110,7 @@ export function extractEvents({ tournament, participants }) {
       createdAt: draw_created && new Date(draw_created).toISOString(),
       structures,
       entries,
+      links,
     };
 
     if (matchUpFormat) drawDefinition.matchUpFormat = matchUpFormat;

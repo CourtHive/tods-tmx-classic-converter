@@ -204,8 +204,9 @@ export function extractMatchUp({
     score,
   };
 
-  const drawPositions = sides?.map(side => side.drawPosition).filter(f => f);
-  if (drawPositions?.length) matchUp.drawPositions = drawPositions;
+  const drawPositions =
+    sides?.map(side => side.drawPosition).filter(f => f) || [];
+  matchUp.drawPositions = drawPositions;
 
   if (sides?.length) matchUp.sides = sides;
   if (matchUpType) matchUp.matchUpType = matchUpType;
@@ -225,6 +226,7 @@ export function extractMatchUp({
   if (collectionPosition) {
     matchUp.collectionPosition = collectionPosition;
   }
+
   return {
     matchUp,
     entries,
