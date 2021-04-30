@@ -89,7 +89,11 @@ function getCompassComponents(props) {
   });
 
   const compassStructures = directionsPresent
-    .map(direction => eliminationStructure({ direction, directions, ...props }))
+    .map(direction => {
+      props.legacyEvent.draw.compass = direction;
+      const info = dfx.drawInfo(props.legacyEvent.draw);
+      return eliminationStructure({ direction, directions, ...props, info });
+    })
     .filter(f => f.matchUps?.length);
 
   const compassLinks = [];
@@ -354,9 +358,11 @@ function processLegacyMatch({
   const roundNumber = !isNaN(parseInt(roundNumberString))
     ? parseInt(roundNumberString)
     : undefined;
+
+  const matches = info && info.all_matches;
   const roundPositionString = matchFx.roundPosition({
     match: legacyMatch.match,
-    info,
+    matches,
   });
   const roundPosition = !isNaN(parseInt(roundPositionString))
     ? parseInt(roundPositionString)
