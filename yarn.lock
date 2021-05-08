@@ -7601,10 +7601,10 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-tods-competition-factory@0.5.82:
-  version "0.5.82"
-  resolved "https://registry.yarnpkg.com/tods-competition-factory/-/tods-competition-factory-0.5.82.tgz#730bebd9f29be3d0a08ab65c89239cf128d1fa14"
-  integrity sha512-40k3nu7NGgUjXVKE5wx6uM+8hVUvtA3bpVJ9FWlXs7wk+5b3jdd7ibM8Kk1lFswqEa+BkD9QzOB++FnSV4NYVg==
+tods-competition-factory@0.5.88:
+  version "0.5.88"
+  resolved "https://registry.yarnpkg.com/tods-competition-factory/-/tods-competition-factory-0.5.88.tgz#7a57b2ab264758c9ee9c48e103b7da9bf232c97e"
+  integrity sha512-g9tGFdgZlLFiTnOAVVSbe4cQp8SvOEtiX8HTHOoAOCiKszZOnrvPL5rE68tO1ls9N5P9vWhNJcAkp/eyzAN1Bw==
   dependencies:
     tods-matchup-format-code "1.1.2"
 
