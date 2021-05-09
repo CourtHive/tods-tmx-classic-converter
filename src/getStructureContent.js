@@ -348,13 +348,7 @@ function processLegacyMatch({
     return {};
   }
 
-  const roundNumberString =
-    legacyMatch?.round ||
-    legacyMatch.match?.round ||
-    matchFx.roundNumber({
-      match: legacyMatch.match,
-      info,
-    });
+  const roundNumberString = legacyMatch?.round || legacyMatch.match?.round;
   const roundNumber = !isNaN(parseInt(roundNumberString))
     ? parseInt(roundNumberString)
     : undefined;
