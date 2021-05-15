@@ -259,7 +259,7 @@ function getTimeItems({ participants, legacyMatch }) {
 
   if (schedule.day) {
     const timeItem = {
-      itemType: 'SCHEDULED.DATE',
+      itemType: 'SCHEDULE.DATE',
       itemValue: schedule.day,
       timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
