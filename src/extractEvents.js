@@ -138,7 +138,9 @@ export function extractEvents({ tournament, participants }) {
     const gender = getGender(mainLegacyEvent.gender);
     const eventRank = mainLegacyEvent.rank;
 
-    const categoryName = `${category.categoryName}-${gender}-${eventType}`;
+    const customEventName = mainLegacyEvent.custom_category;
+    const nameRoot = category.categoryName ? `${category.categoryName}-` : '';
+    const categoryName = `${nameRoot}${gender}-${eventType}`;
     if (!eventCategories[categoryName]) {
       eventCategories[categoryName] = {
         gender,
@@ -146,7 +148,7 @@ export function extractEvents({ tournament, participants }) {
         category,
         eventType,
         eventRank,
-        eventName: categoryName,
+        eventName: customEventName || categoryName,
         drawDefinitions: [drawDefinition],
       };
       if (indoorOutdoor)
