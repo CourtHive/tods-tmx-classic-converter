@@ -21,7 +21,11 @@ import {
 export function extractEvents({ tournament, participants }) {
   const eventCategories = {};
   const legacyEvents = tournament.events || [];
-  const tournamentRecord = { participants, tournamentId: 'foo' };
+  const tournamentId = tournament.tuid;
+  const tournamentRecord = {
+    participants,
+    tournamentId: tournamentId || 'foo',
+  };
   tournamentEngine.setState(tournamentRecord);
 
   // linkedStructures are events which have explicit links
@@ -132,7 +136,6 @@ export function extractEvents({ tournament, participants }) {
     };
     tournamentEngine.addDrawDefinitionExtension({ drawDefinition, extension });
 
-    const eventId = utilities.UUID();
     const surfaceCategory = getSurface(mainLegacyEvent);
     const indoorOutdoor = getIndoorOutdoor(mainLegacyEvent);
     const gender = getGender(mainLegacyEvent.gender);
@@ -140,6 +143,18 @@ export function extractEvents({ tournament, participants }) {
 
     const nameRoot = category.categoryName ? `${category.categoryName}-` : '';
     const categoryName = `${nameRoot}${gender}-${eventType}`;
+
+    const code = parseFloat(
+      categoryName
+        .split('')
+        .map(c => c.charCodeAt(0))
+        .join('')
+    )
+      .toString(36)
+      .slice(0, 12);
+
+    const eventId = `${tournamentId.split('-')[0]}-${code}`;
+
     if (!eventCategories[categoryName]) {
       eventCategories[categoryName] = {
         gender,
