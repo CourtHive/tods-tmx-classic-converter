@@ -1,10 +1,10 @@
-import { getIndoorOutdoor, getSurface } from "./utilities";
+import { getIndoorOutdoor, getSurface } from './utilities';
 import {
   participantConstants,
   participantRoles,
   utilities,
-} from "tods-competition-factory";
-import { format } from "date-fns";
+} from 'tods-competition-factory';
+import { format } from 'date-fns';
 
 /*
 organisation = club
@@ -26,10 +26,10 @@ export function extractTournamentInfo({ tournament, file }) {
     tournamentName: tournament.name,
     startDate:
       tournament.start &&
-      new Date(format(new Date(tournament.start), "yyyy-MM-dd")).toISOString(),
+      new Date(format(new Date(tournament.start), 'yyyy-MM-dd')).toISOString(),
     endDate:
       tournament.end &&
-      new Date(format(new Date(tournament.end), "yyyy-MM-dd")).toISOString(),
+      new Date(format(new Date(tournament.end), 'yyyy-MM-dd')).toISOString(),
     parentOrganisationId: organisationId,
     unifiedTournamentId: {
       tournamentId,
@@ -46,8 +46,8 @@ export function extractTournamentInfo({ tournament, file }) {
 
   const organisationParticipants = [
     getRefereeParticipant(tournament.judge),
-    (tournament.umpires || []).map((umpire) => getRefereeParticipant(umpire)),
-  ].filter((f) => f);
+    (tournament.umpires || []).map(umpire => getRefereeParticipant(umpire)),
+  ].filter(f => f);
   return { tournamentInfo, organisationParticipants };
 }
 
@@ -55,21 +55,21 @@ function getOnlineResources(tournament) {
   const social = tournament.media?.social || {};
   const sponsorImages = tournament.publishing?.sponsors || [];
 
-  const onlineResources = Object.keys(social).map((provider) => {
+  const onlineResources = Object.keys(social).map(provider => {
     const identifier = social[provider];
     const onlineResource = {
       provider,
       identifier,
-      type: "SOCIAL_MEDIA",
+      type: 'SOCIAL_MEDIA',
     };
     return onlineResource;
   });
 
-  sponsorImages.forEach((identifier) => {
+  sponsorImages.forEach(identifier => {
     const onlineResource = {
       identifier,
-      type: "SPONSOR",
-      subType: "LOGO",
+      type: 'SPONSOR',
+      subType: 'LOGO',
     };
     onlineResources.push(onlineResource);
   });
@@ -80,16 +80,19 @@ function getOnlineResources(tournament) {
 function getLocations(tournament) {
   const range = (start, end) =>
     Array.from({ length: end - start }, (v, k) => k + start);
-  const venues = (tournament.locations || []).map((location) => {
+  const venues = (tournament.locations || []).map(location => {
     const venueId = location.luid;
     const venueAbbreviation = location.abbreviation;
-    const courts = range(0, parseInt(location.courts)).map((index) => {
-      const identifier =
-        (location.identifiers && location.identifiers[index]) || index + 1;
+    const courts = range(0, parseInt(location.courts)).map(index => {
+      const identifiers =
+        location.identifiers && location.identifiers.split(',');
+      const identifier = location.identifiers[index] || index + 1;
       const courtName = `${venueAbbreviation} ${identifier}`;
+      const courtNumber = index + 1;
       const court = {
         courtName,
-        courtId: `${venueId}-${index}`,
+        courtNumber,
+        courtId: `${venueId}|${courtNumber}`,
       };
       return court;
     });
@@ -100,7 +103,7 @@ function getLocations(tournament) {
       venueName: location.name,
       addresses: [
         {
-          addressType: "VENUE",
+          addressType: 'VENUE',
           latitude: location.latitide,
           longitude: location.longitude,
           addressLine1: location.address,
@@ -114,7 +117,7 @@ function getLocations(tournament) {
 
 function getRefereeParticipant(referee) {
   if (!referee) return;
-  const [standardGivenName, standardFamilyName] = referee.split(" ");
+  const [standardGivenName, standardFamilyName] = referee.split(' ');
 
   const participantId = utilities.UUID();
   return {
