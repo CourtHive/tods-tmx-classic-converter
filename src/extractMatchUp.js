@@ -33,8 +33,12 @@ export function extractMatchUp({
   const missingParticipants = [];
   const positionAssignments = [];
 
-  const matchUpType =
+  let matchUpType =
     eventType === 'TEAM' ? legacyMatch.format?.toUpperCase() : eventType;
+
+  if (eventType === 'TEAM' && !matchUpType) {
+    matchUpType = 'TEAM';
+  }
 
   const collectionDefinition = tieFormat?.collectionDefinitions.find(
     collectionDefinition => collectionDefinition.matchUpType === matchUpType

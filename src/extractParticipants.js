@@ -7,6 +7,7 @@ import { drawFx } from './drawFx';
 import {
   errorConditionConstants,
   participantConstants,
+  tournamentEngine,
   participantRoles,
   penaltyConstants,
   scaleConstants,
@@ -17,20 +18,30 @@ const dfx = drawFx();
 
 export function extractParticipants({ tournament, file }) {
   const individualParticipants = extractIndividualParticipants({ tournament });
-
-  const pairParticipants = extractPairParticipants({
+  const tournamentId = tournament.tuid;
+  const tournamentRecord = {
     participants: individualParticipants,
+    tournamentId: tournamentId || 'foo',
+  };
+  tournamentEngine.setState(tournamentRecord);
+
+  extractPairParticipants({
+    participants: individualParticipants,
+    tournamentEngine,
     tournament,
     file,
   });
+
+  const {
+    tournamentParticipants,
+  } = tournamentEngine.getTournamentParticipants();
 
   const teamParticipants = extractTeamParticipants({
     tournament,
     file,
   });
 
-  const competitorParticipants = individualParticipants.concat(
-    ...pairParticipants,
+  const competitorParticipants = tournamentParticipants.concat(
     ...teamParticipants
   );
 
@@ -53,7 +64,12 @@ function extractTeamParticipants({ tournament, file }) {
   return teamParticipants;
 }
 
-function extractPairParticipants({ tournament, participants, file }) {
+function extractPairParticipants({
+  tournamentEngine,
+  tournament,
+  participants,
+  file,
+}) {
   const pairParticipants = [];
   const legacyEvents = tournament.events || [];
   const legacyDual = tournament.type === 'dual';
@@ -86,12 +102,13 @@ function extractPairParticipants({ tournament, participants, file }) {
             participant => participant.participantId
           );
           const pairParticipant = {
-            participantId: utilities.UUID(),
+            // participantId: utilities.UUID(),
             participantType: participantConstants.PAIR,
             participantRole: participantRoles.COMPETITOR,
             individualParticipantIds,
             participantName,
           };
+          tournamentEngine.addParticipant({ participant: pairParticipant });
           pairParticipants.push(pairParticipant);
         }
       });

@@ -120,24 +120,11 @@ export function extractEvents({ tournament, participants }) {
       links,
     };
 
-    if (matchUpFormat) drawDefinition.matchUpFormat = matchUpFormat;
-
-    const drawProfile = {
-      automated,
-      drawSize: draw_size,
-      category: { categoryName: legacyCategory },
-    };
-
     if (tieFormat) {
       drawDefinition.tieFormat = tieFormat;
-      drawProfile.tieFormat = tieFormat;
+    } else if (matchUpFormat) {
+      drawDefinition.matchUpFormat = matchUpFormat;
     }
-
-    const extension = {
-      name: 'drawProfile',
-      value: drawProfile,
-    };
-    tournamentEngine.addDrawDefinitionExtension({ drawDefinition, extension });
 
     const surfaceCategory = getSurface(mainLegacyEvent);
     const indoorOutdoor = getIndoorOutdoor(mainLegacyEvent);

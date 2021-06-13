@@ -1,6 +1,6 @@
-import { extractEvents } from './extractEvents';
-import { extractParticipants } from './extractParticipants';
 import { extractTournamentInfo } from './extractTournamentInfo';
+import { extractParticipants } from './extractParticipants';
+import { extractEvents } from './extractEvents';
 
 // collectionDefinitions, ratings category ranges (event.ratings_filter: { high: #, low: #}), Round Robins
 // player Representatives
