@@ -66,6 +66,7 @@ export function extractEvents({ tournament, participants }) {
     const mainLegacyEvent = groupStructures.find(legacyEvent =>
       mainDrawTypes?.includes(legacyEvent.draw_type)
     );
+    const matchUpFormats = mainLegacyEvent?.matchFormats;
     const eventType =
       getMatchUpType(mainLegacyEvent.format) ||
       ((mainLegacyEvent.matchorder || tournament.type === 'dual') &&
@@ -86,7 +87,8 @@ export function extractEvents({ tournament, participants }) {
     } = mainLegacyEvent;
 
     const tieFormat =
-      mainLegacyEvent.matchorder && convertTieFormat(matchorder);
+      mainLegacyEvent.matchorder &&
+      convertTieFormat(matchorder, matchUpFormats);
 
     const format = mainLegacyEvent.score_format;
     const matchUpFormat =

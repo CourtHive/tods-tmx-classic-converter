@@ -1,17 +1,17 @@
-import { utilities } from "tods-competition-factory";
+import { utilities } from 'tods-competition-factory';
 
-export function convertTieFormat(matchorder) {
+export function convertTieFormat(matchorder, matchUpFormats) {
   const matchUpTypes = utilities.unique(
     matchorder.map(({ format }) => format.toUpperCase())
   );
-  const collectionDefinitions = matchUpTypes.map((matchUpType) => {
+  const collectionDefinitions = matchUpTypes.map(matchUpType => {
     const collectionMatchUps = matchorder.filter(
-      (order) => order.format.toUpperCase() === matchUpType
+      order => order.format.toUpperCase() === matchUpType
     );
     const collectionValue =
       collectionMatchUps
         ?.map(({ value }) => parseFloat(value))
-        .filter((value) => !isNaN(value))
+        .filter(value => !isNaN(value))
         .reduce((a, b) => a + b, 0) || 0;
 
     const collectionValueProfile = (collectionMatchUps || []).map(
@@ -24,6 +24,8 @@ export function convertTieFormat(matchorder) {
       matchUpsCount: collectionMatchUps.length,
       collectionName: matchUpType,
       collectionId: utilities.UUID(),
+      matchUpFormat:
+        matchUpFormats && matchUpFormats[matchUpType?.toLowerCase()],
       collectionValue,
       matchUpType,
     };
