@@ -92,8 +92,9 @@ export function extractEvents({ tournament, participants }) {
 
     const format = mainLegacyEvent.score_format;
     const matchUpFormat =
-      mainLegacyEvent.matchFormat ||
-      (format && matchFormatCode.stringify(scoreFormat.jsonTODS(format)));
+      !tieFormat &&
+      (mainLegacyEvent.matchFormat ||
+        (format && matchFormatCode.stringify(scoreFormat.jsonTODS(format))));
 
     const { drawEntries: entries, links, structures } = extractStructures({
       eventType,
