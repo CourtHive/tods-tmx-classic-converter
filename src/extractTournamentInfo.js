@@ -121,7 +121,7 @@ function getRefereeParticipant(referee) {
 
   const participantId = utilities.UUID();
   return {
-    name: referee,
+    participantName: referee,
     participantId,
     participantType: participantConstants.INDIVIDUAL,
     participantRole: participantRoles.OFFICIAL,
