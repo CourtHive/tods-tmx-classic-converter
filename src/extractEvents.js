@@ -135,7 +135,7 @@ export function extractEvents({ tournament, participants }) {
     const categoryName = `${nameRoot}${gender}-${eventType}`;
 
     const code = parseFloat(
-      categoryName
+      `${eventType}-${categoryName}`
         .split('')
         .map(c => c.charCodeAt(0))
         .join('')
