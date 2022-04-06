@@ -282,7 +282,7 @@ function addSignInStatus({ player, participant, tournamentStartDate }) {
     ? participantConstants.SIGNED_IN
     : participantConstants.SIGNED_OUT;
   const timeItem = {
-    itemSubject: participantConstants.SIGN_IN_STATUS,
+    itemType: participantConstants.SIGN_IN_STATUS,
     timeStamp: tournamentStartDate,
     itemValue,
   };
@@ -307,7 +307,7 @@ function addPenalties({ player, participant, tournamentStartDate }) {
       // TODO: add to matchUp.timeItems
       /*
       const timeItem = {
-        itemSubject: "PENALTY",
+        itemType: "PENALTY",
         itemValue: penaltyItem.penaltyId,
         timeStamp: penaltyItem.createdAt
       };
