@@ -20,7 +20,7 @@ export const matchFx = (function() {
     } else if (tc.isTeam({ tournament, e })) {
       Object.keys(e.draw.dual_matches || {}).forEach(key => {
         let dual_matches = e.draw.dual_matches[key].matches || [];
-        dual_matches.forEach(dm => (dm.dual_match = key));
+        dual_matches?.forEach(dm => (dm.dual_match = key));
         matches = matches.concat(...dual_matches);
       });
     } else {
@@ -100,14 +100,14 @@ export const matchFx = (function() {
       (env && env.schedule.max_matches_per_court) || 14;
     safeArr(tournament.locations)
       .map(l => l.luid)
-      .forEach(luid =>
+      ?.forEach(luid =>
         courtData(tournament, luid, max_matches_per_court).forEach(
           ct => (court_names[ctuuid(ct)] = ct.name)
         )
       );
     let check_names = Object.keys(court_names).length;
 
-    matches.forEach(match => {
+    matches?.forEach(match => {
       let schedule = match.match && match.match.schedule;
       if (schedule) {
         if (check_names) schedule.court = court_names[ctuuid(schedule)];
@@ -142,17 +142,17 @@ export const matchFx = (function() {
     if (!current_draw) return;
 
     if (e.draw.compass) {
-      dfx.compassInfo(e.draw).all_matches.forEach(addMUID);
+      dfx.compassInfo(e.draw).all_matches?.forEach(addMUID);
     } else if (e.draw.brackets) {
-      e.draw.brackets.forEach(bracket =>
-        bracket.matches.forEach(match => {
+      e.draw.brackets?.forEach(bracket =>
+        bracket.matches?.forEach(match => {
           if (!match.muid) match.muid = UUID.new();
           match.euid = e.euid;
         })
       );
     } else {
       let info = dfx.drawInfo(current_draw);
-      if (info && info.nodes) info.nodes.forEach(addMUID);
+      if (info && info.nodes) info.nodes?.forEach(addMUID);
     }
 
     function addMUID(node) {

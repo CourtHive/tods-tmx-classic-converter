@@ -31,7 +31,7 @@ export function extractEvents({ tournament, participants }) {
   // linkedStructures are events which have explicit links
   const linkedStructures = {};
 
-  legacyEvents.forEach(legacyEvent => {
+  legacyEvents?.forEach(legacyEvent => {
     const euid = legacyEvent.euid;
     const eventIds = [euid];
     legacyEvent.links &&
@@ -96,7 +96,12 @@ export function extractEvents({ tournament, participants }) {
       (mainLegacyEvent.matchFormat ||
         (format && matchFormatCode.stringify(scoreFormat.jsonTODS(format))));
 
-    const { drawEntries: entries, links, structures } = extractStructures({
+    const {
+      eventEntriesAccumulator,
+      drawEntries: entries,
+      structures,
+      links,
+    } = extractStructures({
       eventType,
       tieFormat,
       tournament,
@@ -105,6 +110,13 @@ export function extractEvents({ tournament, participants }) {
       mainStructureId: mainLegacyEvent.euid,
       legacyEvents: groupStructures,
     });
+
+    const hasPopulatedMatchUps = structures
+      .map(
+        structure =>
+          structure.positionAssignments.filter(a => a.participantId).length
+      )
+      .reduce((a, b) => a + b, 0).length;
 
     const drawDefinition = {
       // entries for a drawDefinition needs to be aggregated from structures
@@ -153,7 +165,7 @@ export function extractEvents({ tournament, participants }) {
         eventType,
         eventRank,
         eventName: categoryName,
-        drawDefinitions: [drawDefinition],
+        drawDefinitions: hasPopulatedMatchUps ? [drawDefinition] : undefined,
       };
       if (indoorOutdoor)
         eventCategories[categoryName].indoorOutdoor = indoorOutdoor;
@@ -166,17 +178,21 @@ export function extractEvents({ tournament, participants }) {
       if (surfaceCategory && !eventCategories[categoryName].surfaceCategory)
         eventCategories[categoryName].surfaceCategory = surfaceCategory;
     }
+
+    eventCategories[
+      categoryName
+    ].eventEntriesAccumulator = eventEntriesAccumulator;
   });
 
   const events = Object.values(eventCategories);
-  events.forEach(event => {
-    const entriesAccumulator = {};
-    event.drawDefinitions.forEach(drawDefinition => {
-      drawDefinition.entries.forEach(entry => {
-        entriesAccumulator[entry.participantId] = entry;
+  events?.forEach(event => {
+    event.drawDefinitions?.forEach(drawDefinition => {
+      drawDefinition.entries?.forEach(entry => {
+        event.eventEntriesAccumulator[entry.participantId] = entry;
       });
     });
-    event.entries = Object.values(entriesAccumulator);
+    event.entries = Object.values(event.eventEntriesAccumulator);
+    delete event.eventEntriesAccumulator;
   });
 
   return { events };

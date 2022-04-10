@@ -8,7 +8,7 @@ export function getPositionAssignmentHashes({
   brackets,
 }) {
   const positionHashMap = {};
-  matches.forEach(legacyMatch => {
+  matches?.forEach(legacyMatch => {
     legacyMatch.teams?.forEach(team => {
       if (!team?.length) return;
       addToHash(team);
@@ -43,7 +43,7 @@ export function getPositionAssignmentHashes({
 
   // handle round robins which have no draw positions specified
   if (brackets && !Object.keys(positionHashMap).length) {
-    brackets.forEach(bracket => {
+    brackets?.forEach(bracket => {
       const byePositions = bracket.byes?.map(bye => bye.position) || [];
       bracket.teams?.forEach((team, index) => {
         if (!byePositions?.includes(index + 1)) addToHash(team, index + 1);

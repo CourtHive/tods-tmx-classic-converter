@@ -1,4 +1,8 @@
-import { drawDefinitionConstants, utilities } from 'tods-competition-factory';
+import {
+  drawDefinitionConstants,
+  entryStatusConstants,
+  utilities,
+} from 'tods-competition-factory';
 import { getStructureContent } from './getStructureContent';
 import { matchFormatCode } from './matchFormatCode';
 import { scoreFormat } from './scoreFormat';
@@ -16,7 +20,18 @@ export function extractStructures({
   const links = [];
   const drawStructures = [];
   const entriesAccumulator = {};
-  legacyEvents.forEach(legacyEvent => {
+  const eventEntriesAccumulator = {};
+
+  legacyEvents?.forEach(legacyEvent => {
+    legacyEvent.approved?.forEach(id => {
+      const entry = {
+        entryStatus: entryStatusConstants.DIRECT_ACCEPTANCE,
+        entryStage: drawDefinitionConstants.MAIN,
+        participantId: id,
+      };
+      eventEntriesAccumulator[entry.participantId] = entry;
+    });
+
     const drawType = legacyEvent?.draw?.brackets
       ? 'ROUND_ROBIN'
       : legacyEvent?.draw?.compass
@@ -51,7 +66,7 @@ export function extractStructures({
         legacyEvent,
         participants,
       });
-      entries.forEach(entry => {
+      entries?.forEach(entry => {
         entriesAccumulator[entry.participantId] = entry;
       });
 
@@ -83,8 +98,8 @@ export function extractStructures({
         participants,
       });
       if (compassLinks?.length) links.push(...compassLinks);
-      compassStructures.forEach(structure => {
-        structure.entries.forEach(entry => {
+      compassStructures?.forEach(structure => {
+        structure.entries?.forEach(entry => {
           entriesAccumulator[entry.participantId] = entry;
         });
 
@@ -102,5 +117,10 @@ export function extractStructures({
   });
 
   const drawEntries = Object.values(entriesAccumulator);
-  return { structures: drawStructures, drawEntries, links };
+  return {
+    structures: drawStructures,
+    eventEntriesAccumulator,
+    drawEntries,
+    links,
+  };
 }

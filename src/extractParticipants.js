@@ -76,12 +76,12 @@ function extractPairParticipants({
   const relevantEvents = legacyEvents.filter(
     legacyEvent => legacyEvent.format === 'D' || legacyDual
   );
-  relevantEvents.forEach(legacyEvent => {
+  relevantEvents?.forEach(legacyEvent => {
     const matches = matchFx.eventMatches(legacyEvent, tournament, true);
     const teams = matches.map(match => match.teams).flat();
     teams
       .filter(team => Array.isArray(team) && team.length === 2)
-      .forEach(team => {
+      ?.forEach(team => {
         const individualParticipants = team
           .map(player =>
             participants.find(participant => {
@@ -172,11 +172,11 @@ function extractIndividualParticipants({ tournament }) {
     }
   }
 
-  players.forEach(addParticipant);
+  players?.forEach(addParticipant);
 
   const relevantEvents = tournament.events?.filter(event => event.draw) || [];
   // check that there are no individual participants in draws that are not in tournament.players
-  relevantEvents.forEach(event => {
+  relevantEvents?.forEach(event => {
     const matches = dfx.matches(event.draw);
     const players = matches.map(matchUp => matchUp.teams).flat(Infinity);
     // players which have .players are team participants
@@ -191,7 +191,7 @@ function isValidDate(date) {
   try {
     const dateObject = new Date(date);
     if (
-      dateObject?.toString()?.trim() === errorConditionConstants.INVALID_DATE
+      dateObject?.toString().trim() === errorConditionConstants.INVALID_DATE
     ) {
       return false;
     }
@@ -292,7 +292,7 @@ function addSignInStatus({ player, participant, tournamentStartDate }) {
 function addPenalties({ player, participant, tournamentStartDate }) {
   if (player.penalties) {
     participant.penalties = [];
-    player.penalties.forEach(penalty => {
+    player.penalties?.forEach(penalty => {
       const penaltyTime =
         (isValidDate(penalty.time) && penalty.time) || tournamentStartDate;
       const penaltyId = utilities.UUID();

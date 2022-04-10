@@ -84,7 +84,7 @@ function getCompassComponents(props) {
     legacyDirections.filter(key => props.legacyEvent.draw[key])
   );
 
-  directionsPresent.forEach(direction => {
+  directionsPresent?.forEach(direction => {
     directions[direction].structureId = utilities.UUID();
   });
 
@@ -104,7 +104,7 @@ function getCompassComponents(props) {
     south: { southeast: 1 },
   };
 
-  directionsPresent.forEach(direction => {
+  directionsPresent?.forEach(direction => {
     linkProfiles[direction] &&
       Object.keys(linkProfiles[direction]).forEach(linkedDirection => {
         if (directionsPresent.includes(linkedDirection)) {
@@ -252,7 +252,7 @@ function roundRobinStructure({
     brackets: legacyEvent.draw.brackets,
   });
 
-  legacyEvent.draw.brackets.forEach((bracket, index) => {
+  legacyEvent.draw.brackets?.forEach((bracket, index) => {
     const drawPositionOffset = index * (legacyEvent.draw.bracket_size || 0);
     const positionAssignments = [];
     const matchUps = bracket.matches
@@ -412,14 +412,14 @@ function processLegacyMatch({
     console.log({ missingParticipants });
 
   if (tieMatchUps) {
-    tieMatchUps.forEach(tieMatchUp => {
+    tieMatchUps?.forEach(tieMatchUp => {
       const { collectionPosition, matchUpType, sides } = tieMatchUp;
       const collectionDefinition = tieFormat?.collectionDefinitions.find(
         collectionDefinition => collectionDefinition.matchUpType === matchUpType
       );
       const collectionId = collectionDefinition?.collectionId;
       if (sides?.length) {
-        sides.forEach(({ participantId, sideNumber }) => {
+        sides?.forEach(({ participantId, sideNumber }) => {
           const side = matchUp.sides.find(
             side => side.sideNumber === sideNumber
           );
@@ -444,13 +444,13 @@ function processLegacyMatch({
     });
   }
 
-  matchUpPositionAssignments.forEach(positionAssignment =>
+  matchUpPositionAssignments?.forEach(positionAssignment =>
     positionAssignments.push(positionAssignment)
   );
-  matchUpSeedAssignments.forEach(seedAssignment =>
+  matchUpSeedAssignments?.forEach(seedAssignment =>
     seedAssignments.push(seedAssignment)
   );
-  matchUpEntries.forEach(entry => entries.push(entry));
+  matchUpEntries?.forEach(entry => entries.push(entry));
 
   Object.assign(matchUp, { roundName, roundNumber, roundPosition });
   if (tieMatchUps.length) {

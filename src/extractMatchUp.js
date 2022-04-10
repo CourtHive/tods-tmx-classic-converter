@@ -72,7 +72,7 @@ export function extractMatchUp({
     'ABD.',
     'DEF.',
     'RET.',
-  ].forEach(
+  ]?.forEach(
     stringStatus =>
       (scoreString = (scoreString || '')
         .split(stringStatus)
@@ -117,7 +117,7 @@ export function extractMatchUp({
 
   let isBye = false;
   if (Array.isArray(legacyMatch.teams)) {
-    legacyMatch.teams.forEach((team, index) => {
+    legacyMatch.teams?.forEach((team, index) => {
       if (!team?.length) return;
 
       let participantId;

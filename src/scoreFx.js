@@ -1,7 +1,7 @@
-import { scoreFormat } from "./scoreFormat";
-import { matchFormatCode } from "./matchFormatCode";
+import { scoreFormat } from './scoreFormat';
+import { matchFormatCode } from './matchFormatCode';
 
-export const scoreFx = (function () {
+export const scoreFx = (function() {
   let fx = {};
 
   function validInt(value, invalid) {
@@ -14,18 +14,18 @@ export const scoreFx = (function () {
   function assignKeys({ source = {}, objects = [] }) {
     let target = Object.assign({}, source);
     if (objects && !Array.isArray(objects)) objects = [objects];
-    objects = objects.filter((f) => f);
-    objects.forEach((o) => {
-      if (typeof o !== "object") return;
+    objects = objects.filter(f => f);
+    objects?.forEach(o => {
+      if (typeof o !== 'object') return;
       let keys = Object.keys(o);
-      keys.forEach(
-        (k) => (target[k] = target[k] !== undefined ? target[k] : o[k])
+      keys?.forEach(
+        k => (target[k] = target[k] !== undefined ? target[k] : o[k])
       );
     });
     return target;
   }
 
-  fx.setsToWin = (best_of) => (best_of && Math.ceil(best_of / 2)) || 1;
+  fx.setsToWin = best_of => (best_of && Math.ceil(best_of / 2)) || 1;
   fx.tiebreakTo = (o, isFinalSet) => {
     let setTiebreakTo =
       o &&
@@ -42,7 +42,7 @@ export const scoreFx = (function () {
 
   fx.matchFormat = matchFormat;
   function matchFormat(matchFormat) {
-    return (matchFormat || "SET3-S:6/TB7").slice(3);
+    return (matchFormat || 'SET3-S:6/TB7').slice(3);
   }
 
   fx.getExistingScores = ({ match }) => {
@@ -63,11 +63,11 @@ export const scoreFx = (function () {
       max_sets,
       sets_to_win,
       games_for_set: validInt(cfg_obj.setsto.ddlb.getValue()),
-      tiebreaks_at: validInt(cfg_obj.tiebreaksat.ddlb.getValue()) || "", // only option that can be 'none'
+      tiebreaks_at: validInt(cfg_obj.tiebreaksat.ddlb.getValue()) || '', // only option that can be 'none'
       tiebreak_to: validInt(cfg_obj.tiebreaksto.ddlb.getValue()),
       supertiebreak_to: validInt(cfg_obj.supertiebreakto.ddlb.getValue()),
       final_set_supertiebreak:
-        cfg_obj.finalset.ddlb.getValue() === "N" ? false : true,
+        cfg_obj.finalset.ddlb.getValue() === 'N' ? false : true,
     };
 
     let matchFormat = matchFormatCode.stringify(
@@ -79,7 +79,7 @@ export const scoreFx = (function () {
 
   fx.getScoringFormat = ({ e, match }) => {
     let format =
-      (match && match.format) || (e.format === "D" ? "doubles" : "singles");
+      (match && match.format) || (e.format === 'D' ? 'doubles' : 'singles');
 
     let objects = [
       match && match.score_format,
@@ -95,7 +95,7 @@ export const scoreFx = (function () {
 
   fx.defaultMatchFormat = ({ format, category, env }) => {
     let matchFormats = env.scoreboard.matchFormats;
-    let formats = { S: "singles", D: "doubles" };
+    let formats = { S: 'singles', D: 'doubles' };
     if (Object.keys(formats).indexOf(format) >= 0) format = formats[format];
     if (
       format &&
@@ -112,7 +112,7 @@ export const scoreFx = (function () {
   function convertStringScore({
     string_score,
     winner_index,
-    split = " ",
+    split = ' ',
     matchFormat,
   }) {
     if (!string_score) return [];
@@ -126,20 +126,20 @@ export const scoreFx = (function () {
 
     let sets = string_score
       .split(split)
-      .filter((f) => f)
-      .map((set) => {
-        if (set.indexOf("/") > 0) {
+      .filter(f => f)
+      .map(set => {
+        if (set.indexOf('/') > 0) {
           // look for supertiebreak scores using #/# format
           let scores = set
-            .split("/")
-            .map((m) => (ss.exec(m) ? { games: +ss.exec(m)[1] } : undefined))
-            .filter((f) => f);
+            .split('/')
+            .map(m => (ss.exec(m) ? { games: +ss.exec(m)[1] } : undefined))
+            .filter(f => f);
           if (scores.length === 2) return scores;
         }
 
         // uglifier doesn't work if variable is undefined
         let tbscore = null;
-        let scores = set.split("-").map((m) => {
+        let scores = set.split('-').map(m => {
           let score;
           if (sst.test(m)) {
             tbscore = +sst.exec(m)[2];
@@ -153,12 +153,12 @@ export const scoreFx = (function () {
         });
 
         // filter out undefined scores
-        scores = scores.filter((f) => f);
+        scores = scores.filter(f => f);
 
         // add spacer for score without tiebreak score
         if (tbscore !== null) {
-          let min_games = Math.min(...scores.map((s) => s.games));
-          scores.forEach((sf) => {
+          let min_games = Math.min(...scores.map(s => s.games));
+          scores?.forEach(sf => {
             if (+sf.games === +min_games) {
               sf.tiebreak = tbscore;
             } else {
@@ -171,10 +171,10 @@ export const scoreFx = (function () {
       });
 
     // filter out sets without two scores
-    sets = sets.filter((scores) => scores && scores.length === 2);
+    sets = sets.filter(scores => scores && scores.length === 2);
 
     // determine if set is supertiebreak
-    sets.forEach((st, i) => {
+    sets?.forEach((st, i) => {
       let set_format =
         match_format && (match_format.finalSetFormat || match_format.setFormat);
       let supertiebreak_to =
@@ -195,14 +195,14 @@ export const scoreFx = (function () {
     }
 
     if (outcome) {
-      if (outcome === "Cancelled") sets.cancelled = true;
-      if (outcome === "Abandoned") sets.abandoned = true;
-      if (outcome === "INC.") sets.incomplete = true;
-      if (outcome === "INT.") sets.interrupted = true;
-      if (outcome === "LIVE") sets.live = true;
-      if (outcome === "TIME") sets.time = true;
-      if (outcome === "DEF.") sets.default = true;
-      if (outcome === "W.O.") sets.walkover = true;
+      if (outcome === 'Cancelled') sets.cancelled = true;
+      if (outcome === 'Abandoned') sets.abandoned = true;
+      if (outcome === 'INC.') sets.incomplete = true;
+      if (outcome === 'INT.') sets.interrupted = true;
+      if (outcome === 'LIVE') sets.live = true;
+      if (outcome === 'TIME') sets.time = true;
+      if (outcome === 'DEF.') sets.default = true;
+      if (outcome === 'W.O.') sets.walkover = true;
 
       if (!sets.length) return sets;
 
@@ -220,24 +220,27 @@ export const scoreFx = (function () {
   }
 
   fx.reverseScore = reverseScore;
-  function reverseScore(score, split = " ") {
+  function reverseScore(score, split = ' ') {
     let irreversible = null;
     if (score) {
-      let reversed = score.split(split).map(parseSet).join(split);
+      let reversed = score
+        .split(split)
+        .map(parseSet)
+        .join(split);
       let result = irreversible ? `${irreversible} ${reversed}` : reversed;
       return result;
     }
 
     function parseSet(set) {
-      let divider = set.indexOf("/") > 0 ? "/" : "-";
+      let divider = set.indexOf('/') > 0 ? '/' : '-';
       let set_scores = set
         .split(divider)
         .map(parseSetScore)
         .reverse()
-        .filter((f) => f);
-      let set_games = set_scores.map((s) => s.games);
-      let tb_scores = set_scores.map((s) => s.tiebreak).filter((f) => f);
-      let tiebreak = tb_scores.length === 1 ? `(${tb_scores[0]})` : "";
+        .filter(f => f);
+      let set_games = set_scores.map(s => s.games);
+      let tb_scores = set_scores.map(s => s.tiebreak).filter(f => f);
+      let tiebreak = tb_scores.length === 1 ? `(${tb_scores[0]})` : '';
       let set_score =
         tb_scores.length < 2
           ? set_games.join(divider)

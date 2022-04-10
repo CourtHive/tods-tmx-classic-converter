@@ -65,7 +65,7 @@ function getOnlineResources(tournament) {
     return onlineResource;
   });
 
-  sponsorImages.forEach(identifier => {
+  sponsorImages?.forEach(identifier => {
     const onlineResource = {
       identifier,
       type: 'SPONSOR',
