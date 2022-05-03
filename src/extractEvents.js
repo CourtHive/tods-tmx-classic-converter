@@ -116,7 +116,7 @@ export function extractEvents({ tournament, participants }) {
         structure =>
           structure.positionAssignments.filter(a => a.participantId).length
       )
-      .reduce((a, b) => a + b, 0).length;
+      .reduce((a, b) => a + b, 0);
 
     const drawDefinition = {
       // entries for a drawDefinition needs to be aggregated from structures
@@ -192,7 +192,7 @@ export function extractEvents({ tournament, participants }) {
       });
     });
     event.entries = Object.values(event.eventEntriesAccumulator);
-    delete event.eventEntriesAccumulator;
+    event.eventEntriesAccumulator = undefined;
   });
 
   return { events };

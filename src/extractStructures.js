@@ -24,12 +24,14 @@ export function extractStructures({
 
   legacyEvents?.forEach(legacyEvent => {
     legacyEvent.approved?.forEach(id => {
-      const entry = {
-        entryStatus: entryStatusConstants.DIRECT_ACCEPTANCE,
-        entryStage: drawDefinitionConstants.MAIN,
-        participantId: id,
-      };
-      eventEntriesAccumulator[entry.participantId] = entry;
+      if (!Array.isArray(id)) {
+        const entry = {
+          entryStatus: entryStatusConstants.DIRECT_ACCEPTANCE,
+          entryStage: drawDefinitionConstants.MAIN,
+          participantId: id,
+        };
+        eventEntriesAccumulator[entry.participantId] = entry;
+      }
     });
 
     const drawType = legacyEvent?.draw?.brackets
@@ -117,6 +119,11 @@ export function extractStructures({
   });
 
   const drawEntries = Object.values(entriesAccumulator);
+
+  drawEntries.forEach(entry => {
+    eventEntriesAccumulator[entry.participantId] = entry;
+  });
+
   return {
     structures: drawStructures,
     eventEntriesAccumulator,
