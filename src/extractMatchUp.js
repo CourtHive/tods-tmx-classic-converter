@@ -6,6 +6,7 @@ import {
   participantConstants,
   entryStatusConstants,
   matchUpStatusConstants,
+  tournamentEngine,
   mocksEngine,
 } from 'tods-competition-factory';
 
@@ -23,7 +24,6 @@ export function extractMatchUp({
   participantIds,
   drawPositionHashMap = {},
   drawPositionOffset = 0,
-  tournamentEngine, // must pass in tournamentEngine that contains state with participants
 }) {
   const matchUpId = legacyMatch.match?.muid || legacyMatch.muid;
 

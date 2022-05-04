@@ -128,7 +128,6 @@ export function extractStructures({
         tournament,
         legacyEvent,
         participants,
-        tournamentEngine,
       });
       if (compassLinks?.length) links.push(...compassLinks);
       compassStructures?.forEach(structure => {
