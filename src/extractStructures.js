@@ -1,6 +1,7 @@
 import {
   drawDefinitionConstants,
   entryStatusConstants,
+  tournamentEngine,
   utilities,
 } from 'tods-competition-factory';
 import { getStructureContent } from './getStructureContent';
@@ -10,6 +11,7 @@ import { getStage } from './utilities';
 
 export function extractStructures({
   eventType,
+
   tieFormat,
   tournament,
   participants,
@@ -21,6 +23,7 @@ export function extractStructures({
   const drawStructures = [];
   const entriesAccumulator = {};
   const eventEntriesAccumulator = {};
+  const missingParticipants = [];
 
   legacyEvents?.forEach(legacyEvent => {
     legacyEvent.approved?.forEach(id => {
@@ -31,6 +34,33 @@ export function extractStructures({
           participantId: id,
         };
         eventEntriesAccumulator[entry.participantId] = entry;
+      } else if (Array.isArray(id)) {
+        const {
+          participant: existingParticipant,
+        } = tournamentEngine.getPairedParticipant({
+          participantIds: id,
+        });
+        if (!existingParticipant) {
+          const {
+            participant: newParticipant,
+          } = tournamentEngine.addParticipant({
+            returnParticipant: true,
+            participant: {
+              participantType: 'PAIR',
+              participantRole: 'COMPETITOR',
+              individualParticipantIds: id,
+            },
+          });
+          if (newParticipant) {
+            missingParticipants.push(newParticipant);
+            const entry = {
+              entryStatus: entryStatusConstants.DIRECT_ACCEPTANCE,
+              entryStage: drawDefinitionConstants.MAIN,
+              participantId: newParticipant.participantId,
+            };
+            eventEntriesAccumulator[entry.participantId] = entry;
+          }
+        }
       }
     });
 
@@ -98,6 +128,7 @@ export function extractStructures({
         tournament,
         legacyEvent,
         participants,
+        tournamentEngine,
       });
       if (compassLinks?.length) links.push(...compassLinks);
       compassStructures?.forEach(structure => {
@@ -127,6 +158,7 @@ export function extractStructures({
   return {
     structures: drawStructures,
     eventEntriesAccumulator,
+    missingParticipants,
     drawEntries,
     links,
   };

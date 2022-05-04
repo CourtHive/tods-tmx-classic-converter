@@ -19,7 +19,13 @@ export function convertTMX2TODS({ tournament }) {
     ...organisationParticipants
   );
 
-  const { events } = extractEvents({ tournament, participants });
+  const { events, eventPairParticipants } = extractEvents({
+    participants,
+    tournament,
+  });
+
+  if (eventPairParticipants?.length)
+    participants.push(...eventPairParticipants);
 
   const tournamentRecord = {
     ...tournamentInfo,

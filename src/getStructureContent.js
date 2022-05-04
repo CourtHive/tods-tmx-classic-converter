@@ -1,5 +1,4 @@
 import { getPositionAssignmentHashes } from './getPositionAssignmentHashes';
-import { tournamentEngine } from 'tods-competition-factory';
 import { extractMatchUp } from './extractMatchUp';
 import { normalizeName } from 'normalize-text';
 import { getStage } from './utilities';
@@ -139,6 +138,7 @@ function eliminationStructure({
   entryStage,
   legacyEvent,
   participants,
+  tournamentEngine,
   eventType,
   info,
 }) {
@@ -181,6 +181,7 @@ function eliminationStructure({
         seedAssignments,
         drawPositionHashMap,
 
+        tournamentEngine,
         tieMatches,
         legacyMatch,
         participantIds,
@@ -324,6 +325,7 @@ function roundRobinStructure({
 }
 
 function processLegacyMatch({
+  tournamentEngine,
   seedAssignments,
   matchUpFormat,
   isAdhocEvent,

@@ -20,6 +20,7 @@ import {
 
 export function extractEvents({ tournament, participants }) {
   const eventCategories = {};
+  const eventPairParticipants = [];
   const legacyEvents = tournament.events || [];
   const tournamentId = tournament.tuid;
   const tournamentRecord = {
@@ -99,6 +100,7 @@ export function extractEvents({ tournament, participants }) {
     const {
       eventEntriesAccumulator,
       drawEntries: entries,
+      missingParticipants,
       structures,
       links,
     } = extractStructures({
@@ -110,6 +112,9 @@ export function extractEvents({ tournament, participants }) {
       mainStructureId: mainLegacyEvent.euid,
       legacyEvents: groupStructures,
     });
+
+    if (missingParticipants?.length)
+      eventPairParticipants.push(...missingParticipants);
 
     const hasPopulatedMatchUps = structures
       .map(
@@ -195,5 +200,5 @@ export function extractEvents({ tournament, participants }) {
     event.eventEntriesAccumulator = undefined;
   });
 
-  return { events };
+  return { events, eventPairParticipants };
 }
