@@ -2152,7 +2152,7 @@ export function drawFx(opts) {
 
     let all_positions = range(1, draw_size + 1);
     let chunk_sizes = range(2, draw_size)
-      .filter(Boolean === nearestPow2(f))
+      .filter(f => f && f === nearestPow2(f))
       .reverse();
     let chunks = chunk_sizes.map(size => chunkArray(all_positions, size));
     let vetted = chunks.map(chunkRow);
@@ -2162,10 +2162,10 @@ export function drawFx(opts) {
       .filter(Boolean);
     let no_group_unpaired = group_not_present
       .map(row => row.filter(r => r.unpaired.length).map(m => m.unpaired))
-      .filter(Boolean && f.length);
+      .filter(f => f && f.length);
     let no_group_unassigned = group_not_present
       .map(row => row.filter(r => r.unassigned.length).map(m => m.unassigned))
-      .filter(Boolean && f.length);
+      .filter(f => f && f.length);
 
     let viable_sections =
       (no_group_unpaired.length && no_group_unpaired[0]) ||

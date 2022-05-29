@@ -180,7 +180,7 @@ function extractIndividualParticipants({ tournament }) {
     const matches = dfx.matches(event.draw);
     const players = matches.map(matchUp => matchUp.teams).flat(Infinity);
     // players which have .players are team participants
-    players.filter(Boolean && !f.players).forEach(addParticipant);
+    players.filter(f => f && !f.players).forEach(addParticipant);
   });
 
   return individualParticipants;
