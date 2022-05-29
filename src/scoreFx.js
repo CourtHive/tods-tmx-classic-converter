@@ -14,7 +14,7 @@ export const scoreFx = (function() {
   function assignKeys({ source = {}, objects = [] }) {
     let target = Object.assign({}, source);
     if (objects && !Array.isArray(objects)) objects = [objects];
-    objects = objects.filter(f => f);
+    objects = objects.filter(Boolean);
     objects?.forEach(o => {
       if (typeof o !== 'object') return;
       let keys = Object.keys(o);
@@ -126,14 +126,14 @@ export const scoreFx = (function() {
 
     let sets = string_score
       .split(split)
-      .filter(f => f)
+      .filter(Boolean)
       .map(set => {
         if (set.indexOf('/') > 0) {
           // look for supertiebreak scores using #/# format
           let scores = set
             .split('/')
             .map(m => (ss.exec(m) ? { games: +ss.exec(m)[1] } : undefined))
-            .filter(f => f);
+            .filter(Boolean);
           if (scores.length === 2) return scores;
         }
 
@@ -153,7 +153,7 @@ export const scoreFx = (function() {
         });
 
         // filter out undefined scores
-        scores = scores.filter(f => f);
+        scores = scores.filter(Boolean);
 
         // add spacer for score without tiebreak score
         if (tbscore !== null) {
@@ -237,9 +237,9 @@ export const scoreFx = (function() {
         .split(divider)
         .map(parseSetScore)
         .reverse()
-        .filter(f => f);
+        .filter(Boolean);
       let set_games = set_scores.map(s => s.games);
-      let tb_scores = set_scores.map(s => s.tiebreak).filter(f => f);
+      let tb_scores = set_scores.map(s => s.tiebreak).filter(Boolean);
       let tiebreak = tb_scores.length === 1 ? `(${tb_scores[0]})` : '';
       let set_score =
         tb_scores.length < 2

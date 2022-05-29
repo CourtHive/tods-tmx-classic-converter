@@ -121,7 +121,7 @@ export function extractMatchUp({
       if (!team?.length) return;
 
       let participantId;
-      const individualParticipantIds = team.map(getId).filter(f => f);
+      const individualParticipantIds = team.map(getId).filter(Boolean);
 
       const player1 = team && team[0] && typeof team[0] === 'object' && team[0];
       const player2 = team && team[1] && typeof team[1] === 'object' && team[1];
@@ -209,7 +209,7 @@ export function extractMatchUp({
   };
 
   const drawPositions =
-    sides?.map(side => side.drawPosition).filter(f => f) || [];
+    sides?.map(side => side.drawPosition).filter(Boolean) || [];
   matchUp.drawPositions = drawPositions;
 
   if (sides?.length) matchUp.sides = sides;
@@ -362,9 +362,9 @@ function reverseScore(score, split = ' ') {
       .split(divider)
       .map(parseSetScore)
       .reverse()
-      .filter(f => f);
+      .filter(Boolean);
     let set_games = set_scores.map(s => s.games);
-    let tb_scores = set_scores.map(s => s.tiebreak).filter(f => f);
+    let tb_scores = set_scores.map(s => s.tiebreak).filter(Boolean);
     let tiebreak = tb_scores.length === 1 ? `(${tb_scores[0]})` : '';
     let set_score =
       tb_scores.length < 2

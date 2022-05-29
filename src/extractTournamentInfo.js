@@ -47,7 +47,7 @@ export function extractTournamentInfo({ tournament, file }) {
   const organisationParticipants = [
     getRefereeParticipant(tournament.judge),
     (tournament.umpires || []).map(umpire => getRefereeParticipant(umpire)),
-  ].filter(f => f);
+  ].filter(Boolean);
   return { tournamentInfo, organisationParticipants };
 }
 

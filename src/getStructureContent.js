@@ -93,7 +93,7 @@ function getCompassComponents(props) {
       const info = dfx.drawInfo(props.legacyEvent.draw);
       return eliminationStructure({ direction, directions, ...props, info });
     })
-    .filter(f => f.matchUps?.length);
+    .filter(Boolean.matchUps?.length);
 
   const compassLinks = [];
   const linkProfiles = {
@@ -197,7 +197,7 @@ function eliminationStructure({
       }
       return undefined;
     })
-    .filter(f => f);
+    .filter(Boolean);
 
   positionAssignments.sort((a, b) =>
     a.drawPosition > b.drawPosition ? 1 : -1
@@ -282,7 +282,7 @@ function roundRobinStructure({
         }
         return undefined;
       })
-      .filter(f => f);
+      .filter(Boolean);
 
     const { participantResults } = drawEngine.tallyParticipantResults({
       matchUps,
@@ -410,7 +410,7 @@ function processLegacyMatch({
     drawPositionOffset,
     drawPositionHashMap,
   });
-  if (missingParticipants?.filter(f => f).length)
+  if (missingParticipants?.filter(Boolean).length)
     console.log({ missingParticipants });
 
   if (tieMatchUps) {

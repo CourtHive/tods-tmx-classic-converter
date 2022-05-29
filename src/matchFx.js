@@ -171,7 +171,7 @@ export const matchFx = (function() {
       undefined
     );
     let roundMatches = matches?.filter(n => matchNode?.depth === n.depth);
-    let muids = roundMatches?.map(n => n?.data?.match?.muid).filter(f => f);
+    let muids = roundMatches?.map(n => n?.data?.match?.muid).filter(Boolean);
     let index = muids && muids.indexOf(match?.muid);
     const roundPosition = index >= 0 ? (index + 1).toString() : '';
     return roundPosition;

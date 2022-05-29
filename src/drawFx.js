@@ -12,7 +12,7 @@ import { matchFormatCode } from './matchFormatCode';
 function playersHash(players) {
   return players
     .map(p => p && p.id)
-    .filter(f => f)
+    .filter(Boolean)
     .sort()
     .join('-');
 }
@@ -454,7 +454,7 @@ export function drawFx(opts) {
             bracket: b,
             matchups: bracketMatchups(b, br[r], r),
           }))
-          .filter(f => f.matchups)
+          .filter(Boolean.matchups)
       );
     }
     rounds?.forEach((round, i) => {
@@ -700,7 +700,7 @@ export function drawFx(opts) {
     let doubles = nodes
       .map(n => (n.data.team ? n.data.team.length > 1 : false))
       .reduce((a, b) => a || b);
-    let draw_positions = unique(nodes.map(n => n.data.dp)).filter(f => f);
+    let draw_positions = unique(nodes.map(n => n.data.dp)).filter(Boolean);
     let qualifiers = nodes.filter(n => !n.height && n.data.qualifier);
     let seeds = nodes
       .filter(
@@ -832,7 +832,7 @@ export function drawFx(opts) {
     matches?.forEach(match => {
       if (match.teams)
         match.teams
-          .filter(f => f)
+          .filter(Boolean)
           ?.forEach(team => team?.forEach(checkReplacePlayer));
       if (match.winner) match.winner?.forEach(checkReplacePlayer);
       if (match.loser) match.loser?.forEach(checkReplacePlayer);
@@ -1282,7 +1282,7 @@ export function drawFx(opts) {
             findPositionNode({ node: child, position })
           )
         )
-        .filter(f => f)[0];
+        .filter(Boolean)[0];
     }
   }
 
@@ -1398,7 +1398,7 @@ export function drawFx(opts) {
 
     // if position in node children, get index;
     let cdpi = node.children.map(c => c.dp).indexOf(position);
-    let teams = node.children.map(c => c.team).filter(f => f);
+    let teams = node.children.map(c => c.team).filter(Boolean);
     let containsByeTeam = teams.reduce((p, c) => fx.teamIsBye(c) || p, false);
 
     if (teams.length === 2 && cdpi >= 0) {
@@ -1753,10 +1753,10 @@ export function drawFx(opts) {
       if (o.compressed.byes_adjacent_to_seeds) {
         // only used this feature if enabled in drawFx options
         structural_seed_order
-          .filter(f => f)
+          .filter(Boolean)
           ?.forEach((o, i) => (adjacent_to_seeds[o - 1] = adjacent_pairs[i]));
       }
-      adjacent_to_seeds.filter(f => f);
+      adjacent_to_seeds.filter(Boolean);
 
       let assignment = bye_positions.map((b, i) =>
         adjacent_to_seeds[i] ? adjacent_to_seeds[i][randomBinary()] : undefined
@@ -1781,7 +1781,7 @@ export function drawFx(opts) {
               return getBye(pairs_no_seed_or_bye);
             return false;
           })
-          .filter(f => f);
+          .filter(Boolean);
       }
 
       // redefine pairs_no_seed to filter out pairs_no_seed_or_bye
@@ -1980,7 +1980,7 @@ export function drawFx(opts) {
     return Object.assign(
       {},
       ...teams
-        .filter(f => f[0].seed)
+        .filter(Boolean[0].seed)
         .sort((a, b) => a[0].seed - b[0].seed)
         .map(t => ({ [t[0].seed]: t }))
     );
@@ -2152,20 +2152,20 @@ export function drawFx(opts) {
 
     let all_positions = range(1, draw_size + 1);
     let chunk_sizes = range(2, draw_size)
-      .filter(f => f === nearestPow2(f))
+      .filter(Boolean === nearestPow2(f))
       .reverse();
     let chunks = chunk_sizes.map(size => chunkArray(all_positions, size));
     let vetted = chunks.map(chunkRow);
 
     let group_not_present = vetted
       .map(row => row.filter(r => !r.group_present))
-      .filter(f => f);
+      .filter(Boolean);
     let no_group_unpaired = group_not_present
       .map(row => row.filter(r => r.unpaired.length).map(m => m.unpaired))
-      .filter(f => f && f.length);
+      .filter(Boolean && f.length);
     let no_group_unassigned = group_not_present
       .map(row => row.filter(r => r.unassigned.length).map(m => m.unassigned))
-      .filter(f => f && f.length);
+      .filter(Boolean && f.length);
 
     let viable_sections =
       (no_group_unpaired.length && no_group_unpaired[0]) ||
@@ -2324,14 +2324,14 @@ export function drawFx(opts) {
         child.team?.forEach(team => (team.draw_position = child.dp));
       }
     });
-    let teams = node.data.children.map(m => m.team).filter(f => f);
+    let teams = node.data.children.map(m => m.team).filter(Boolean);
     return teams;
   }
 
   fx.feedNode = feedNode;
   function feedNode(node) {
     if (!node || !node.data || !node.data.children) return false;
-    let feed_arms = node.data.children.map(m => m.feed).filter(f => f);
+    let feed_arms = node.data.children.map(m => m.feed).filter(Boolean);
     return feed_arms.length === 1 ? true : false;
   }
 
@@ -2345,7 +2345,7 @@ export function drawFx(opts) {
     if (!node.data.children) return false;
     let teams = matchNode(node);
     if (!teams) return false;
-    let test = node.data.children.map(d => d.bye).filter(f => f);
+    let test = node.data.children.map(d => d.bye).filter(Boolean);
     if (!test.length) return false;
     return test.reduce((a, b) => a && b) ? teams : false;
   }
@@ -2353,7 +2353,7 @@ export function drawFx(opts) {
   fx.byeNode = byeNode;
   function byeNode(node) {
     if (!node.children) return false;
-    let test = node.data.children.map(d => d.bye).filter(f => f);
+    let test = node.data.children.map(d => d.bye).filter(Boolean);
     if (test.length) return test.length;
   }
 
@@ -2362,7 +2362,7 @@ export function drawFx(opts) {
     if (!node.children) return false;
     let teams = matchNode(node);
     if (!teams) return false;
-    let test = node.data.children.map(isAteam).filter(f => f);
+    let test = node.data.children.map(isAteam).filter(Boolean);
     if (test.length < 2) return false;
     return test.reduce((a, b) => a && b) ? teams : false;
 
@@ -2387,7 +2387,7 @@ export function drawFx(opts) {
           )
         )
       )
-    ).filter(f => f);
+    ).filter(Boolean);
   }
 
   fx.replaceEmptiesWithByes = replaceEmptiesWithByes;
@@ -2585,7 +2585,7 @@ export function drawFx(opts) {
           round: node.height,
           calculated_round_name,
           match: node.data.match,
-          teams: node.data.children.map(c => c.team).filter(f => f),
+          teams: node.data.children.map(c => c.team).filter(Boolean),
         };
         if (draw) this_match.draw = draw;
         return this_match;
@@ -2808,64 +2808,62 @@ export function drawFx(opts) {
     if (!matches) return;
 
     // for all matches winner score comes first!
-    matches
-      .filter(f => f)
-      ?.forEach(match => {
-        let match_format =
-          matchFormatCode.parse(match.matchFormat || matchFormat) || {};
-        if (match.winner && match.loser) {
-          let wH = getIdentifier(match.winner);
-          let lH = getIdentifier(match.loser);
+    matches.filter(Boolean)?.forEach(match => {
+      let match_format =
+        matchFormatCode.parse(match.matchFormat || matchFormat) || {};
+      if (match.winner && match.loser) {
+        let wH = getIdentifier(match.winner);
+        let lH = getIdentifier(match.loser);
 
-          if (!wH || !lH) {
-            // if there is an undefined winner/loser then the match was cancelled
-            let team1 =
-              match.teams && match.teams[0] && getIdentifier(match.teams[0]);
-            let team2 =
-              match.teams && match.teams[1] && getIdentifier(match.teams[1]);
-            if (team1) {
-              checkTeam(team1);
-              team_results[team1].matches_cancelled += 1;
-            }
-            if (team2) {
-              checkTeam(team2);
-              team_results[team2].matches_cancelled += 1;
-            }
-            return;
+        if (!wH || !lH) {
+          // if there is an undefined winner/loser then the match was cancelled
+          let team1 =
+            match.teams && match.teams[0] && getIdentifier(match.teams[0]);
+          let team2 =
+            match.teams && match.teams[1] && getIdentifier(match.teams[1]);
+          if (team1) {
+            checkTeam(team1);
+            team_results[team1].matches_cancelled += 1;
           }
-
-          checkTeam(wH);
-          checkTeam(lH);
-          if (match.score && disqualifyingScore(match.score))
-            disqualified.push(lH);
-
-          team_results[wH].matches_won += 1;
-          team_results[lH].matches_lost += 1;
-          team_results[lH].defeats.push(wH);
-          team_results[wH].victories.push(lH);
-
-          let sets_tally = countSets(match.score, 0, match_format);
-          team_results[wH].sets_won += sets_tally[0];
-          team_results[wH].sets_lost += sets_tally[1];
-          team_results[lH].sets_won += sets_tally[1];
-          team_results[lH].sets_lost += sets_tally[0];
-
-          let games_tally = countGames(match.score, 0, match_format);
-          team_results[wH].games_won += games_tally[0];
-          team_results[wH].games_lost += games_tally[1];
-          team_results[lH].games_won += games_tally[1];
-          team_results[lH].games_lost += games_tally[0];
-
-          let points_tally = countPoints(match.score);
-          team_results[wH].points_won += points_tally[0];
-          team_results[wH].points_lost += points_tally[1];
-          team_results[lH].points_won += points_tally[1];
-          team_results[lH].points_lost += points_tally[0];
-        } else {
-          if (match.teams)
-            match.teams?.forEach(team => checkTeam(getIdentifier(team)));
+          if (team2) {
+            checkTeam(team2);
+            team_results[team2].matches_cancelled += 1;
+          }
+          return;
         }
-      });
+
+        checkTeam(wH);
+        checkTeam(lH);
+        if (match.score && disqualifyingScore(match.score))
+          disqualified.push(lH);
+
+        team_results[wH].matches_won += 1;
+        team_results[lH].matches_lost += 1;
+        team_results[lH].defeats.push(wH);
+        team_results[wH].victories.push(lH);
+
+        let sets_tally = countSets(match.score, 0, match_format);
+        team_results[wH].sets_won += sets_tally[0];
+        team_results[wH].sets_lost += sets_tally[1];
+        team_results[lH].sets_won += sets_tally[1];
+        team_results[lH].sets_lost += sets_tally[0];
+
+        let games_tally = countGames(match.score, 0, match_format);
+        team_results[wH].games_won += games_tally[0];
+        team_results[wH].games_lost += games_tally[1];
+        team_results[lH].games_won += games_tally[1];
+        team_results[lH].games_lost += games_tally[0];
+
+        let points_tally = countPoints(match.score);
+        team_results[wH].points_won += points_tally[0];
+        team_results[wH].points_lost += points_tally[1];
+        team_results[lH].points_won += points_tally[1];
+        team_results[lH].points_lost += points_tally[0];
+      } else {
+        if (match.teams)
+          match.teams?.forEach(team => checkTeam(getIdentifier(team)));
+      }
+    });
 
     function getIdentifier(opponent) {
       if (!Array.isArray(opponent) && opponent.players && opponent.id) {
