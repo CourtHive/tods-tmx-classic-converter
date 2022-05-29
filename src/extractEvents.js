@@ -119,7 +119,7 @@ export function extractEvents({ tournament, participants }) {
     const hasPopulatedMatchUps = structures
       .map(
         structure =>
-          structure.positionAssignments.filter(a => a.participantId).length
+          structure.positionAssignments?.filter(a => a.participantId).length
       )
       .reduce((a, b) => a + b, 0);
 
