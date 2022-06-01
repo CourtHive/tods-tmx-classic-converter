@@ -177,6 +177,9 @@ export function extractEvents({ tournament, participants }) {
       if (surfaceCategory)
         eventCategories[categoryName].surfaceCategory = surfaceCategory;
     } else {
+      if (!eventCategories[categoryName].drawDefinitions) {
+        eventCategories[categoryName].drawDefinitions = [];
+      }
       eventCategories[categoryName].drawDefinitions.push(drawDefinition);
       if (indoorOutdoor && !eventCategories[categoryName].indoorOutdoor)
         eventCategories[categoryName].indoorOutdoor = indoorOutdoor;
