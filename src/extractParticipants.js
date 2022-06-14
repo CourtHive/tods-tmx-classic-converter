@@ -426,47 +426,47 @@ function addTimeItems({ player, participant }) {
 }
 
 function addExtensions({ player, participant }) {
-  if (
-    player.suspended_until &&
-    utilities.dateTime.isDate(player.suspended_until)
-  ) {
-    const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.SUSPENSION}.UNTIL`;
-    const extension = {
-      value: utilities.dateTime.formatDate(player.suspended_until),
-      name,
-    };
-    tournamentEngine.addExtension({
-      element: participant,
-      extension,
-    });
+  if (player.suspended_until) {
+    const date = new Date(player.suspended_until);
+    if (utilities.dateTime.isDate(date)) {
+      const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.SUSPENSION}.UNTIL`;
+      const extension = {
+        value: utilities.dateTime.formatDate(date),
+        name,
+      };
+      tournamentEngine.addExtension({
+        element: participant,
+        extension,
+      });
+    }
   }
-  if (
-    player.registered_until &&
-    utilities.dateTime.isDate(player.registered_until)
-  ) {
-    const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.REGISTRATION}.UNTIL`;
-    const extension = {
-      value: utilities.dateTime.formatDate(player.registered_until),
-      name,
-    };
-    tournamentEngine.addExtension({
-      element: participant,
-      extension,
-    });
+  if (player.registered_until) {
+    const date = new Date(player.registered_until);
+    if (utilities.dateTime.isDate(date)) {
+      const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.REGISTRATION}.UNTIL`;
+      const extension = {
+        value: utilities.dateTime.formatDate(player.registered_until),
+        name,
+      };
+      tournamentEngine.addExtension({
+        element: participant,
+        extension,
+      });
+    }
   }
-  if (
-    player.right_to_play_until &&
-    utilities.dateTime.isDate(player.right_to_play_until)
-  ) {
-    const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.MEDICAL}.UNTIL`;
-    const extension = {
-      value: utilities.dateTime.formatDate(player.right_to_play_until),
-      name,
-    };
-    tournamentEngine.addExtension({
-      element: participant,
-      extension,
-    });
+  if (player.right_to_play_until) {
+    const date = new Date(player.right_to_play_until);
+    if (utilities.dateTime.isDate(date)) {
+      const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.MEDICAL}.UNTIL`;
+      const extension = {
+        value: utilities.dateTime.formatDate(player.right_to_play_until),
+        name,
+      };
+      tournamentEngine.addExtension({
+        element: participant,
+        extension,
+      });
+    }
   }
 }
 
