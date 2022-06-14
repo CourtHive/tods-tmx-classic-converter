@@ -3,10 +3,13 @@ import { getGender } from './utilities';
 import { matchFx } from './matchFx';
 import { format } from 'date-fns';
 import { drawFx } from './drawFx';
+import { UUID } from './UUID';
 
 import {
   errorConditionConstants,
-  participantConstants,
+  entryStatusConstants,
+  participantTypes,
+  timeItemConstants,
   tournamentEngine,
   participantRoles,
   penaltyConstants,
@@ -16,8 +19,14 @@ import {
 
 const dfx = drawFx();
 
-export function extractParticipants({ tournament, file }) {
-  const individualParticipants = extractIndividualParticipants({ tournament });
+export function extractParticipants({ tournament }) {
+  const {
+    individualParticipants,
+    schools,
+    clubs,
+  } = extractIndividualParticipants({
+    tournament,
+  });
   const tournamentId = tournament.tuid;
   const tournamentRecord = {
     participants: individualParticipants,
@@ -29,7 +38,17 @@ export function extractParticipants({ tournament, file }) {
     participants: individualParticipants,
     tournamentEngine,
     tournament,
-    file,
+  });
+
+  Object.values(schools).forEach(groupParticipant => {
+    const result = tournamentEngine.addParticipant({
+      participant: groupParticipant,
+    });
+  });
+  Object.values(clubs).forEach(groupParticipant => {
+    const result = tournamentEngine.addParticipant({
+      participant: groupParticipant,
+    });
   });
 
   const {
@@ -38,7 +57,6 @@ export function extractParticipants({ tournament, file }) {
 
   const teamParticipants = extractTeamParticipants({
     tournament,
-    file,
   });
 
   const competitorParticipants = tournamentParticipants.concat(
@@ -48,12 +66,12 @@ export function extractParticipants({ tournament, file }) {
   return { competitorParticipants };
 }
 
-function extractTeamParticipants({ tournament, file }) {
+function extractTeamParticipants({ tournament }) {
   const teamParticipants = (tournament.teams || []).map(team => {
     const individualParticipantIds = Object.keys(team.players);
     const teamParticipant = {
       participantId: team.id,
-      participantType: participantConstants.TEAM,
+      participantType: participantTypes.TEAM,
       participantRole: participantRoles.COMPETITOR,
       individualParticipantIds,
       participantName: team.name,
@@ -68,7 +86,6 @@ function extractPairParticipants({
   tournamentEngine,
   tournament,
   participants,
-  file,
 }) {
   const pairParticipants = [];
   const legacyEvents = tournament.events || [];
@@ -102,8 +119,7 @@ function extractPairParticipants({
             participant => participant.participantId
           );
           const pairParticipant = {
-            // participantId: utilities.UUID(),
-            participantType: participantConstants.PAIR,
+            participantType: participantTypes.PAIR,
             participantRole: participantRoles.COMPETITOR,
             individualParticipantIds,
             participantName,
@@ -119,9 +135,11 @@ function extractPairParticipants({
 
 const getId = p => p?.id || p?.puid;
 function extractIndividualParticipants({ tournament }) {
-  const individualParticipants = [];
-  const individualParticipantIds = [];
   const players = tournament.players || [];
+  const individualParticipantIds = [];
+  const individualParticipants = [];
+  const schools = {};
+  const clubs = {};
 
   const tournamentStartDate =
     tournament.start && format(new Date(tournament.start), 'yyyy-MM-dd');
@@ -140,7 +158,7 @@ function extractIndividualParticipants({ tournament }) {
     const participant = {
       participantName,
       participantId,
-      participantType: participantConstants.INDIVIDUAL,
+      participantType: participantTypes.INDIVIDUAL,
       participantRole: participantRoles.COMPETITOR,
       timeItems: [],
       person: {
@@ -158,22 +176,63 @@ function extractIndividualParticipants({ tournament }) {
     addOtherNames({ player, participant });
     addOtherIds({ player, participant, organisationId });
     addRankings({
-      player,
-      participant,
       tournamentStartDate,
       tournamentCategory,
+      participant,
+      player,
     });
     addRatings({ player, participant, tournamentStartDate });
     addPenalties({ player, participant, tournamentStartDate });
+    addExtensions({ player, participant });
 
     if (!individualParticipantIds?.includes(participant.participantId)) {
       individualParticipants.push(participant);
       individualParticipantIds.push(participantId);
     }
+
+    const { club, club_code, school } = player;
+    if (club_code) {
+      if (!clubs[club_code])
+        clubs[club_code] = {
+          extensions: [{ name: 'clubId', value: club }],
+          participantType: participantTypes.GROUP,
+          participantRole: participantRoles.OTHER,
+          participantRoleResponsibilities: ['CLUB'],
+          participantId: utilities.UUID(),
+          individualParticipantIds: [],
+          participantName: club_code,
+        };
+      if (
+        !clubs[club_code].individualParticipantIds.includes(
+          participant.participantId
+        )
+      ) {
+        clubs[club_code].individualParticipantIds.push(
+          participant.participantId
+        );
+      }
+    }
+    if (school) {
+      if (!schools[school])
+        school[school] = {
+          participantType: participantTypes.GROUP,
+          participantRole: participantRoles.OTHER,
+          participantRoleResponsibilities: ['SCHOOL'],
+          participantId: utilities.UUID(),
+          individualParticipantIds: [],
+          participantName: school,
+        };
+      if (
+        !school[school].individualParticipantIds.includes(
+          participant.participantId
+        )
+      ) {
+        school[school].individualParticipantIds.push(participant.participantId);
+      }
+    }
   }
 
   players?.forEach(addParticipant);
-
   const relevantEvents = tournament.events?.filter(event => event.draw) || [];
   // check that there are no individual participants in draws that are not in tournament.players
   relevantEvents?.forEach(event => {
@@ -183,7 +242,7 @@ function extractIndividualParticipants({ tournament }) {
     players.filter(f => f && !f.players).forEach(addParticipant);
   });
 
-  return individualParticipants;
+  return { individualParticipants, clubs, schools };
 }
 
 function isValidDate(date) {
@@ -237,25 +296,58 @@ function addRankings({
   tournamentStartDate,
   tournamentCategory,
 }) {
+  if (player.rank && tournamentCategory) {
+    const itemType = `${scaleConstants.SCALE}.${scaleConstants.RANKING}.SINGLES.${tournamentCategory}`;
+    const timeItem = {
+      itemValue: player.rank,
+      timestamp: tournamentStartDate,
+      itemType,
+    };
+    participant.timeItems.push(timeItem);
+  }
+  if (player.modified_ranking && tournamentCategory) {
+    const itemType = `${scaleConstants.SCALE}.${scaleConstants.RANKING}.SINGLES.${tournamentCategory}`;
+    const timeItem = {
+      itemValue: player.modified_ranking,
+      timestamp: tournamentStartDate,
+      itemType,
+    };
+    tournamentEngine.addTimeItem({
+      removePriorValues: true,
+      duplicateValues: false,
+      element: participant,
+      timeItem,
+    });
+  }
   if (player.rankings) {
     Object.keys(player.rankings).forEach(key => {
       const itemType = `${scaleConstants.SCALE}.${scaleConstants.RANKING}.SINGLES.${key}`;
       const timeItem = {
-        itemType,
         itemValue: player.rankings[key],
         timestamp: tournamentStartDate,
+        itemType,
       };
-      participant.timeItems.push(timeItem);
+      tournamentEngine.addTimeItem({
+        removePriorValues: true,
+        duplicateValues: false,
+        element: participant,
+        timeItem,
+      });
     });
   }
   if (player.category_dbls && tournamentCategory) {
-    const itemType = `${scaleConstants.SCALE}.${scaleConstants.RANKING}.SINGLES.${tournamentCategory}`;
+    const itemType = `${scaleConstants.SCALE}.${scaleConstants.RANKING}.DOUBLES.${tournamentCategory}`;
     const timeItem = {
-      itemType,
       itemValue: player.category_dbls,
       timestamp: tournamentStartDate,
+      itemType,
     };
-    participant.timeItems.push(timeItem);
+    tournamentEngine.addTimeItem({
+      removePriorValues: true,
+      duplicateValues: false,
+      element: participant,
+      timeItem,
+    });
   }
 }
 
@@ -267,9 +359,9 @@ function addRatings({ player, participant, tournamentStartDate }) {
           scaleConstants.RATING
         }.${ratingType.toUpperCase()}.${key.toUpperCase()}`;
         const timeItem = {
-          itemType,
           itemValue: player.ratings[key][ratingType].value,
           timestamp: tournamentStartDate,
+          itemType,
         };
         if (timeItem.itemValue) participant.timeItems.push(timeItem);
       });
@@ -277,12 +369,79 @@ function addRatings({ player, participant, tournamentStartDate }) {
   }
 }
 
+function addTimeItems({ player, participant }) {
+  if (player.registered) {
+    const itemType = `ENTRY.${timeItemConstants.REGISTRATION}`;
+    const timeItem = {
+      itemValue: player.registered,
+      timestamp: tournamentStartDate,
+      itemType,
+    };
+    tournamentEngine.addTimeItem({
+      removePriorValues: true,
+      duplicateValues: false,
+      element: participant,
+      timeItem,
+    });
+  }
+  if (player.withdrawn === 'Y' && player.withdrew) {
+    const itemType = `ENTRY.${entryStatusConstants.WITHDRAWN}`;
+    const timeItem = {
+      itemValue: player.withdrew,
+      timestamp: tournamentStartDate,
+      itemType,
+    };
+    tournamentEngine.addTimeItem({
+      removePriorValues: true,
+      duplicateValues: false,
+      element: participant,
+      timeItem,
+    });
+  }
+}
+
+function addExtensions({ player, participant }) {
+  if (player.suspended_until) {
+    const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.SUSPENSION}.UNTIL`;
+    const extension = {
+      value: player.suspended_until,
+      name,
+    };
+    tournamentEngine.addExtension({
+      element: participant,
+      extension,
+    });
+  }
+  if (player.registered_until) {
+    const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.REGISTRATION}.UNTIL`;
+    const extension = {
+      value: player.registered_until,
+      name,
+    };
+    tournamentEngine.addExtension({
+      element: participant,
+      extension,
+    });
+  }
+  if (player.right_to_play_until) {
+    const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.MEDICAL}.UNTIL`;
+    const extension = {
+      value: player.right_to_play_until,
+      name,
+    };
+    tournamentEngine.addExtension({
+      element: participant,
+      extension,
+    });
+  }
+}
+
 function addSignInStatus({ player, participant, tournamentStartDate }) {
   const itemValue = player.signed_in
-    ? participantConstants.SIGNED_IN
-    : participantConstants.SIGNED_OUT;
+    ? participantTypes.SIGNED_IN
+    : participantTypes.SIGNED_OUT;
   const timeItem = {
-    itemType: participantConstants.SIGN_IN_STATUS,
+    itemType: participantTypes.SIGN_IN_STATUS,
     timeStamp: tournamentStartDate,
     itemValue,
   };
