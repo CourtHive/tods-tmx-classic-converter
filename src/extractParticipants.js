@@ -184,6 +184,7 @@ function extractIndividualParticipants({ tournament }) {
     });
     addRatings({ player, participant, tournamentStartDate });
     addPenalties({ player, participant, tournamentStartDate });
+    addTimeItems({ player, participant, tournamentStartDate });
     addExtensions({ player, participant });
 
     if (!individualParticipantIds?.includes(participant.participantId)) {
@@ -390,7 +391,7 @@ function addRatings({ player, participant, tournamentStartDate }) {
   }
 }
 
-function addTimeItems({ player, participant }) {
+function addTimeItems({ player, participant, tournamentStartDate }) {
   if (player.registered) {
     const itemType = `ENTRY.${timeItemConstants.REGISTRATION}`;
     const timeItem = {
