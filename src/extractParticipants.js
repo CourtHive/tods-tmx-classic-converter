@@ -303,7 +303,13 @@ function addRankings({
       timestamp: tournamentStartDate,
       itemType,
     };
-    participant.timeItems.push(timeItem);
+    const result = tournamentEngine.addTimeItem({
+      removePriorValues: true,
+      duplicateValues: false,
+      element: participant,
+      timeItem,
+    });
+    if (result.error) console.log(result, { timeItem });
   }
   if (player.modified_ranking && tournamentCategory) {
     const itemType = `${scaleConstants.SCALE}.${scaleConstants.RANKING}.SINGLES.${tournamentCategory}`;
@@ -312,12 +318,13 @@ function addRankings({
       timestamp: tournamentStartDate,
       itemType,
     };
-    tournamentEngine.addTimeItem({
+    const result = tournamentEngine.addTimeItem({
       removePriorValues: true,
       duplicateValues: false,
       element: participant,
       timeItem,
     });
+    if (result.error) console.log(result, { timeItem });
   }
   if (player.rankings) {
     Object.keys(player.rankings).forEach(key => {
@@ -327,12 +334,13 @@ function addRankings({
         timestamp: tournamentStartDate,
         itemType,
       };
-      tournamentEngine.addTimeItem({
+      const result = tournamentEngine.addTimeItem({
         removePriorValues: true,
         duplicateValues: false,
         element: participant,
         timeItem,
       });
+      if (result.error) console.log(result, { timeItem });
     });
   }
   if (player.category_dbls && tournamentCategory) {
@@ -342,12 +350,13 @@ function addRankings({
       timestamp: tournamentStartDate,
       itemType,
     };
-    tournamentEngine.addTimeItem({
+    const result = tournamentEngine.addTimeItem({
       removePriorValues: true,
       duplicateValues: false,
       element: participant,
       timeItem,
     });
+    if (result.error) console.log(result, { timeItem });
   }
 }
 
@@ -363,7 +372,13 @@ function addRatings({ player, participant, tournamentStartDate }) {
           timestamp: tournamentStartDate,
           itemType,
         };
-        if (timeItem.itemValue) participant.timeItems.push(timeItem);
+        const result = tournamentEngine.addTimeItem({
+          removePriorValues: true,
+          duplicateValues: false,
+          element: participant,
+          timeItem,
+        });
+        if (result.error) console.log(result, { timeItem });
       });
     });
   }
@@ -377,12 +392,13 @@ function addTimeItems({ player, participant }) {
       timestamp: tournamentStartDate,
       itemType,
     };
-    tournamentEngine.addTimeItem({
+    const result = tournamentEngine.addTimeItem({
       removePriorValues: true,
       duplicateValues: false,
       element: participant,
       timeItem,
     });
+    if (result.error) console.log(result, { timeItem });
   }
   if (player.withdrawn === 'Y' && player.withdrew) {
     const itemType = `ENTRY.${entryStatusConstants.WITHDRAWN}`;
@@ -391,12 +407,13 @@ function addTimeItems({ player, participant }) {
       timestamp: tournamentStartDate,
       itemType,
     };
-    tournamentEngine.addTimeItem({
+    const result = tournamentEngine.addTimeItem({
       removePriorValues: true,
       duplicateValues: false,
       element: participant,
       timeItem,
     });
+    if (result.error) console.log(result, { timeItem });
   }
 }
 
@@ -445,7 +462,13 @@ function addSignInStatus({ player, participant, tournamentStartDate }) {
     timeStamp: tournamentStartDate,
     itemValue,
   };
-  participant.timeItems.push(timeItem);
+  const result = tournamentEngine.addTimeItem({
+    removePriorValues: true,
+    duplicateValues: false,
+    element: participant,
+    timeItem,
+  });
+  if (result.error) console.log(result, { timeItem });
 }
 
 function addPenalties({ player, participant, tournamentStartDate }) {
