@@ -8,9 +8,10 @@ import { UUID } from './UUID';
 import {
   errorConditionConstants,
   entryStatusConstants,
-  participantTypes,
+  participantConstants,
   timeItemConstants,
   tournamentEngine,
+  participantTypes,
   participantRoles,
   penaltyConstants,
   scaleConstants,
@@ -464,10 +465,10 @@ function addExtensions({ player, participant }) {
 
 function addSignInStatus({ player, participant, tournamentStartDate }) {
   const itemValue = player.signed_in
-    ? participantTypes.SIGNED_IN
-    : participantTypes.SIGNED_OUT;
+    ? participantConstants.SIGNED_IN
+    : participantConstants.SIGNED_OUT;
   const timeItem = {
-    itemType: participantTypes.SIGN_IN_STATUS,
+    itemType: participantConstants.SIGN_IN_STATUS,
     timeStamp: tournamentStartDate,
     itemValue,
   };
