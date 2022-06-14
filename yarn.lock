@@ -8416,7 +8416,7 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-tods-competition-factory@^0.220.4:
+tods-competition-factory@^0.220.3:
   version "0.220.4"
   resolved "https://registry.yarnpkg.com/tods-competition-factory/-/tods-competition-factory-0.220.4.tgz#81473e54f165337e3d0062acd1d1cf8d52788c0f"
   integrity sha512-yZuQFAaH+9sLsXd0zTgv6Muk9CyNh31Egc6XrXsGWaDJ7qt0ToUbJ6rfs1nGAos7Glz5E8AFN1ml/dnJ/9ktBw==
