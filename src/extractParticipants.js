@@ -308,6 +308,7 @@ function addRankings({
       removePriorValues: true,
       duplicateValues: false,
       element: participant,
+      creationTime: false,
       timeItem,
     });
     if (result.error) console.log(result, { timeItem });
@@ -323,6 +324,7 @@ function addRankings({
       removePriorValues: true,
       duplicateValues: false,
       element: participant,
+      creationTime: false,
       timeItem,
     });
     if (result.error) console.log(result, { timeItem });
@@ -339,6 +341,7 @@ function addRankings({
         removePriorValues: true,
         duplicateValues: false,
         element: participant,
+        creationTime: false,
         timeItem,
       });
       if (result.error) console.log(result, { timeItem });
@@ -355,6 +358,7 @@ function addRankings({
       removePriorValues: true,
       duplicateValues: false,
       element: participant,
+      creationTime: false,
       timeItem,
     });
     if (result.error) console.log(result, { timeItem });
@@ -377,6 +381,7 @@ function addRatings({ player, participant, tournamentStartDate }) {
           removePriorValues: true,
           duplicateValues: false,
           element: participant,
+          creationTime: false,
           timeItem,
         });
         if (result.error) console.log(result, { timeItem });
@@ -397,6 +402,7 @@ function addTimeItems({ player, participant }) {
       removePriorValues: true,
       duplicateValues: false,
       element: participant,
+      creationTime: false,
       timeItem,
     });
     if (result.error) console.log(result, { timeItem });
@@ -412,6 +418,7 @@ function addTimeItems({ player, participant }) {
       removePriorValues: true,
       duplicateValues: false,
       element: participant,
+      creationTime: false,
       timeItem,
     });
     if (result.error) console.log(result, { timeItem });
@@ -476,6 +483,7 @@ function addSignInStatus({ player, participant, tournamentStartDate }) {
     removePriorValues: true,
     duplicateValues: false,
     element: participant,
+    creationTime: false,
     timeItem,
   });
   if (result.error) console.log(result, { timeItem });
@@ -496,14 +504,6 @@ function addPenalties({ player, participant, tournamentStartDate }) {
         createdAt: new Date(penaltyTime).toISOString(),
       };
       participant.penalties.push(penaltyItem);
-      // TODO: add to matchUp.timeItems
-      /*
-      const timeItem = {
-        itemType: "PENALTY",
-        itemValue: penaltyItem.penaltyId,
-        timeStamp: penaltyItem.createdAt
-      };
-      */
     });
   }
 
