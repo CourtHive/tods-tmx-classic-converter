@@ -436,6 +436,7 @@ function addExtensions({ player, participant }) {
       };
       tournamentEngine.addExtension({
         element: participant,
+        creationTime: false,
         extension,
       });
     }
@@ -450,6 +451,7 @@ function addExtensions({ player, participant }) {
       };
       tournamentEngine.addExtension({
         element: participant,
+        creationTime: false,
         extension,
       });
     }
@@ -464,6 +466,7 @@ function addExtensions({ player, participant }) {
       };
       tournamentEngine.addExtension({
         element: participant,
+        creationTime: false,
         extension,
       });
     }
