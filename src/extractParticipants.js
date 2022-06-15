@@ -16,6 +16,7 @@ import {
   penaltyConstants,
   scaleConstants,
   utilities,
+  fixtures,
 } from 'tods-competition-factory';
 
 const dfx = drawFx();
@@ -147,6 +148,11 @@ function extractIndividualParticipants({ tournament }) {
   const tournamentCategory = tournament.category;
   const organisationId = tournament.org?.ouid;
 
+  function getISO(ioc) {
+    const country = fixtures.countries.find(country => country.ioc === ioc);
+    return country?.iso || ioc;
+  }
+
   function addParticipant(player) {
     const participantId = getId(player);
     const standardFamilyName = getName(player.last_name);
@@ -167,7 +173,7 @@ function extractIndividualParticipants({ tournament }) {
         standardFamilyName,
         standardGivenName,
         sex: getGender(player.sex),
-        nationalityCode: player.ioc,
+        nationalityCode: getISO(player.ioc),
         birthDate,
         otherNames: [],
       },
