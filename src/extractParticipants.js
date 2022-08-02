@@ -441,7 +441,7 @@ function addExtensions({ player, participant }) {
         value: utilities.dateTime.formatDate(date),
         name,
       };
-      tournamentEngine.addExtension({
+      utilities.addExtension({
         element: participant,
         creationTime: false,
         extension,
@@ -456,7 +456,7 @@ function addExtensions({ player, participant }) {
         value: utilities.dateTime.formatDate(player.registered_until),
         name,
       };
-      tournamentEngine.addExtension({
+      utilities.addExtension({
         element: participant,
         creationTime: false,
         extension,
@@ -471,7 +471,7 @@ function addExtensions({ player, participant }) {
         value: utilities.dateTime.formatDate(player.right_to_play_until),
         name,
       };
-      tournamentEngine.addExtension({
+      utilities.addExtension({
         element: participant,
         creationTime: false,
         extension,

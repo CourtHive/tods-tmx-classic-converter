@@ -117,10 +117,21 @@ export function extractEvents({ tournament, participants }) {
       eventPairParticipants.push(...missingParticipants);
 
     const hasPopulatedMatchUps = structures
-      .map(
-        structure =>
-          structure.positionAssignments?.filter(a => a.participantId).length
-      )
+      .map(structure => {
+        if (structure.structures) {
+          return structure.structures
+            .map(
+              ({ positionAssignments }) =>
+                positionAssignments.filter(a => a.participantId)?.length || 0
+            )
+            .reduce((a, b) => a + b, 0);
+        } else {
+          return (
+            structure.positionAssignments?.filter(a => a.participantId)
+              ?.length || 0
+          );
+        }
+      })
       .reduce((a, b) => a + b, 0);
 
     const drawDefinition = {
@@ -202,6 +213,8 @@ export function extractEvents({ tournament, participants }) {
     event.entries = Object.values(event.eventEntriesAccumulator);
     event.eventEntriesAccumulator = undefined;
   });
+
+  console.log({ events });
 
   return { events, eventPairParticipants };
 }
