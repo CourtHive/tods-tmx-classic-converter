@@ -7,7 +7,7 @@ import { drawFx } from './drawFx';
 
 import {
   drawDefinitionConstants,
-  drawEngine,
+  matchUpEngine,
   utilities,
 } from 'tods-competition-factory';
 
@@ -284,7 +284,7 @@ function roundRobinStructure({
       })
       .filter(Boolean);
 
-    const { participantResults } = drawEngine.tallyParticipantResults({
+    const { participantResults } = matchUpEngine.tallyParticipantResults({
       matchUps,
     });
     const resultsParticipantIds = Object.keys(participantResults || {});
