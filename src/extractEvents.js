@@ -214,7 +214,5 @@ export function extractEvents({ tournament, participants }) {
     event.eventEntriesAccumulator = undefined;
   });
 
-  console.log({ events });
-
   return { events, eventPairParticipants };
 }
