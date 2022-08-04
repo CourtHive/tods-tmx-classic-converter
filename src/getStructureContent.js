@@ -248,9 +248,9 @@ function roundRobinStructure({
     .map(bracket => bracket.matches)
     .flat();
   const drawPositionHashMap = getPositionAssignmentHashes({
-    matches,
-    tournament,
     brackets: legacyEvent.draw.brackets,
+    tournament,
+    matches,
   });
 
   legacyEvent.draw.brackets?.forEach((bracket, index) => {

@@ -1,13 +1,13 @@
+import { getStructureContent } from './getStructureContent';
+import { matchFormatCode } from './matchFormatCode';
+import { scoreFormat } from './scoreFormat';
+import { getStage } from './utilities';
 import {
   drawDefinitionConstants,
   entryStatusConstants,
   tournamentEngine,
   utilities,
 } from 'tods-competition-factory';
-import { getStructureContent } from './getStructureContent';
-import { matchFormatCode } from './matchFormatCode';
-import { scoreFormat } from './scoreFormat';
-import { getStage } from './utilities';
 
 export function extractStructures({
   eventType,
