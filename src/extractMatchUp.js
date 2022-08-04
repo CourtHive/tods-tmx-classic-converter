@@ -85,7 +85,7 @@ export function extractMatchUp({
   if (![0, 1].includes(parseInt(winner_index)))
     winner_index = legacyMatch.winner_index;
   const winner = [0, 1].includes(parseInt(winner_index));
-  const winningSide = (winner && winner_index + 1) || undefined;
+  let winningSide = (winner && winner_index + 1) || undefined;
 
   const matchUpStatus =
     (live && matchUpStatusConstants.IN_PROGRESS) ||
@@ -210,9 +210,14 @@ export function extractMatchUp({
 
   const drawPositions =
     sides?.map(side => side.drawPosition).filter(Boolean) || [];
-  matchUp.drawPositions = drawPositions.sort();
 
-  if (sides?.length) matchUp.sides = sides;
+  if (drawPositions[1] < drawPositions[0]) {
+    winningSide = 3 - winningSide;
+  }
+  matchUp.drawPositions = drawPositions.slice().sort();
+
+  if (sides?.length)
+    matchUp.sides = sides.sort((a, b) => a.sideNumber - b.sideNumber);
   if (matchUpType) matchUp.matchUpType = matchUpType;
   if (winningSide) matchUp.winningSide = winningSide;
   if (timeItems?.length) matchUp.timeItems = timeItems;
