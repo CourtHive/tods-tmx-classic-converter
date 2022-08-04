@@ -169,9 +169,27 @@ export function extractEvents({ tournament, participants }) {
         .join('')
     )
       .toString(36)
-      .slice(0, 12);
+      .slice(0, 10);
 
-    const eventId = `${tournamentId.split('-')[0]}-${code}`;
+    const code1 = parseFloat(
+      `${categoryName}-${eventType}`
+        .split('')
+        .map(c => c.charCodeAt(0))
+        .join('')
+    )
+      .toString(36)
+      .slice(0, 10);
+
+    const code2 = parseFloat(
+      `${gender || 'MIXED'}-${eventRank || 'UR'}`
+        .split('')
+        .map(c => c.charCodeAt(0))
+        .join('')
+    )
+      .toString(36)
+      .slice(0, 10);
+
+    const eventId = `${tournamentId.split('-')[0]}-${code}-${code1}-${code2}`;
 
     if (!eventCategories[categoryName]) {
       eventCategories[categoryName] = {
