@@ -101,20 +101,6 @@ export function extractMatchUp({
     (time && matchUpStatusConstants.COMPLETED) ||
     (!winningSide && matchUpStatusConstants.TO_BE_PLAYED);
 
-  const reversedScoreString = reverseScore(scoreString) || '';
-  const scoreStringSide1 = matchTiebreakTODS(
-    !winner || winningSide === 1 ? scoreString : reversedScoreString
-  );
-  const scoreStringSide2 = matchTiebreakTODS(
-    !winner || winningSide === 1 ? reversedScoreString : scoreString
-  );
-  const sets = mocksEngine.parseScoreString({ scoreString: scoreStringSide1 });
-  const score = {
-    scoreStringSide1,
-    scoreStringSide2,
-    sets,
-  };
-
   let isBye = false;
   if (Array.isArray(legacyMatch.teams)) {
     legacyMatch.teams?.forEach((team, index) => {
@@ -203,18 +189,32 @@ export function extractMatchUp({
   }
 
   const timeItems = getTimeItems({ participants, legacyMatch });
-  const matchUp = {
-    matchUpId,
-    score,
-  };
-
   const drawPositions =
     sides?.map(side => side.drawPosition).filter(Boolean) || [];
 
   if (drawPositions[1] < drawPositions[0]) {
     winningSide = 3 - winningSide;
   }
-  matchUp.drawPositions = drawPositions.slice().sort();
+
+  const reversedScoreString = reverseScore(scoreString) || '';
+  const scoreStringSide1 = matchTiebreakTODS(
+    !winner || winningSide === 1 ? scoreString : reversedScoreString
+  );
+  const scoreStringSide2 = matchTiebreakTODS(
+    !winner || winningSide === 1 ? reversedScoreString : scoreString
+  );
+  const sets = mocksEngine.parseScoreString({ scoreString: scoreStringSide1 });
+  const score = {
+    scoreStringSide1,
+    scoreStringSide2,
+    sets,
+  };
+
+  const matchUp = {
+    drawPositions: drawPositions.slice().sort(),
+    matchUpId,
+    score,
+  };
 
   if (sides?.length)
     matchUp.sides = sides.sort((a, b) => a.sideNumber - b.sideNumber);
