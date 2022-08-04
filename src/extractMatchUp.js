@@ -210,7 +210,7 @@ export function extractMatchUp({
 
   const drawPositions =
     sides?.map(side => side.drawPosition).filter(Boolean) || [];
-  matchUp.drawPositions = drawPositions;
+  matchUp.drawPositions = drawPositions.sort();
 
   if (sides?.length) matchUp.sides = sides;
   if (matchUpType) matchUp.matchUpType = matchUpType;
