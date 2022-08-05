@@ -216,8 +216,6 @@ export function extractMatchUp({
     score,
   };
 
-  if (sides?.length)
-    matchUp.sides = sides.sort((a, b) => a.sideNumber - b.sideNumber);
   if (matchUpType) matchUp.matchUpType = matchUpType;
   if (winningSide) matchUp.winningSide = winningSide;
   if (timeItems?.length) matchUp.timeItems = timeItems;

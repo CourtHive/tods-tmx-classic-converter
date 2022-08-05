@@ -5,7 +5,9 @@ import { scoreFormat } from './scoreFormat';
 import {
   tournamentEngine,
   factoryConstants,
+  matchUpEngine,
   matchUpTypes,
+  drawEngine,
   utilities,
 } from 'tods-competition-factory';
 
@@ -226,6 +228,37 @@ export function extractEvents({ tournament, participants }) {
     event.drawDefinitions?.forEach(drawDefinition => {
       drawDefinition.entries?.forEach(entry => {
         event.eventEntriesAccumulator[entry.participantId] = entry;
+      });
+      drawDefinition.structures?.forEach(structure => {
+        if (structure.structureType === 'CONTAINER') {
+          const positionAssignments = structure.structures
+            .map(({ positionAssignments }) => positionAssignments)
+            .flat();
+          const { matchUps } = drawEngine
+            .setState(drawDefinition)
+            .allStructureMatchUps({
+              tournamentParticipants: participants,
+              structureId: structure.structureId,
+            });
+
+          const { participantResults } = matchUpEngine.tallyParticipantResults({
+            matchUps,
+          });
+          const resultsParticipantIds = Object.keys(participantResults || {});
+          if (resultsParticipantIds?.length) {
+            positionAssignments?.forEach(assignment => {
+              const { participantId } = assignment;
+              if (resultsParticipantIds?.includes(participantId)) {
+                assignment.extensions = [
+                  {
+                    name: 'tally',
+                    value: participantResults[participantId],
+                  },
+                ];
+              }
+            });
+          }
+        }
       });
     });
     event.entries = Object.values(event.eventEntriesAccumulator);

@@ -5,11 +5,7 @@ import { getStage } from './utilities';
 import { matchFx } from './matchFx';
 import { drawFx } from './drawFx';
 
-import {
-  drawDefinitionConstants,
-  matchUpEngine,
-  utilities,
-} from 'tods-competition-factory';
+import { drawDefinitionConstants } from 'tods-competition-factory';
 
 const {
   CONTAINER,
@@ -255,7 +251,6 @@ function roundRobinStructure({
 
   legacyEvent.draw.brackets?.forEach((bracket, index) => {
     const drawPositionOffset = index * (legacyEvent.draw.bracket_size || 0);
-    const positionAssignments = [];
     const matchUps = bracket.matches
       .map(legacyMatch => {
         const result = processLegacyMatch({
@@ -274,33 +269,9 @@ function roundRobinStructure({
           seedLimit,
           info,
         });
-        if (result) {
-          const { matchUp, positionAssignments: matchUpAssignments } = result;
-          if (matchUpAssignments)
-            positionAssignments.push(...matchUpAssignments);
-          return matchUp;
-        }
         return undefined;
       })
       .filter(Boolean);
-
-    const { participantResults } = matchUpEngine.tallyParticipantResults({
-      matchUps,
-    });
-    const resultsParticipantIds = Object.keys(participantResults || {});
-    if (resultsParticipantIds?.length) {
-      positionAssignments?.forEach(assignment => {
-        const { participantId } = assignment;
-        if (resultsParticipantIds?.includes(participantId)) {
-          assignment.extensions = [
-            {
-              name: 'tally',
-              value: participantResults[participantId],
-            },
-          ];
-        }
-      });
-    }
 
     const structureName = bracket.name || `Group ${index + 1}`;
     const structure = {
