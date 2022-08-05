@@ -251,6 +251,7 @@ function roundRobinStructure({
 
   legacyEvent.draw.brackets?.forEach((bracket, index) => {
     const drawPositionOffset = index * (legacyEvent.draw.bracket_size || 0);
+    const positionAssignments = [];
     const matchUps = bracket.matches
       .map(legacyMatch => {
         const result = processLegacyMatch({
@@ -269,6 +270,12 @@ function roundRobinStructure({
           seedLimit,
           info,
         });
+        if (result) {
+          const { matchUp, positionAssignments: matchUpAssignments } = result;
+          if (matchUpAssignments)
+            positionAssignments.push(...matchUpAssignments);
+          return matchUp;
+        }
         return undefined;
       })
       .filter(Boolean);
