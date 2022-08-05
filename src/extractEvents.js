@@ -241,8 +241,9 @@ export function extractEvents({ tournament, participants }) {
               structureId: structure.structureId,
             });
 
+          const consideredMatchUps = matchUps.filter(m => m.winningSide);
           const { participantResults } = matchUpEngine.tallyParticipantResults({
-            matchUps,
+            matchUps: consideredMatchUps,
           });
           const resultsParticipantIds = Object.keys(participantResults || {});
           if (resultsParticipantIds?.length) {
