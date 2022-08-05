@@ -5,7 +5,7 @@ import { getStage } from './utilities';
 import { matchFx } from './matchFx';
 import { drawFx } from './drawFx';
 
-import { drawDefinitionConstants } from 'tods-competition-factory';
+import { drawDefinitionConstants, utilities } from 'tods-competition-factory';
 
 const {
   CONTAINER,
