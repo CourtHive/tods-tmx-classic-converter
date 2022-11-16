@@ -3,17 +3,20 @@ import { convertTMX2TODS } from '../dist';
 import fs from 'fs';
 
 export function TMX2TODS({
-  count,
+  targetExtension = '.tods.json',
+  processParticipants,
+  disableProgress,
+  tournamentId,
   sourceDir,
   targetDir,
-  tournamentId,
-  disableProgress,
-  targetExtension = '.tods.json',
+  count,
 } = {}) {
   const sourcePath = sourceDir || '.';
   const targetPath = targetDir || '.';
 
   const orgs = { no_org: { count: 0 } };
+
+  const participants = {};
 
   const filenames = fs
     .readdirSync(sourcePath)
@@ -40,6 +43,9 @@ export function TMX2TODS({
     ) {
       try {
         const { tournamentRecord } = convertTMX2TODS({ tournament });
+        if (typeof processParticipants === 'function')
+          processParticipants(tournamentRecord);
+
         const organisationId =
           tournamentRecord.parentOrganisationId ||
           (tournamentRecord.unifiedTournamentId &&
