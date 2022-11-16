@@ -1,3 +1,4 @@
+import { getGender, getIndoorOutdoor, getSurface } from './utilities';
 import { convertTieFormat } from './convertTieFormat';
 import { extractStructures } from './extractStructures';
 import { matchFormatCode } from './matchFormatCode';
@@ -10,15 +11,6 @@ import {
   drawEngine,
   utilities,
 } from 'tods-competition-factory';
-
-import {
-  getGender,
-  getSurface,
-  intersection,
-  getMatchUpType,
-  getIndoorOutdoor,
-  getAgeCategoryCode,
-} from './utilities';
 
 export function extractEvents({ tournament, participants }) {
   const eventCategories = {};
@@ -42,7 +34,10 @@ export function extractEvents({ tournament, participants }) {
         const linkedEuid = legacyEvent.links[key];
         eventIds.push(linkedEuid);
       });
-    const groupEuid = intersection(Object.keys(linkedStructures), eventIds);
+    const groupEuid = utilities.intersection(
+      Object.keys(linkedStructures),
+      eventIds
+    );
     if (groupEuid.length) {
       linkedStructures[groupEuid[0]][euid] = legacyEvent;
     } else {
@@ -58,7 +53,9 @@ export function extractEvents({ tournament, participants }) {
       event => event.draw_type
     );
     const mainDrawTypes = ['E', 'S'];
-    if (!intersection(mainDrawTypes, structureGroupDrawTypes).length) {
+    if (
+      !utilities.intersection(mainDrawTypes, structureGroupDrawTypes).length
+    ) {
       if (structureGroupDrawTypes?.includes('R')) mainDrawTypes.push('R');
       else if (structureGroupDrawTypes?.includes('A')) mainDrawTypes.push('A');
       else if (structureGroupDrawTypes?.includes('C')) mainDrawTypes.push('C');
@@ -71,10 +68,12 @@ export function extractEvents({ tournament, participants }) {
     );
     const matchUpFormats = mainLegacyEvent?.matchFormats;
     const eventType =
-      getMatchUpType(mainLegacyEvent.format) ||
+      matchUpEngine.getMatchUpType(mainLegacyEvent.format) ||
       ((mainLegacyEvent.matchorder || tournament.type === 'dual') &&
         matchUpTypes.TEAM);
-    const ageCategoryCode = getAgeCategoryCode(mainLegacyEvent.category);
+    const ageCategoryCode = utilities.parseAgeCategoryCode(
+      mainLegacyEvent.category
+    );
     const category = { categoryName: mainLegacyEvent.category };
     if (ageCategoryCode) category.ageCategoryCode = ageCategoryCode;
 

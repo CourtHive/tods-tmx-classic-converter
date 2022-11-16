@@ -6,7 +6,6 @@ import {
   drawDefinitionConstants,
   entryStatusConstants,
   tournamentEngine,
-  utilities,
 } from 'tods-competition-factory';
 
 export function extractStructures({

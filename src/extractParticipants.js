@@ -1,4 +1,4 @@
-import { normalizeName } from 'normalize-text';
+import { normalizeName, normalizeDiacritics } from 'normalize-text';
 import { getGender } from './utilities';
 import { matchFx } from './matchFx';
 import { format } from 'date-fns';
@@ -221,8 +221,8 @@ function extractIndividualParticipants({ tournament }) {
       }
     }
     if (school) {
-      if (!schools[school])
-        school[school] = {
+      if (!schools[school]) {
+        schools[school] = {
           participantType: participantTypes.GROUP,
           participantRole: participantRoles.OTHER,
           participantRoleResponsibilities: ['SCHOOL'],
@@ -230,12 +230,15 @@ function extractIndividualParticipants({ tournament }) {
           individualParticipantIds: [],
           participantName: school,
         };
+      }
       if (
-        !school[school].individualParticipantIds.includes(
+        !schools[school].individualParticipantIds.includes(
           participant.participantId
         )
       ) {
-        school[school].individualParticipantIds.push(participant.participantId);
+        schools[school].individualParticipantIds.push(
+          participant.participantId
+        );
       }
     }
   }
@@ -256,6 +259,7 @@ function extractIndividualParticipants({ tournament }) {
 function isValidDate(date) {
   if (!date) return;
   try {
+    const formatted = format(new Date(date), 'yyyy-MM-dd');
     const dateObject = new Date(date);
     if (
       dateObject?.toString().trim() === errorConditionConstants.INVALID_DATE
@@ -281,7 +285,7 @@ function addOtherIds({ player, participant, organisationId }) {
       {
         organisationId,
         uniqueOrganisationName: 'HTS',
-        personId: player.cropin,
+        personId: normalizeDiacritics(player.cropin),
       },
     ];
     participant.person.personOtherIds = personOtherIds;
@@ -292,7 +296,7 @@ function addOtherIds({ player, participant, organisationId }) {
     const otherId = {
       organisationId,
       uniqueOrganisationName: 'System',
-      personId: player.puid,
+      personId: normalizeDiacritics(player.puid),
     };
     participant.person.personOtherIds.push(otherId);
   }

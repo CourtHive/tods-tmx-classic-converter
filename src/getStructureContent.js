@@ -87,9 +87,15 @@ function getCompassComponents(props) {
     .map(direction => {
       props.legacyEvent.draw.compass = direction;
       const info = dfx.drawInfo(props.legacyEvent.draw);
-      return eliminationStructure({ direction, directions, ...props, info });
+      const result = eliminationStructure({
+        direction,
+        directions,
+        ...props,
+        info,
+      });
+      return result;
     })
-    .filter(Boolean.matchUps?.length);
+    .filter(Boolean);
 
   const compassLinks = [];
   const linkProfiles = {
@@ -121,6 +127,7 @@ function getCompassComponents(props) {
         }
       });
   });
+
   return { compassStructures, compassLinks };
 }
 
