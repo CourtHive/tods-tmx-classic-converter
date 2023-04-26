@@ -32,8 +32,16 @@ export function TMX2TODS({
 
   filenames.slice(0, count).forEach((filename, index) => {
     const tournamentRaw = fs.readFileSync(`${sourcePath}/${filename}`, 'UTF8');
-    const tournament = JSON.parse(tournamentRaw);
-    if (disableProgress)
+
+    let tournament;
+    try {
+      tournament = JSON.parse(tournamentRaw);
+    } catch (err) {
+      console.log('error', { filename });
+      console.log({ err });
+    }
+
+    if (disableProgress && tournament)
       console.log(`${index + 1}: ${tournament.name}, ${tournament.tuid}`);
 
     if (
