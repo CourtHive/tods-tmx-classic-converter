@@ -71,21 +71,21 @@ export function extractEvents({ tournament, participants }) {
       matchUpEngine.getMatchUpType(mainLegacyEvent.format) ||
       ((mainLegacyEvent.matchorder || tournament.type === 'dual') &&
         matchUpTypes.TEAM);
-    const ageCategoryCode = utilities.parseAgeCategoryCode(
-      mainLegacyEvent.category
-    );
+    const ageCategoryDetail = utilities.parseAgeCategoryCode({
+      category: mainLegacyEvent.category,
+    });
     const category = { categoryName: mainLegacyEvent.category };
-    if (ageCategoryCode) category.ageCategoryCode = ageCategoryCode;
+    if (!ageCategoryDetail.error) Object.assign(category, ageCategoryDetail);
 
     const {
       name,
-      automated,
-      draw_size,
+      //      automated,
+      //      draw_size,
       matchorder,
       draw_created,
       broadcast_name,
       custom_category,
-      category: legacyCategory,
+      //      category: legacyCategory,
     } = mainLegacyEvent;
 
     const tieFormat =
