@@ -6129,9 +6129,9 @@ normalize-path@^3.0.0:
   integrity sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==
 
 normalize-text@^2.3.2:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/normalize-text/-/normalize-text-2.4.0.tgz#56df3a1e5d8db277d32d5cddd1028eb7721dc07e"
-  integrity sha512-PrCsIXDdNAeVmqbLWOx/J1g3OnyhKNbnWc5ABKO+2yHv7XisjtSzuFpYb95d4lwb5VV05HwIusWiXFho5shz/Q==
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/normalize-text/-/normalize-text-2.4.1.tgz#dba275ef7d36533ea278fdd6e2e216eec34f3f74"
+  integrity sha512-cmckAM5KW/lvqJoDUZWOdMHswvEA5LBEtkR/0YXv6iNV+4+5Aha+1lOKQuVFT38lnRavDRSzpoxb9DTt/3nbOw==
   dependencies:
     "@bitty/pipe" "^0.3.0"
 
