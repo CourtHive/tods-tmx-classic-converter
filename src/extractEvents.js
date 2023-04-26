@@ -1,4 +1,9 @@
-import { getGender, getIndoorOutdoor, getSurface } from './utilities';
+import {
+  getGender,
+  getIndoorOutdoor,
+  getMatchUpType,
+  getSurface,
+} from './utilities';
 import { convertTieFormat } from './convertTieFormat';
 import { extractStructures } from './extractStructures';
 import { matchFormatCode } from './matchFormatCode';
@@ -68,7 +73,7 @@ export function extractEvents({ tournament, participants }) {
     );
     const matchUpFormats = mainLegacyEvent?.matchFormats;
     const eventType =
-      matchUpEngine.getMatchUpType(mainLegacyEvent.format) ||
+      getMatchUpType(mainLegacyEvent.format) ||
       ((mainLegacyEvent.matchorder || tournament.type === 'dual') &&
         matchUpTypes.TEAM);
     const ageCategoryDetail = utilities.parseAgeCategoryCode({
