@@ -197,7 +197,7 @@ function extractIndividualParticipants({ tournament }) {
       individualParticipantIds.push(participantId);
     }
 
-    const { club, club_code, school } = player;
+    const { club, club_code, club_name, school } = player;
     if (club_code) {
       if (!clubs[club_code])
         clubs[club_code] = {
@@ -215,6 +215,27 @@ function extractIndividualParticipants({ tournament }) {
         )
       ) {
         clubs[club_code].individualParticipantIds.push(
+          participant.participantId
+        );
+      }
+    }
+    if (club_name) {
+      if (!clubs[club_name])
+        clubs[club_name] = {
+          extensions: [{ name: 'clubId', value: club }],
+          participantType: participantTypes.GROUP,
+          participantRole: participantRoles.OTHER,
+          participantRoleResponsibilities: ['CLUB'],
+          participantId: utilities.UUID(),
+          individualParticipantIds: [],
+          participantName: club_name,
+        };
+      if (
+        !clubs[club_name].individualParticipantIds.includes(
+          participant.participantId
+        )
+      ) {
+        clubs[club_name].individualParticipantIds.push(
           participant.participantId
         );
       }
