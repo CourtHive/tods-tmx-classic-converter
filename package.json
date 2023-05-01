@@ -47,8 +47,8 @@
     "cli-progress": "^3.9.0",
     "d3": "5.16.0",
     "date-fns": "^2.19.0",
-    "normalize-text": "^2.3.2",
-    "tods-competition-factory": "0.481.0"
+    "normalize-text": "^2.4.1",
+    "tods-competition-factory": "0.483.0"
   },
   "devDependencies": {
     "@babel/core": "7.21.4",

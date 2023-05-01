@@ -3,7 +3,6 @@ import { getGender } from './utilities';
 import { matchFx } from './matchFx';
 import { format } from 'date-fns';
 import { drawFx } from './drawFx';
-import { UUID } from './UUID';
 
 import {
   errorConditionConstants,
@@ -43,12 +42,12 @@ export function extractParticipants({ tournament }) {
   });
 
   Object.values(schools).forEach(groupParticipant => {
-    const result = tournamentEngine.addParticipant({
+    tournamentEngine.addParticipant({
       participant: groupParticipant,
     });
   });
   Object.values(clubs).forEach(groupParticipant => {
-    const result = tournamentEngine.addParticipant({
+    tournamentEngine.addParticipant({
       participant: groupParticipant,
     });
   });
@@ -259,14 +258,12 @@ function extractIndividualParticipants({ tournament }) {
 function isValidDate(date) {
   if (!date) return;
   try {
-    const formatted = format(new Date(date), 'yyyy-MM-dd');
+    // const formatted = format(new Date(date), 'yyyy-MM-dd');
     const dateObject = new Date(date);
-    if (
-      dateObject?.toString().trim() === errorConditionConstants.INVALID_DATE
-    ) {
-      return false;
-    }
-    return true;
+    return dateObject?.toString().trim() ===
+      errorConditionConstants.INVALID_DATE
+      ? false
+      : true;
   } catch (err) {
     return false;
   }
