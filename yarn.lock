@@ -8022,10 +8022,10 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-tods-competition-factory@0.481.0:
-  version "0.481.0"
-  resolved "https://registry.yarnpkg.com/tods-competition-factory/-/tods-competition-factory-0.481.0.tgz#462b23e725e2dcaf19c3a2f5395d06ff985743c1"
-  integrity sha512-c6oNj7wCED5+wzOw2puOrJEhelaKGDv5d1t4CKd52iDONcj/DmeuUMyAxzwUo0fY69JGENqWawlsfl3XaX2zbA==
+tods-competition-factory@0.483.0:
+  version "0.483.0"
+  resolved "https://registry.yarnpkg.com/tods-competition-factory/-/tods-competition-factory-0.483.0.tgz#0041777dc00364b859853d030d3ba8fc085ee01b"
+  integrity sha512-el1lc2XTzOi1RjL2vH2hNBFChlubxxw7lHUOiPhsQX5y6u8IzkvU8n5ZY7nC21jRkNwmcHl0N0vTgiaf5pFJZw==
 
 tough-cookie@^2.3.3, tough-cookie@~2.5.0:
   version "2.5.0"
