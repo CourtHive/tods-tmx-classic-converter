@@ -1,6 +1,6 @@
 import { getPositionAssignmentHashes } from './getPositionAssignmentHashes';
 import { extractMatchUp } from './extractMatchUp';
-import { normalizeName } from 'normalize-text';
+import { normalizeName } from './normalizeName';
 import { getStage } from './utilities';
 import { matchFx } from './matchFx';
 import { drawFx } from './drawFx';

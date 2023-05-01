@@ -1,4 +1,4 @@
-import { normalizeName, normalizeDiacritics } from 'normalize-text';
+import { normalizeName } from './normalizeName';
 import { getGender } from './utilities';
 import { matchFx } from './matchFx';
 import { format } from 'date-fns';
@@ -282,7 +282,7 @@ function addOtherIds({ player, participant, organisationId }) {
       {
         organisationId,
         uniqueOrganisationName: 'HTS',
-        personId: normalizeDiacritics(player.cropin),
+        personId: player.cropin,
       },
     ];
     participant.person.personOtherIds = personOtherIds;
@@ -293,7 +293,7 @@ function addOtherIds({ player, participant, organisationId }) {
     const otherId = {
       organisationId,
       uniqueOrganisationName: 'System',
-      personId: normalizeDiacritics(player.puid),
+      personId: player.puid,
     };
     participant.person.personOtherIds.push(otherId);
   }
