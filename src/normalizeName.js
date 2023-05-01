@@ -16,7 +16,7 @@ export function normalizeName(name) {
     })
     .join(' ');
 
-  return fx.upperAfterDash(supportApostrophe(nName));
+  return upperAfterDash(supportApostrophe(nName));
 
   function supportApostrophe(name) {
     const s_name = name.split(' ');
@@ -34,5 +34,17 @@ export function normalizeName(name) {
 
   function replaceAt(s, n, t) {
     return s.substring(0, n) + t + s.substring(n + 1);
+  }
+}
+
+function upperAfterDash(name, allSegments) {
+  return name
+    .split('-')
+    .map(afterDash)
+    .join('-');
+
+  function afterDash(segment, i) {
+    let modified = segment.slice(0, 1).toUpperCase() + segment.slice(1);
+    return allSegments || i ? modified : segment;
   }
 }
