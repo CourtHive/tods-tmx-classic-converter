@@ -535,7 +535,7 @@ function addPenalties({ player, participant, tournamentStartDate }) {
         penaltyId,
         matchUpId: penalty.muid,
         penaltyType: getPenaltyType(penalty),
-        notes: penalty.penalty?.label,
+        notes: penalty.penalty,
         createdAt: new Date(penaltyTime).toISOString(),
       };
       participant.penalties.push(penaltyItem);
