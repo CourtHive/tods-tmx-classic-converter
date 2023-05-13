@@ -155,6 +155,7 @@ export function extractMatchUp({
         side.bye = bye;
         isBye = true;
       }
+
       if (participantId) {
         side.participantId = participantId;
       } else {
@@ -172,18 +173,20 @@ export function extractMatchUp({
         };
         entries.push(entry);
         const positionAssignment = { drawPosition, participantId };
-        positionAssignments.push(positionAssignment);
-        if (seed && seed <= seedLimit) {
-          const seedAssignment = {
-            seedNumber: seed,
-            seedValue: seed, // TODO: check whether there is a seed display value in TMX 1.9
-            participantId,
-          };
-          seedAssignments.push(seedAssignment);
+        if (!isAdhocEvent) {
+          positionAssignments.push(positionAssignment);
+          if (seed && seed <= seedLimit) {
+            const seedAssignment = {
+              seedNumber: seed,
+              seedValue: seed, // TODO: check whether there is a seed display value in TMX 1.9
+              participantId,
+            };
+            seedAssignments.push(seedAssignment);
+          }
         }
       } else if (bye) {
         const positionAssignment = { drawPosition, bye };
-        positionAssignments.push(positionAssignment);
+        if (!isAdhocEvent) positionAssignments.push(positionAssignment);
       }
     });
   }
@@ -215,6 +218,11 @@ export function extractMatchUp({
     matchUpId,
     score,
   };
+
+  if (isAdhocEvent) {
+    matchUp.sides = sides;
+    matchUp.roundNumber = legacyMatch.round;
+  }
 
   if (matchUpType) matchUp.matchUpType = matchUpType;
   if (winningSide) matchUp.winningSide = winningSide;

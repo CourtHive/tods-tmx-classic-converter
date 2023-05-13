@@ -30,7 +30,6 @@
   },
   "scripts": {
     "release": "np --no-tests",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "tsdx build",
     "start": "tsdx watch",
     "build": "tsdx build"
@@ -47,7 +46,7 @@
     "cli-progress": "^3.9.0",
     "d3": "5.16.0",
     "date-fns": "^2.19.0",
-    "tods-competition-factory": "^0.486.0"
+    "tods-competition-factory": "^0.493.0"
   },
   "devDependencies": {
     "@babel/core": "7.21.4",

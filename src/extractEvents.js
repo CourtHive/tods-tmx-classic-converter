@@ -124,6 +124,9 @@ export function extractEvents({ tournament, participants }) {
 
     const hasPopulatedMatchUps = structures
       .map(structure => {
+        // account for AD_HOC
+        if (structure.matchUps?.some(({ sides }) => sides))
+          return structure.matchUps.length;
         if (structure.structures) {
           return structure.structures
             .map(

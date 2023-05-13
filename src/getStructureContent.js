@@ -52,11 +52,9 @@ export function getStructureContent({
   };
 
   const result =
-    drawType === 'ROUND_ROBIN'
-      ? roundRobinStructure(props)
-      : drawType === 'COMPASS'
-      ? getCompassComponents(props)
-      : eliminationStructure(props);
+    (drawType === 'ROUND_ROBIN' && roundRobinStructure(props)) ||
+    (drawType === 'COMPASS' && getCompassComponents(props)) ||
+    eliminationStructure(props);
 
   return result;
 }
@@ -210,11 +208,12 @@ function eliminationStructure({
   const structureContent = {
     entries,
     matchUps,
-    seedLimit,
     seedAssignments,
     positionAssignments,
     finishingPosition: ROUND_OUTCOME,
   };
+
+  if (!isAdhocEvent) structureContent.seedLimit = seedLimit;
 
   if (direction) {
     const structureName = normalizeName(direction);
@@ -439,9 +438,13 @@ function processLegacyMatch({
   );
   matchUpEntries?.forEach(entry => entries.push(entry));
 
-  Object.assign(matchUp, { roundName, roundNumber, roundPosition });
-  if (tieMatchUps.length) {
-    Object.assign(matchUp, { tieMatchUps });
+  if (isAdhocEvent) {
+    Object.assign(matchUp, { roundName });
+  } else {
+    Object.assign(matchUp, { roundName, roundNumber, roundPosition });
+    if (tieMatchUps.length) {
+      Object.assign(matchUp, { tieMatchUps });
+    }
   }
 
   return { matchUp, positionAssignments };
