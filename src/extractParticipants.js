@@ -74,9 +74,15 @@ function extractTeamParticipants({ tournament }) {
       participantId: team.id,
       participantType: participantTypes.TEAM,
       participantRole: participantRoles.COMPETITOR,
+      participantOtherName: team.abbreviation,
       individualParticipantIds,
       participantName: team.name,
+      representing: team.ioc,
     };
+    if (team.code) {
+      teamParticipant.extensions = [{ name: 'code', value: team.code }];
+    }
+
     return teamParticipant;
   });
 
