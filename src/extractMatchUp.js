@@ -260,14 +260,12 @@ function getTimeItems({ participants, legacyMatch }) {
     let timeItem = {
       itemType: 'SCHEDULE.ASSIGNMENT.VENUE',
       itemValue: schedule.luid,
-      timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
     timeItems.push(timeItem);
 
     timeItem = {
       itemType: 'SCHEDULE.ASSIGNMENT.COURT',
       itemValue: `${schedule.luid}|${parseInt(schedule.index) - 1}`,
-      timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
     timeItems.push(timeItem);
   }
@@ -276,7 +274,6 @@ function getTimeItems({ participants, legacyMatch }) {
     const timeItem = {
       itemType: 'SCHEDULE.DATE',
       itemValue: schedule.day,
-      timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
     timeItems.push(timeItem);
 
@@ -286,7 +283,6 @@ function getTimeItems({ participants, legacyMatch }) {
       const timeItem = {
         itemType: 'SCHEDULE.TIME.START',
         itemValue: new Date(startDateTime).toISOString(),
-        timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
       };
       timeItems.push(timeItem);
     }
@@ -297,7 +293,32 @@ function getTimeItems({ participants, legacyMatch }) {
       const timeItem = {
         itemType: 'SCHEDULE.TIME.END',
         itemValue: new Date(endDateTime).toISOString(),
-        timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
+      };
+      timeItems.push(timeItem);
+    }
+  }
+
+  if (schedule.oop_round && schedule.day && schedule.luid && schedule.index) {
+    const timeItem = {
+      itemType: 'SCHEDULE.COURT.ORDER',
+      itemValue: schedule.oop_round,
+    };
+    timeItems.push(timeItem);
+
+    if (schedule.heading || schedule.time_prefix) {
+      const timeModifiers = [];
+      if (schedule.heading?.includes('Followed By'))
+        timeModifiers.push('FOLLOWED_BY');
+      if (schedule.heading?.includes('Next Available'))
+        timeModifiers.push('NEXT_AVAILABLE');
+      if (schedule.time_prefix?.includes('After Rest'))
+        timeModifiers.push('AFTER_REST');
+      if (schedule.time_prefix?.includes('NB'))
+        timeModifiers.push('NOT_BEFORE');
+
+      const timeItem = {
+        itemType: 'SCHEDULE.TIME.MODIFIERS',
+        itemValue: timeModifiers,
       };
       timeItems.push(timeItem);
     }
@@ -308,7 +329,6 @@ function getTimeItems({ participants, legacyMatch }) {
     const timeItem = {
       itemType: 'SCHEDULE.TIME.SCHEDULED',
       itemValue,
-      timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
     timeItems.push(timeItem);
   }
@@ -326,7 +346,6 @@ function getTimeItems({ participants, legacyMatch }) {
     const timeItem = {
       itemType: 'SCHEDULE.ASSIGNMENT.OFFICIAL',
       itemValue,
-      timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
     if (itemValue) timeItems.push(timeItem);
   }
