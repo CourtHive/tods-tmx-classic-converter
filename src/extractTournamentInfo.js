@@ -86,13 +86,13 @@ function getLocations(tournament) {
     const courts = range(0, parseInt(location.courts)).map(index => {
       const identifiers =
         location.identifiers && location.identifiers.split(',');
-      const identifier = location.identifiers[index] || index + 1;
+      const identifier = identifiers[index] || index + 1;
       const courtName = `${venueAbbreviation} ${identifier}`;
       const courtNumber = index + 1;
       const court = {
-        courtName,
-        courtNumber,
         courtId: `${venueId}|${courtNumber}`,
+        courtNumber,
+        courtName,
       };
       return court;
     });
