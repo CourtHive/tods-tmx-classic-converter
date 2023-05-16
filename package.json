@@ -46,7 +46,7 @@
     "cli-progress": "^3.9.0",
     "d3": "5.16.0",
     "date-fns": "^2.19.0",
-    "tods-competition-factory": "^0.494.0"
+    "tods-competition-factory": "^0.496.0"
   },
   "devDependencies": {
     "@babel/core": "7.21.8",

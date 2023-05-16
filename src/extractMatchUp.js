@@ -256,7 +256,7 @@ function getTimeItems({ participants, legacyMatch }) {
   const schedule = legacyMatch.match?.schedule || legacyMatch.schedule || {};
   const umpire = legacyMatch.match?.umpire || legacyMatch.umpire;
 
-  if (schedule.luid && schedule.index) {
+  if (schedule.luid && schedule.index >= 0) {
     let timeItem = {
       itemType: 'SCHEDULE.ASSIGNMENT.VENUE',
       itemValue: schedule.luid,
@@ -265,7 +265,7 @@ function getTimeItems({ participants, legacyMatch }) {
 
     timeItem = {
       itemType: 'SCHEDULE.ASSIGNMENT.COURT',
-      itemValue: `${schedule.luid}|${parseInt(schedule.index) - 1}`,
+      itemValue: `${schedule.luid}|${parseInt(schedule.index)}`,
     };
     timeItems.push(timeItem);
   }
@@ -298,7 +298,12 @@ function getTimeItems({ participants, legacyMatch }) {
     }
   }
 
-  if (schedule.oop_round && schedule.day && schedule.luid && schedule.index) {
+  if (
+    schedule.oop_round &&
+    schedule.day &&
+    schedule.luid &&
+    schedule.index >= 0
+  ) {
     const timeItem = {
       itemType: 'SCHEDULE.COURT.ORDER',
       itemValue: schedule.oop_round,
