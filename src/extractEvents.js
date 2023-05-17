@@ -1,13 +1,13 @@
+import { convertTieFormat } from './convertTieFormat';
+import { extractStructures } from './extractStructures';
+import { matchFormatCode } from './matchFormatCode';
+import { scoreFormat } from './scoreFormat';
 import {
   getGender,
   getIndoorOutdoor,
   getMatchUpType,
   getSurface,
 } from './utilities';
-import { convertTieFormat } from './convertTieFormat';
-import { extractStructures } from './extractStructures';
-import { matchFormatCode } from './matchFormatCode';
-import { scoreFormat } from './scoreFormat';
 import {
   tournamentEngine,
   factoryConstants,
@@ -156,6 +156,8 @@ export function extractEvents({ tournament, participants }) {
       entries,
       links,
     };
+
+    drawEngine.addGoesTo({ drawDefinition });
 
     if (tieFormat) {
       drawDefinition.tieFormat = tieFormat;
