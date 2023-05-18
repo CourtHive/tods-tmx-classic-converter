@@ -144,8 +144,7 @@ export function extractEvents({ tournament, participants }) {
       .reduce((a, b) => a + b, 0);
 
     const drawDefinition = {
-      // entries for a drawDefinition needs to be aggregated from structures
-      drawId: utilities.UUID(),
+      // drawId will be assigned after allocation to events
       drawName:
         custom_category ||
         broadcast_name ||
@@ -234,7 +233,9 @@ export function extractEvents({ tournament, participants }) {
 
   const events = Object.values(eventCategories);
   events?.forEach(event => {
-    event.drawDefinitions?.forEach(drawDefinition => {
+    const eventId = event.eventId;
+    event.drawDefinitions?.forEach((drawDefinition, i) => {
+      drawDefinition.drawId = `${eventId}-${i + 1}`;
       drawDefinition.entries?.forEach(entry => {
         event.eventEntriesAccumulator[entry.participantId] = entry;
       });
