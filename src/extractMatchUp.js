@@ -87,20 +87,6 @@ export function extractMatchUp({
   const winner = [0, 1].includes(parseInt(winner_index));
   let winningSide = (winner && winner_index + 1) || undefined;
 
-  const matchUpStatus =
-    (live && matchUpStatusConstants.IN_PROGRESS) ||
-    (interrupted && matchUpStatusConstants.SUSPENDED) ||
-    (incomplete && matchUpStatusConstants.INCOMPLETE) ||
-    (walkover && matchUpStatusConstants.WALKOVER) ||
-    (cancelled && matchUpStatusConstants.NOT_PLAYED) ||
-    (abandoned && matchUpStatusConstants.ABANDONED) ||
-    (defaulted && matchUpStatusConstants.DEFAULTED) ||
-    (retired && matchUpStatusConstants.RETIRED) ||
-    (isBye && matchUpStatusConstants.BYE) ||
-    (winningSide && matchUpStatusConstants.COMPLETED) ||
-    (time && matchUpStatusConstants.COMPLETED) ||
-    (!winningSide && matchUpStatusConstants.TO_BE_PLAYED);
-
   let isBye = false;
   if (Array.isArray(legacyMatch.teams)) {
     legacyMatch.teams?.forEach((team, index) => {
@@ -223,6 +209,20 @@ export function extractMatchUp({
     matchUp.sides = sides;
     matchUp.roundNumber = legacyMatch.round;
   }
+
+  const matchUpStatus =
+    (live && matchUpStatusConstants.IN_PROGRESS) ||
+    (interrupted && matchUpStatusConstants.SUSPENDED) ||
+    (incomplete && matchUpStatusConstants.INCOMPLETE) ||
+    (walkover && matchUpStatusConstants.WALKOVER) ||
+    (cancelled && matchUpStatusConstants.NOT_PLAYED) ||
+    (abandoned && matchUpStatusConstants.ABANDONED) ||
+    (defaulted && matchUpStatusConstants.DEFAULTED) ||
+    (retired && matchUpStatusConstants.RETIRED) ||
+    (isBye && matchUpStatusConstants.BYE) ||
+    (winningSide && matchUpStatusConstants.COMPLETED) ||
+    (time && matchUpStatusConstants.COMPLETED) ||
+    (!winningSide && matchUpStatusConstants.TO_BE_PLAYED);
 
   if (matchUpType) matchUp.matchUpType = matchUpType;
   if (winningSide) matchUp.winningSide = winningSide;
