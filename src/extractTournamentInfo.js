@@ -104,7 +104,7 @@ function getLocations(tournament) {
       addresses: [
         {
           addressType: 'VENUE',
-          latitude: location.latitide,
+          latitude: location.latitude,
           longitude: location.longitude,
           addressLine1: location.address,
         },
