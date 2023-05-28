@@ -57,6 +57,12 @@ export function extractMatchUp({
   const defaulted = scoreString.indexOf('DEF') >= 0;
   const retired = scoreString.indexOf('RET') > 0;
   [
+    'INT.',
+    'INC.',
+    'CCL.',
+    'ABD.',
+    'DEF.',
+    'RET.',
     'TIME',
     'LIVE',
     'INT',
@@ -66,12 +72,6 @@ export function extractMatchUp({
     'ABD',
     'DEF',
     'RET',
-    'INT.',
-    'INC.',
-    'CCL.',
-    'ABD.',
-    'DEF.',
-    'RET.',
   ]?.forEach(
     stringStatus =>
       (scoreString = (scoreString || '')
