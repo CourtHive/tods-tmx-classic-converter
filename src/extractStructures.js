@@ -8,23 +8,29 @@ import {
   tournamentEngine,
 } from 'tods-competition-factory';
 
-const { DRAW, MAIN, QUALIFYING, WINNER } = drawDefinitionConstants;
+const {
+  CONSOLATION,
+  DRAW,
+  MAIN,
+  QUALIFYING,
+  WINNER,
+  LOSER,
+} = drawDefinitionConstants;
 
 export function extractStructures({
-  eventType,
-
-  tieFormat,
-  tournament,
-  participants,
-  legacyEvents,
-  matchUpFormat,
   mainStructureId,
+  matchUpFormat,
+  legacyEvents,
+  participants,
+  tournament,
+  eventType,
+  tieFormat,
 }) {
-  const links = [];
-  const drawStructures = [];
-  const entriesAccumulator = {};
   const eventEntriesAccumulator = {};
   const missingParticipants = [];
+  const entriesAccumulator = {};
+  const drawStructures = [];
+  const links = [];
 
   legacyEvents?.forEach(legacyEvent => {
     legacyEvent.approved?.forEach(id => {
@@ -159,6 +165,9 @@ export function extractStructures({
   });
 
   if (links.length < drawStructures.length - 1) {
+    const consolationStructure = drawStructures.find(
+      ({ stage }) => stage === CONSOLATION
+    );
     const qualifyingStructure = drawStructures.find(
       ({ stage }) => stage === QUALIFYING
     );
@@ -193,6 +202,22 @@ export function extractStructures({
         };
         links.push(link);
       }
+    }
+
+    if (consolationStructure && mainStructure) {
+      const link = {
+        linkType: LOSER,
+        source: {
+          structureId: mainStructure.structureId,
+          roundNumber: 1,
+        },
+        target: {
+          structureId: consolationStructure.structureId,
+          feedProfile: DRAW,
+          roundNumber: 1,
+        },
+      };
+      links.push(link);
     }
   }
 
