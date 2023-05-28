@@ -205,6 +205,7 @@ export function extractStructures({
     }
 
     if (consolationStructure && mainStructure) {
+      consolationStructure.structureName += ' Consolation';
       const link = {
         linkType: LOSER,
         source: {
