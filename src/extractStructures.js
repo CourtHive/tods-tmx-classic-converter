@@ -176,6 +176,8 @@ export function extractStructures({
         0
       );
 
+      qualifyingStructure.structureName += ' Qualifying';
+
       if (roundNumber) {
         const link = {
           linkType: WINNER,
