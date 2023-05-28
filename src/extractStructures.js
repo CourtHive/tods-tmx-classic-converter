@@ -8,6 +8,8 @@ import {
   tournamentEngine,
 } from 'tods-competition-factory';
 
+const { DRAW, MAIN, QUALIFYING, WINNER } = drawDefinitionConstants;
+
 export function extractStructures({
   eventType,
 
@@ -29,7 +31,7 @@ export function extractStructures({
       if (!Array.isArray(id)) {
         const entry = {
           entryStatus: entryStatusConstants.DIRECT_ACCEPTANCE,
-          entryStage: drawDefinitionConstants.MAIN,
+          entryStage: MAIN,
           participantId: id,
         };
         eventEntriesAccumulator[entry.participantId] = entry;
@@ -155,6 +157,42 @@ export function extractStructures({
   drawEntries.forEach(entry => {
     eventEntriesAccumulator[entry.participantId] = entry;
   });
+
+  if (links.length < drawStructures.length - 1) {
+    const qualifyingStructure = drawStructures.find(
+      ({ stage }) => stage === QUALIFYING
+    );
+    const mainStructure = drawStructures.find(
+      ({ stage, stageSequence }) => stage === MAIN && stageSequence === 1
+    );
+
+    if (qualifyingStructure && mainStructure) {
+      const roundNumber = qualifyingStructure.matchUps?.reduce(
+        (roundNumber, matchUp) => {
+          return matchUp.roundNumber > roundNumber
+            ? matchUp.roundNumber
+            : roundNumber;
+        },
+        0
+      );
+
+      if (roundNumber) {
+        const link = {
+          linkType: WINNER,
+          source: {
+            structureId: qualifyingStructure.structureId,
+            roundNumber: 2,
+          },
+          target: {
+            feedProfile: DRAW,
+            structureId: mainStructure.structureId,
+            roundNumber: 1,
+          },
+        };
+        links.push(link);
+      }
+    }
+  }
 
   return {
     structures: drawStructures,
