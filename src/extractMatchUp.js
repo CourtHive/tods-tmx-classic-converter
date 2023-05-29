@@ -95,8 +95,8 @@ export function extractMatchUp({
       let participantId;
       const individualParticipantIds = team.map(getId).filter(Boolean);
 
-      const player1 = team && team[0] && typeof team[0] === 'object' && team[0];
-      const player2 = team && team[1] && typeof team[1] === 'object' && team[1];
+      const player1 = team?.[0] && typeof team[0] === 'object' && team[0];
+      const player2 = team?.[1] && typeof team[1] === 'object' && team[1];
       let drawPosition =
         (drawPositionHashMap &&
           (drawPositionHashMap[player1?.id] ||
