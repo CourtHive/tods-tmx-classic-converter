@@ -30,12 +30,10 @@ export function extractTournamentInfo({ tournament, file }) {
     endDate:
       tournament.end &&
       new Date(format(new Date(tournament.end), 'yyyy-MM-dd')).toISOString(),
-    parentOrganisationId: organisationId,
-    unifiedTournamentId: {
-      tournamentId,
-      organisationId,
-      organisationName: tournament.org?.name,
+    parentOrganisation: {
       organisationAbbreviation: tournament.org?.abbr,
+      organisationName: tournament.org?.name,
+      organisationId,
     },
   };
   if (venues) tournamentInfo.venues = venues;
@@ -43,6 +41,17 @@ export function extractTournamentInfo({ tournament, file }) {
   if (indoorOutdoor) tournamentInfo.indoorOutdoor = indoorOutdoor;
   if (onlineResources) tournamentInfo.onlineResources = onlineResources;
   if (surfaceCategory) tournamentInfo.surfaceCategory = surfaceCategory;
+  if (tournament.latitude && tournament.longitude) {
+    tournamentInfo.extensions = [
+      {
+        name: 'TOURNAMENT_LOCATION',
+        value: {
+          latitude: tournament.latitude,
+          longitude: tournament.longitude,
+        },
+      },
+    ];
+  }
 
   const organisationParticipants = [
     getRefereeParticipant(tournament.judge),
@@ -58,18 +67,18 @@ function getOnlineResources(tournament) {
   const onlineResources = Object.keys(social).map(provider => {
     const identifier = social[provider];
     const onlineResource = {
-      provider,
-      identifier,
       type: 'SOCIAL_MEDIA',
+      identifier,
+      provider,
     };
     return onlineResource;
   });
 
   sponsorImages?.forEach(identifier => {
     const onlineResource = {
-      identifier,
       type: 'SPONSOR',
       subType: 'LOGO',
+      identifier,
     };
     onlineResources.push(onlineResource);
   });
