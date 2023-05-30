@@ -124,7 +124,6 @@ export function extractStructures({
         structureName: legacyEvent.name,
       };
       if (drawType === 'AD_HOC') {
-        console.log({ drawType });
         structure.finishingPosition = undefined;
       }
       if (structures) structure.structures = structures;
@@ -205,6 +204,20 @@ export function extractStructures({
           },
         };
         links.push(link);
+      } else if (qualifyingStructure.finishingPosition === 'WIN_RATIO') {
+        const link = {
+          linkType: WINNER,
+          source: {
+            structureId: qualifyingStructure.structureId,
+            finishingPositions: [1],
+          },
+          target: {
+            feedProfile: DRAW,
+            structureId: mainStructure.structureId,
+            roundNumber: 1,
+          },
+        };
+        links.push(link);
       }
     }
 
@@ -231,6 +244,7 @@ export function extractStructures({
     eventEntriesAccumulator,
     missingParticipants,
     drawEntries,
+    drawTypes,
     links,
   };
 }

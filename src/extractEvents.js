@@ -157,9 +157,9 @@ export function extractEvents({ tournament, participants }) {
       links,
     };
 
-    if (drawTypes.length === 1) {
+    if (drawTypes?.length === 1) {
       drawDefinition.drawType = drawTypes[0];
-    } else if (drawTypes.length === 2) {
+    } else if (drawTypes?.length === 2) {
       if (drawDefinition.structures[0].stage === 'QUALIFYING') {
         drawDefinition.drawType = drawTypes[1];
       } else if (drawDefinition.structures[1].stage === 'CONSOLATION') {
