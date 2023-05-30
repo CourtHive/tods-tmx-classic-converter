@@ -250,35 +250,37 @@ export function extractEvents({ tournament, participants }) {
       drawDefinition.entries?.forEach(entry => {
         event.eventEntriesAccumulator[entry.participantId] = entry;
       });
+      const { matchUps } = drawEngine.setState(drawDefinition).allDrawMatchUps({
+        tournamentParticipants: participants,
+      });
       drawDefinition.structures?.forEach(structure => {
         if (structure.structureType === 'CONTAINER') {
-          const positionAssignments = structure.structures
-            .map(({ positionAssignments }) => positionAssignments)
-            .flat();
-          const { matchUps } = drawEngine
-            .setState(drawDefinition)
-            .allStructureMatchUps({
-              tournamentParticipants: participants,
-              structureId: structure.structureId,
+          structure.structures.forEach(childStructure => {
+            const positionAssignments = childStructure.positionAssignments;
+            const childMatchUps = matchUps.filter(
+              m => m.structureId === childStructure.structureId
+            );
+            const {
+              participantResults,
+            } = matchUpEngine.tallyParticipantResults({
+              matchUpFormat: structure.matchUpFormat,
+              matchUps: childMatchUps,
             });
-
-          const { participantResults } = matchUpEngine.tallyParticipantResults({
-            matchUps,
+            const resultsParticipantIds = Object.keys(participantResults || {});
+            if (resultsParticipantIds?.length) {
+              positionAssignments?.forEach(assignment => {
+                const { participantId } = assignment;
+                if (resultsParticipantIds?.includes(participantId)) {
+                  assignment.extensions = [
+                    {
+                      value: participantResults[participantId],
+                      name: 'tally',
+                    },
+                  ];
+                }
+              });
+            }
           });
-          const resultsParticipantIds = Object.keys(participantResults || {});
-          if (resultsParticipantIds?.length) {
-            positionAssignments?.forEach(assignment => {
-              const { participantId } = assignment;
-              if (resultsParticipantIds?.includes(participantId)) {
-                assignment.extensions = [
-                  {
-                    name: 'tally',
-                    value: participantResults[participantId],
-                  },
-                ];
-              }
-            });
-          }
         }
       });
     });
