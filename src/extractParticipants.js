@@ -158,14 +158,21 @@ function extractIndividualParticipants({ tournament }) {
     return country?.iso || ioc;
   }
 
+  function getPlayerBirth(birth) {
+    if (!isValidDate(birth)) return undefined;
+    try {
+      return format(new Date(player.birth), 'yyyy-MM-dd');
+    } catch (err) {
+      return undefined;
+    }
+  }
+
   function addParticipant(player) {
     const participantId = getId(player);
     const standardFamilyName = getName(player.last_name);
     const standardGivenName = getName(player.first_name);
     const participantName = `${standardFamilyName.toUpperCase()}, ${standardGivenName}`;
-    const birthDate = isValidDate(player.birth)
-      ? format(new Date(player.birth), 'yyyy-MM-dd')
-      : undefined;
+    const birthDate = getPlayerBirth(player.birth);
 
     const participant = {
       participantName,
