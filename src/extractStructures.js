@@ -30,6 +30,7 @@ export function extractStructures({
   const missingParticipants = [];
   const entriesAccumulator = {};
   const drawStructures = [];
+  const drawTypes = [];
   const links = [];
 
   legacyEvents?.forEach(legacyEvent => {
@@ -75,7 +76,9 @@ export function extractStructures({
       (legacyEvent.draw_type === 'A' && 'AD_HOC') ||
       (legacyEvent?.draw?.brackets && 'ROUND_ROBIN') ||
       (legacyEvent?.draw?.compass && 'COMPASS') ||
-      'ELIMINATION';
+      'SINGLE_ELIMINATION';
+
+    drawTypes.push(drawType);
 
     const stage =
       legacyEvent.euid === mainStructureId
@@ -87,7 +90,7 @@ export function extractStructures({
       legacyEvent.matchFormat ||
       (format && matchFormatCode.stringify(scoreFormat.jsonTODS(format)));
 
-    if (['AD_HOC', 'ELIMINATION', 'ROUND_ROBIN'].includes(drawType)) {
+    if (['AD_HOC', 'SINGLE_ELIMINATION', 'ROUND_ROBIN'].includes(drawType)) {
       const {
         entries,
         matchUps,
@@ -121,6 +124,7 @@ export function extractStructures({
         structureName: legacyEvent.name,
       };
       if (drawType === 'AD_HOC') {
+        console.log({ drawType });
         structure.finishingPosition = undefined;
       }
       if (structures) structure.structures = structures;

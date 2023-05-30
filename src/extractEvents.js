@@ -108,6 +108,7 @@ export function extractEvents({ tournament, participants }) {
       drawEntries: entries,
       missingParticipants,
       structures,
+      drawTypes,
       links,
     } = extractStructures({
       eventType,
@@ -155,6 +156,16 @@ export function extractEvents({ tournament, participants }) {
       entries,
       links,
     };
+
+    if (drawTypes.length === 1) {
+      drawDefinition.drawType = drawTypes[0];
+    } else if (drawTypes.length === 2) {
+      if (drawDefinition.structures[0].stage === 'QUALIFYING') {
+        drawDefinition.drawType = drawTypes[1];
+      } else if (drawDefinition.structures[1].stage === 'CONSOLATION') {
+        drawDefinition.drawType = 'FIRST_ROUND_LOSER_CONSOLATION';
+      }
+    }
 
     drawEngine.addGoesTo({ drawDefinition });
 
