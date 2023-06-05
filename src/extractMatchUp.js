@@ -57,6 +57,12 @@ export function extractMatchUp({
   const defaulted = scoreString.indexOf('DEF') >= 0;
   const retired = scoreString.indexOf('RET') > 0;
   [
+    'INT.',
+    'INC.',
+    'CCL.',
+    'ABD.',
+    'DEF.',
+    'RET.',
     'TIME',
     'LIVE',
     'INT',
@@ -66,12 +72,6 @@ export function extractMatchUp({
     'ABD',
     'DEF',
     'RET',
-    'INT.',
-    'INC.',
-    'CCL.',
-    'ABD.',
-    'DEF.',
-    'RET.',
   ]?.forEach(
     stringStatus =>
       (scoreString = (scoreString || '')
@@ -87,20 +87,6 @@ export function extractMatchUp({
   const winner = [0, 1].includes(parseInt(winner_index));
   let winningSide = (winner && winner_index + 1) || undefined;
 
-  const matchUpStatus =
-    (live && matchUpStatusConstants.IN_PROGRESS) ||
-    (interrupted && matchUpStatusConstants.SUSPENDED) ||
-    (incomplete && matchUpStatusConstants.INCOMPLETE) ||
-    (walkover && matchUpStatusConstants.WALKOVER) ||
-    (cancelled && matchUpStatusConstants.NOT_PLAYED) ||
-    (abandoned && matchUpStatusConstants.ABANDONED) ||
-    (defaulted && matchUpStatusConstants.DEFAULTED) ||
-    (retired && matchUpStatusConstants.RETIRED) ||
-    (isBye && matchUpStatusConstants.BYE) ||
-    (winningSide && matchUpStatusConstants.COMPLETED) ||
-    (time && matchUpStatusConstants.COMPLETED) ||
-    (!winningSide && matchUpStatusConstants.TO_BE_PLAYED);
-
   let isBye = false;
   if (Array.isArray(legacyMatch.teams)) {
     legacyMatch.teams?.forEach((team, index) => {
@@ -109,8 +95,8 @@ export function extractMatchUp({
       let participantId;
       const individualParticipantIds = team.map(getId).filter(Boolean);
 
-      const player1 = team && team[0] && typeof team[0] === 'object' && team[0];
-      const player2 = team && team[1] && typeof team[1] === 'object' && team[1];
+      const player1 = team?.[0] && typeof team[0] === 'object' && team[0];
+      const player2 = team?.[1] && typeof team[1] === 'object' && team[1];
       let drawPosition =
         (drawPositionHashMap &&
           (drawPositionHashMap[player1?.id] ||
@@ -155,6 +141,7 @@ export function extractMatchUp({
         side.bye = bye;
         isBye = true;
       }
+
       if (participantId) {
         side.participantId = participantId;
       } else {
@@ -172,18 +159,20 @@ export function extractMatchUp({
         };
         entries.push(entry);
         const positionAssignment = { drawPosition, participantId };
-        positionAssignments.push(positionAssignment);
-        if (seed && seed <= seedLimit) {
-          const seedAssignment = {
-            seedNumber: seed,
-            seedValue: seed, // TODO: check whether there is a seed display value in TMX 1.9
-            participantId,
-          };
-          seedAssignments.push(seedAssignment);
+        if (!isAdhocEvent) {
+          positionAssignments.push(positionAssignment);
+          if (seed && seed <= seedLimit) {
+            const seedAssignment = {
+              seedNumber: seed,
+              seedValue: seed, // TODO: check whether there is a seed display value in TMX 1.9
+              participantId,
+            };
+            seedAssignments.push(seedAssignment);
+          }
         }
       } else if (bye) {
         const positionAssignment = { drawPosition, bye };
-        positionAssignments.push(positionAssignment);
+        if (!isAdhocEvent) positionAssignments.push(positionAssignment);
       }
     });
   }
@@ -215,6 +204,25 @@ export function extractMatchUp({
     matchUpId,
     score,
   };
+
+  if (isAdhocEvent) {
+    matchUp.sides = sides;
+    matchUp.roundNumber = legacyMatch.round;
+  }
+
+  const matchUpStatus =
+    (live && matchUpStatusConstants.IN_PROGRESS) ||
+    (interrupted && matchUpStatusConstants.SUSPENDED) ||
+    (incomplete && matchUpStatusConstants.INCOMPLETE) ||
+    (walkover && matchUpStatusConstants.WALKOVER) ||
+    (cancelled && matchUpStatusConstants.NOT_PLAYED) ||
+    (abandoned && matchUpStatusConstants.ABANDONED) ||
+    (defaulted && matchUpStatusConstants.DEFAULTED) ||
+    (retired && matchUpStatusConstants.RETIRED) ||
+    (isBye && matchUpStatusConstants.BYE) ||
+    (winningSide && matchUpStatusConstants.COMPLETED) ||
+    (time && matchUpStatusConstants.COMPLETED) ||
+    (!winningSide && matchUpStatusConstants.TO_BE_PLAYED);
 
   if (matchUpType) matchUp.matchUpType = matchUpType;
   if (winningSide) matchUp.winningSide = winningSide;
@@ -248,18 +256,16 @@ function getTimeItems({ participants, legacyMatch }) {
   const schedule = legacyMatch.match?.schedule || legacyMatch.schedule || {};
   const umpire = legacyMatch.match?.umpire || legacyMatch.umpire;
 
-  if (schedule.luid && schedule.index) {
+  if (schedule.luid && schedule.index >= 0) {
     let timeItem = {
       itemType: 'SCHEDULE.ASSIGNMENT.VENUE',
       itemValue: schedule.luid,
-      timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
     timeItems.push(timeItem);
 
     timeItem = {
       itemType: 'SCHEDULE.ASSIGNMENT.COURT',
-      itemValue: `${schedule.luid}|${parseInt(schedule.index) - 1}`,
-      timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
+      itemValue: `${schedule.luid}|${parseInt(schedule.index)}`,
     };
     timeItems.push(timeItem);
   }
@@ -268,7 +274,6 @@ function getTimeItems({ participants, legacyMatch }) {
     const timeItem = {
       itemType: 'SCHEDULE.DATE',
       itemValue: schedule.day,
-      timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
     timeItems.push(timeItem);
 
@@ -278,7 +283,6 @@ function getTimeItems({ participants, legacyMatch }) {
       const timeItem = {
         itemType: 'SCHEDULE.TIME.START',
         itemValue: new Date(startDateTime).toISOString(),
-        timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
       };
       timeItems.push(timeItem);
     }
@@ -289,7 +293,37 @@ function getTimeItems({ participants, legacyMatch }) {
       const timeItem = {
         itemType: 'SCHEDULE.TIME.END',
         itemValue: new Date(endDateTime).toISOString(),
-        timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
+      };
+      timeItems.push(timeItem);
+    }
+  }
+
+  if (
+    schedule.oop_round &&
+    schedule.day &&
+    schedule.luid &&
+    schedule.index >= 0
+  ) {
+    const timeItem = {
+      itemType: 'SCHEDULE.COURT.ORDER',
+      itemValue: schedule.oop_round,
+    };
+    timeItems.push(timeItem);
+
+    if (schedule.heading || schedule.time_prefix) {
+      const timeModifiers = [];
+      if (schedule.heading?.includes('Followed By'))
+        timeModifiers.push('FOLLOWED_BY');
+      if (schedule.heading?.includes('Next Available'))
+        timeModifiers.push('NEXT_AVAILABLE');
+      if (schedule.time_prefix?.includes('After Rest'))
+        timeModifiers.push('AFTER_REST');
+      if (schedule.time_prefix?.includes('NB'))
+        timeModifiers.push('NOT_BEFORE');
+
+      const timeItem = {
+        itemType: 'SCHEDULE.TIME.MODIFIERS',
+        itemValue: timeModifiers,
       };
       timeItems.push(timeItem);
     }
@@ -300,7 +334,6 @@ function getTimeItems({ participants, legacyMatch }) {
     const timeItem = {
       itemType: 'SCHEDULE.TIME.SCHEDULED',
       itemValue,
-      timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
     timeItems.push(timeItem);
   }
@@ -318,7 +351,6 @@ function getTimeItems({ participants, legacyMatch }) {
     const timeItem = {
       itemType: 'SCHEDULE.ASSIGNMENT.OFFICIAL',
       itemValue,
-      timeStamp: new Date().toISOString(), // TODO: should be the start date of the tournament
     };
     if (itemValue) timeItems.push(timeItem);
   }

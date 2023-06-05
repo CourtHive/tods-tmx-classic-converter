@@ -1,13 +1,13 @@
+import { convertTieFormat } from './convertTieFormat';
+import { extractStructures } from './extractStructures';
+import { matchFormatCode } from './matchFormatCode';
+import { scoreFormat } from './scoreFormat';
 import {
   getGender,
   getIndoorOutdoor,
   getMatchUpType,
   getSurface,
 } from './utilities';
-import { convertTieFormat } from './convertTieFormat';
-import { extractStructures } from './extractStructures';
-import { matchFormatCode } from './matchFormatCode';
-import { scoreFormat } from './scoreFormat';
 import {
   tournamentEngine,
   factoryConstants,
@@ -108,6 +108,7 @@ export function extractEvents({ tournament, participants }) {
       drawEntries: entries,
       missingParticipants,
       structures,
+      drawTypes,
       links,
     } = extractStructures({
       eventType,
@@ -124,6 +125,9 @@ export function extractEvents({ tournament, participants }) {
 
     const hasPopulatedMatchUps = structures
       .map(structure => {
+        // account for AD_HOC
+        if (structure.matchUps?.some(({ sides }) => sides))
+          return structure.matchUps.length;
         if (structure.structures) {
           return structure.structures
             .map(
@@ -141,8 +145,7 @@ export function extractEvents({ tournament, participants }) {
       .reduce((a, b) => a + b, 0);
 
     const drawDefinition = {
-      // entries for a drawDefinition needs to be aggregated from structures
-      drawId: utilities.UUID(),
+      // drawId will be assigned after allocation to events
       drawName:
         custom_category ||
         broadcast_name ||
@@ -153,6 +156,18 @@ export function extractEvents({ tournament, participants }) {
       entries,
       links,
     };
+
+    if (drawTypes?.length === 1) {
+      drawDefinition.drawType = drawTypes[0];
+    } else if (drawTypes?.length === 2) {
+      if (drawDefinition.structures[0].stage === 'QUALIFYING') {
+        drawDefinition.drawType = drawTypes[1];
+      } else if (drawDefinition.structures[1].stage === 'CONSOLATION') {
+        drawDefinition.drawType = 'FIRST_ROUND_LOSER_CONSOLATION';
+      }
+    }
+
+    drawEngine.addGoesTo({ drawDefinition });
 
     if (tieFormat) {
       drawDefinition.tieFormat = tieFormat;
@@ -229,39 +244,43 @@ export function extractEvents({ tournament, participants }) {
 
   const events = Object.values(eventCategories);
   events?.forEach(event => {
-    event.drawDefinitions?.forEach(drawDefinition => {
+    const eventId = event.eventId;
+    event.drawDefinitions?.forEach((drawDefinition, i) => {
+      drawDefinition.drawId = `${eventId}-${i + 1}`;
       drawDefinition.entries?.forEach(entry => {
         event.eventEntriesAccumulator[entry.participantId] = entry;
       });
+      const { matchUps } = drawEngine.setState(drawDefinition).allDrawMatchUps({
+        tournamentParticipants: participants,
+      });
       drawDefinition.structures?.forEach(structure => {
         if (structure.structureType === 'CONTAINER') {
-          const positionAssignments = structure.structures
-            .map(({ positionAssignments }) => positionAssignments)
-            .flat();
-          const { matchUps } = drawEngine
-            .setState(drawDefinition)
-            .allStructureMatchUps({
-              tournamentParticipants: participants,
-              structureId: structure.structureId,
+          structure.structures.forEach(childStructure => {
+            const positionAssignments = childStructure.positionAssignments;
+            const childMatchUps = matchUps.filter(
+              m => m.structureId === childStructure.structureId
+            );
+            const {
+              participantResults,
+            } = matchUpEngine.tallyParticipantResults({
+              matchUpFormat: structure.matchUpFormat,
+              matchUps: childMatchUps,
             });
-
-          const { participantResults } = matchUpEngine.tallyParticipantResults({
-            matchUps,
+            const resultsParticipantIds = Object.keys(participantResults || {});
+            if (resultsParticipantIds?.length) {
+              positionAssignments?.forEach(assignment => {
+                const { participantId } = assignment;
+                if (resultsParticipantIds?.includes(participantId)) {
+                  assignment.extensions = [
+                    {
+                      value: participantResults[participantId],
+                      name: 'tally',
+                    },
+                  ];
+                }
+              });
+            }
           });
-          const resultsParticipantIds = Object.keys(participantResults || {});
-          if (resultsParticipantIds?.length) {
-            positionAssignments?.forEach(assignment => {
-              const { participantId } = assignment;
-              if (resultsParticipantIds?.includes(participantId)) {
-                assignment.extensions = [
-                  {
-                    name: 'tally',
-                    value: participantResults[participantId],
-                  },
-                ];
-              }
-            });
-          }
         }
       });
     });

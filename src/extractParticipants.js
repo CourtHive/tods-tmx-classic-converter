@@ -1,9 +1,8 @@
-import { normalizeName, normalizeDiacritics } from 'normalize-text';
+import { normalizeName } from './normalizeName';
 import { getGender } from './utilities';
 import { matchFx } from './matchFx';
 import { format } from 'date-fns';
 import { drawFx } from './drawFx';
-import { UUID } from './UUID';
 
 import {
   errorConditionConstants,
@@ -43,12 +42,12 @@ export function extractParticipants({ tournament }) {
   });
 
   Object.values(schools).forEach(groupParticipant => {
-    const result = tournamentEngine.addParticipant({
+    tournamentEngine.addParticipant({
       participant: groupParticipant,
     });
   });
   Object.values(clubs).forEach(groupParticipant => {
-    const result = tournamentEngine.addParticipant({
+    tournamentEngine.addParticipant({
       participant: groupParticipant,
     });
   });
@@ -75,9 +74,15 @@ function extractTeamParticipants({ tournament }) {
       participantId: team.id,
       participantType: participantTypes.TEAM,
       participantRole: participantRoles.COMPETITOR,
+      participantOtherName: team.abbreviation,
       individualParticipantIds,
       participantName: team.name,
+      representing: team.ioc,
     };
+    if (team.code) {
+      teamParticipant.extensions = [{ name: 'code', value: team.code }];
+    }
+
     return teamParticipant;
   });
 
@@ -153,14 +158,21 @@ function extractIndividualParticipants({ tournament }) {
     return country?.iso || ioc;
   }
 
+  function getPlayerBirth(birth) {
+    if (!isValidDate(birth)) return undefined;
+    try {
+      return format(new Date(player.birth), 'yyyy-MM-dd');
+    } catch (err) {
+      return undefined;
+    }
+  }
+
   function addParticipant(player) {
     const participantId = getId(player);
     const standardFamilyName = getName(player.last_name);
     const standardGivenName = getName(player.first_name);
     const participantName = `${standardFamilyName.toUpperCase()}, ${standardGivenName}`;
-    const birthDate = isValidDate(player.birth)
-      ? format(new Date(player.birth), 'yyyy-MM-dd')
-      : undefined;
+    const birthDate = getPlayerBirth(player.birth);
 
     const participant = {
       participantName,
@@ -198,11 +210,11 @@ function extractIndividualParticipants({ tournament }) {
       individualParticipantIds.push(participantId);
     }
 
-    const { club, club_code, school } = player;
-    if (club_code) {
+    const { club, club_code, club_name, school } = player;
+    if (club_code && !club_name) {
       if (!clubs[club_code])
         clubs[club_code] = {
-          extensions: [{ name: 'clubId', value: club }],
+          extensions: [{ name: 'clubId', value: club_code }],
           participantType: participantTypes.GROUP,
           participantRole: participantRoles.OTHER,
           participantRoleResponsibilities: ['CLUB'],
@@ -216,6 +228,30 @@ function extractIndividualParticipants({ tournament }) {
         )
       ) {
         clubs[club_code].individualParticipantIds.push(
+          participant.participantId
+        );
+      }
+    }
+    if (club_name) {
+      if (!clubs[club_name]) {
+        clubs[club_name] = {
+          participantType: participantTypes.GROUP,
+          participantRole: participantRoles.OTHER,
+          participantRoleResponsibilities: ['CLUB'],
+          participantId: utilities.UUID(),
+          individualParticipantIds: [],
+          participantName: club_name,
+        };
+      }
+      if (club_code) {
+        clubs[club_name].extensions = [{ name: 'clubId', value: club_code }];
+      }
+      if (
+        !clubs[club_name].individualParticipantIds.includes(
+          participant.participantId
+        )
+      ) {
+        clubs[club_name].individualParticipantIds.push(
           participant.participantId
         );
       }
@@ -259,14 +295,12 @@ function extractIndividualParticipants({ tournament }) {
 function isValidDate(date) {
   if (!date) return;
   try {
-    const formatted = format(new Date(date), 'yyyy-MM-dd');
+    // const formatted = format(new Date(date), 'yyyy-MM-dd');
     const dateObject = new Date(date);
-    if (
-      dateObject?.toString().trim() === errorConditionConstants.INVALID_DATE
-    ) {
-      return false;
-    }
-    return true;
+    return dateObject?.toString().trim() ===
+      errorConditionConstants.INVALID_DATE
+      ? false
+      : true;
   } catch (err) {
     return false;
   }
@@ -285,7 +319,7 @@ function addOtherIds({ player, participant, organisationId }) {
       {
         organisationId,
         uniqueOrganisationName: 'HTS',
-        personId: normalizeDiacritics(player.cropin),
+        personId: player.cropin,
       },
     ];
     participant.person.personOtherIds = personOtherIds;
@@ -296,7 +330,7 @@ function addOtherIds({ player, participant, organisationId }) {
     const otherId = {
       organisationId,
       uniqueOrganisationName: 'System',
-      personId: normalizeDiacritics(player.puid),
+      personId: player.puid,
     };
     participant.person.personOtherIds.push(otherId);
   }
@@ -514,7 +548,7 @@ function addPenalties({ player, participant, tournamentStartDate }) {
         penaltyId,
         matchUpId: penalty.muid,
         penaltyType: getPenaltyType(penalty),
-        notes: penalty.penalty?.label,
+        notes: penalty.penalty,
         createdAt: new Date(penaltyTime).toISOString(),
       };
       participant.penalties.push(penaltyItem);

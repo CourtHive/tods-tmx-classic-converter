@@ -8,28 +8,37 @@ import {
   tournamentEngine,
 } from 'tods-competition-factory';
 
-export function extractStructures({
-  eventType,
+const {
+  CONSOLATION,
+  DRAW,
+  MAIN,
+  QUALIFYING,
+  WINNER,
+  LOSER,
+} = drawDefinitionConstants;
 
-  tieFormat,
-  tournament,
-  participants,
-  legacyEvents,
-  matchUpFormat,
+export function extractStructures({
   mainStructureId,
+  matchUpFormat,
+  legacyEvents,
+  participants,
+  tournament,
+  eventType,
+  tieFormat,
 }) {
-  const links = [];
-  const drawStructures = [];
-  const entriesAccumulator = {};
   const eventEntriesAccumulator = {};
   const missingParticipants = [];
+  const entriesAccumulator = {};
+  const drawStructures = [];
+  const drawTypes = [];
+  const links = [];
 
   legacyEvents?.forEach(legacyEvent => {
     legacyEvent.approved?.forEach(id => {
       if (!Array.isArray(id)) {
         const entry = {
           entryStatus: entryStatusConstants.DIRECT_ACCEPTANCE,
-          entryStage: drawDefinitionConstants.MAIN,
+          entryStage: MAIN,
           participantId: id,
         };
         eventEntriesAccumulator[entry.participantId] = entry;
@@ -63,11 +72,13 @@ export function extractStructures({
       }
     });
 
-    const drawType = legacyEvent?.draw?.brackets
-      ? 'ROUND_ROBIN'
-      : legacyEvent?.draw?.compass
-      ? 'COMPASS'
-      : 'ELIMINATION';
+    const drawType =
+      (legacyEvent.draw_type === 'A' && 'AD_HOC') ||
+      (legacyEvent?.draw?.brackets && 'ROUND_ROBIN') ||
+      (legacyEvent?.draw?.compass && 'COMPASS') ||
+      'SINGLE_ELIMINATION';
+
+    drawTypes.push(drawType);
 
     const stage =
       legacyEvent.euid === mainStructureId
@@ -79,7 +90,7 @@ export function extractStructures({
       legacyEvent.matchFormat ||
       (format && matchFormatCode.stringify(scoreFormat.jsonTODS(format)));
 
-    if (['ELIMINATION', 'ROUND_ROBIN'].includes(drawType)) {
+    if (['AD_HOC', 'SINGLE_ELIMINATION', 'ROUND_ROBIN'].includes(drawType)) {
       const {
         entries,
         matchUps,
@@ -112,6 +123,9 @@ export function extractStructures({
         structureId: legacyEvent.euid,
         structureName: legacyEvent.name,
       };
+      if (drawType === 'AD_HOC') {
+        structure.finishingPosition = undefined;
+      }
       if (structures) structure.structures = structures;
       if (structureType) structure.structureType = structureType;
 
@@ -153,11 +167,84 @@ export function extractStructures({
     eventEntriesAccumulator[entry.participantId] = entry;
   });
 
+  if (links.length < drawStructures.length - 1) {
+    const consolationStructure = drawStructures.find(
+      ({ stage }) => stage === CONSOLATION
+    );
+    const qualifyingStructure = drawStructures.find(
+      ({ stage }) => stage === QUALIFYING
+    );
+    const mainStructure = drawStructures.find(
+      ({ stage, stageSequence }) => stage === MAIN && stageSequence === 1
+    );
+
+    if (qualifyingStructure && mainStructure) {
+      const roundNumber = qualifyingStructure.matchUps?.reduce(
+        (roundNumber, matchUp) => {
+          return matchUp.roundNumber > roundNumber
+            ? matchUp.roundNumber
+            : roundNumber;
+        },
+        0
+      );
+
+      qualifyingStructure.structureName += ' Qualifying';
+
+      if (roundNumber) {
+        const link = {
+          linkType: WINNER,
+          source: {
+            structureId: qualifyingStructure.structureId,
+            roundNumber: 2,
+          },
+          target: {
+            feedProfile: DRAW,
+            structureId: mainStructure.structureId,
+            roundNumber: 1,
+          },
+        };
+        links.push(link);
+      } else if (qualifyingStructure.finishingPosition === 'WIN_RATIO') {
+        const link = {
+          linkType: WINNER,
+          source: {
+            structureId: qualifyingStructure.structureId,
+            finishingPositions: [1],
+          },
+          target: {
+            feedProfile: DRAW,
+            structureId: mainStructure.structureId,
+            roundNumber: 1,
+          },
+        };
+        links.push(link);
+      }
+    }
+
+    if (consolationStructure && mainStructure) {
+      consolationStructure.structureName += ' Consolation';
+      const link = {
+        linkType: LOSER,
+        source: {
+          structureId: mainStructure.structureId,
+          roundNumber: 1,
+        },
+        target: {
+          structureId: consolationStructure.structureId,
+          feedProfile: DRAW,
+          roundNumber: 1,
+        },
+      };
+      links.push(link);
+    }
+  }
+
   return {
     structures: drawStructures,
     eventEntriesAccumulator,
     missingParticipants,
     drawEntries,
+    drawTypes,
     links,
   };
 }
