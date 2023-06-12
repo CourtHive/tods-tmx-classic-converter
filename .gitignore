@@ -1,0 +1,12 @@
+*.log
+.DS_Store
+benchmarks
+coverage
+node_modules
+scratch
+dist
+*.un~
+.*.un~
+*.VSCodeCounter
+.nvim*
+.eslintcache

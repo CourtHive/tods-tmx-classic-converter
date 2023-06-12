@@ -8873,10 +8873,10 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-tods-competition-factory@^0.510.2:
-  version "0.510.2"
-  resolved "https://registry.yarnpkg.com/tods-competition-factory/-/tods-competition-factory-0.510.2.tgz#576c4b8db4292af6818aa0d175befb026f0e3394"
-  integrity sha512-YWpZxVIca2G4sDpZwzv6jEKX+cGRFl9XdhiqXHUz0YP/ZlIQPPZO4cJAjRLuBDKhm+pRmWltQ34jvEHDYz3LvQ==
+tods-competition-factory@^0.512.2:
+  version "0.512.2"
+  resolved "https://registry.yarnpkg.com/tods-competition-factory/-/tods-competition-factory-0.512.2.tgz#02053d0c54ebc49b75ea48e35faab0d7cdf089b9"
+  integrity sha512-v+r22daBC2ha+ZmRN4Pqt0cYmORr5TFnF4iHzAHj7IHYbU1L5soFqMCLDea8kBqlL8yxFcfbc4liuNBMIIN3mw==
 
 tough-cookie@^2.3.3, tough-cookie@~2.5.0:
   version "2.5.0"
