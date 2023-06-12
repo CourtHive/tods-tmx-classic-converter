@@ -44,11 +44,7 @@ export function TMX2TODS({
     if (disableProgress && tournament)
       console.log(`${index + 1}: ${tournament.name}, ${tournament.tuid}`);
 
-    if (
-      tournament &&
-      tournament.tuid &&
-      (!tournamentId || tournamentId === tournament.tuid)
-    ) {
+    if (!tournamentId || tournamentId === tournament?.tuid) {
       try {
         const { tournamentRecord } = convertTMX2TODS({ tournament });
         if (typeof processParticipants === 'function')
@@ -56,8 +52,7 @@ export function TMX2TODS({
 
         const organisationId =
           tournamentRecord.parentOrganisationId ||
-          (tournamentRecord.unifiedTournamentId &&
-            tournamentRecord.unifiedTournamentId.organisationId) ||
+          tournamentRecord.unifiedTournamentId?.organisationId ||
           'no_org';
         if (tournamentRecord.unifiedTournamentId && !orgs[organisationId]) {
           orgs[organisationId] = {
