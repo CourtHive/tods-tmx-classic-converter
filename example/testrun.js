@@ -5,4 +5,8 @@ const { TMX2TODS } = require('./TMX2TODS');
 const sourceDir = `./sourceFiles`;
 const targetDir = `./output`;
 
-TMX2TODS({ sourceDir, targetDir, disableProgress: true });
+TMX2TODS({
+  sourceDir,
+  targetDir,
+  disableProgress: true,
+});

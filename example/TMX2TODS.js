@@ -1,3 +1,4 @@
+import { setDevContext } from 'tods-competition-factory';
 import { SingleBar, Presets } from 'cli-progress';
 import { convertTMX2TODS } from '../dist';
 import fs from 'fs';
@@ -9,8 +10,11 @@ export function TMX2TODS({
   tournamentId,
   sourceDir,
   targetDir,
+  start = 0,
   count,
 } = {}) {
+  setDevContext({ finishingRound: true });
+
   const sourcePath = sourceDir || '.';
   const targetPath = targetDir || '.';
 
@@ -30,7 +34,7 @@ export function TMX2TODS({
   const progressBar = new SingleBar({}, Presets.shades_classic);
   if (!disableProgress) progressBar.start(count, 0);
 
-  filenames.slice(0, count).forEach((filename, index) => {
+  filenames.slice(start, start + count).forEach((filename, index) => {
     const tournamentRaw = fs.readFileSync(`${sourcePath}/${filename}`, 'UTF8');
 
     let tournament;
@@ -44,7 +48,7 @@ export function TMX2TODS({
     if (disableProgress && tournament)
       console.log(`${index + 1}: ${tournament.name}, ${tournament.tuid}`);
 
-    if (!tournamentId || tournamentId === tournament?.tuid) {
+    if (!tournamentId || tournamentId === tournament.tuid) {
       try {
         const { tournamentRecord } = convertTMX2TODS({ tournament });
         if (typeof processParticipants === 'function')
@@ -52,7 +56,8 @@ export function TMX2TODS({
 
         const organisationId =
           tournamentRecord.parentOrganisationId ||
-          tournamentRecord.unifiedTournamentId?.organisationId ||
+          (tournamentRecord.unifiedTournamentId &&
+            tournamentRecord.unifiedTournamentId.organisationId) ||
           'no_org';
         if (tournamentRecord.unifiedTournamentId && !orgs[organisationId]) {
           orgs[organisationId] = {
@@ -75,7 +80,7 @@ export function TMX2TODS({
           'UTF-8'
         );
       } catch (err) {
-        console.log({ err });
+        console.log({ filename });
       }
     }
 
