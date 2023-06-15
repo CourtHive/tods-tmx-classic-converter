@@ -10,3 +10,6 @@ dist
 *.VSCodeCounter
 .nvim*
 .eslintcache
+example/output
+example/quarantine
+example/sourceFiles
