@@ -207,7 +207,7 @@ export function extractMatchUp({
 
   if (isAdhocEvent) {
     matchUp.sides = sides;
-    matchUp.roundNumber = legacyMatch.round;
+    matchUp.roundNumber = legacyMatch.round || 1;
   }
 
   const matchUpStatus =
