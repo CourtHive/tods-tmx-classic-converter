@@ -6,7 +6,8 @@ const sourceDir = `./sourceFiles`;
 const targetDir = `./output`;
 
 TMX2TODS({
+  disableProgress: true,
   sourceDir,
   targetDir,
-  disableProgress: true,
+  // count: 1,
 });

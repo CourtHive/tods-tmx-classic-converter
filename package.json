@@ -46,6 +46,7 @@
   "author": "Charles Allen <charles@CourtHive.com> (CourtHive.com)",
   "license": "MIT",
   "dependencies": {
+    "circular-json": "^0.5.9",
     "cli-progress": "^3.9.0",
     "d3": "5.16.0",
     "date-fns": "^2.19.0",
