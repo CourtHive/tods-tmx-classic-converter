@@ -61,23 +61,36 @@ export function extractTournamentInfo({ tournament, file }) {
 }
 
 function getOnlineResources(tournament) {
-  const social = tournament.media?.social || {};
   const sponsorImages = tournament.publishing?.sponsors || [];
+  const tournamentImage = tournament.publishing?.logo;
+  const social = tournament.media?.social || {};
 
   const onlineResources = Object.keys(social).map(provider => {
     const identifier = social[provider];
     const onlineResource = {
-      type: 'SOCIAL_MEDIA',
+      resourceType: 'SOCIAL_MEDIA',
+      resourceSubType: 'WEBSITE',
+      name: provider,
       identifier,
       provider,
     };
     return onlineResource;
   });
 
+  if (tournamentImage) {
+    const onlineResource = {
+      identifier: tournamentImage,
+      resourceSubType: 'IMAGE',
+      name: 'tournamentImage',
+      resourceType: 'URL',
+    };
+    onlineResources.push(onlineResource);
+  }
+
   sponsorImages?.forEach(identifier => {
     const onlineResource = {
-      type: 'SPONSOR',
-      subType: 'LOGO',
+      resourceSubType: 'IMAGE',
+      resourceType: 'URL',
       identifier,
     };
     onlineResources.push(onlineResource);
