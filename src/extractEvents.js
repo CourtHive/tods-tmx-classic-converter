@@ -111,13 +111,13 @@ export function extractEvents({ tournament, participants }) {
       drawTypes,
       links,
     } = extractStructures({
-      eventType,
-      tieFormat,
-      tournament,
-      participants,
-      matchUpFormat,
       mainStructureId: mainLegacyEvent.euid,
       legacyEvents: groupStructures,
+      matchUpFormat,
+      participants,
+      tournament,
+      eventType,
+      tieFormat,
     });
 
     if (missingParticipants?.length)

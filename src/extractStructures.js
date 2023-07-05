@@ -6,6 +6,7 @@ import {
   drawDefinitionConstants,
   entryStatusConstants,
   tournamentEngine,
+  drawEngine,
 } from 'tods-competition-factory';
 
 const {
@@ -101,27 +102,29 @@ export function extractStructures({
         seedAssignments,
         positionAssignments,
       } = getStructureContent({
-        drawType,
+        participants,
+        legacyEvent,
+        tournament,
         eventType,
         tieFormat,
-        tournament,
-        legacyEvent,
-        participants,
+        drawType,
       });
       entries?.forEach(entry => {
         entriesAccumulator[entry.participantId] = entry;
       });
 
+      drawEngine.addFinishingRounds({ matchUps });
+
       const structure = {
-        stage,
-        matchUps,
-        seedLimit,
-        finishingPosition,
-        seedAssignments,
+        structureName: legacyEvent.name,
+        structureId: legacyEvent.euid,
         positionAssignments,
         stageSequence: 1,
-        structureId: legacyEvent.euid,
-        structureName: legacyEvent.name,
+        finishingPosition,
+        seedAssignments,
+        seedLimit,
+        matchUps,
+        stage,
       };
       if (drawType === 'AD_HOC') {
         structure.finishingPosition = undefined;
