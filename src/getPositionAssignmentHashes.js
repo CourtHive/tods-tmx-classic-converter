@@ -18,8 +18,8 @@ export function getPositionAssignmentHashes({
   });
 
   function addToHash(side, position) {
-    const opponent1 = side && side[0] && typeof side[0] === 'object' && side[0];
-    const opponent2 = side && side[1] && typeof side[1] === 'object' && side[1];
+    const opponent1 = side?.[0] && typeof side[0] === 'object' && side[0];
+    const opponent2 = side?.[1] && typeof side[1] === 'object' && side[1];
     const drawPosition = opponent1?.draw_position || opponent2?.draw_position;
     const addTeamPlayers = players => {
       Object.keys(players).forEach(playerId => {
