@@ -53,10 +53,10 @@
     "tods-competition-factory": "^1.4.11"
   },
   "devDependencies": {
-    "@babel/core": "7.22.6",
+    "@babel/core": "7.22.10",
     "@babel/plugin-proposal-nullish-coalescing-operator": "7.18.6",
     "@babel/plugin-proposal-optional-chaining": "7.21.0",
-    "@babel/preset-env": "7.22.6",
+    "@babel/preset-env": "7.22.10",
     "esm": "^3.2.25",
     "np": "^8.0.2",
     "tsdx": "^0.14.1"
