@@ -417,8 +417,11 @@ function addRatings({ player, participant, tournamentStartDate }) {
         const itemType = `${scaleConstants.SCALE}.${
           scaleConstants.RATING
         }.${ratingType.toUpperCase()}.${key.toUpperCase()}`;
+        const ratingAccessor = `${ratingType.toLowerCase()}Rating`;
         const timeItem = {
-          itemValue: player.ratings[key][ratingType].value,
+          itemValue: {
+            [ratingAccessor]: player.ratings[key][ratingType].value,
+          },
           timestamp: tournamentStartDate,
           itemType,
         };
