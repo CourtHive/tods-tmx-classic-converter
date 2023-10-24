@@ -26,7 +26,7 @@
     "contents": "."
   },
   "engines": {
-    "node": ">=16.16.0 < 19"
+    "node": ">=16.16.0 < 21"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
