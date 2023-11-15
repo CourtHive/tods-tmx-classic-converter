@@ -50,7 +50,7 @@
     "cli-progress": "^3.9.0",
     "d3": "5.16.0",
     "date-fns": "^2.19.0",
-    "tods-competition-factory": "^1.4.11"
+    "tods-competition-factory": "^1.8.26"
   },
   "devDependencies": {
     "@babel/core": "7.23.0",
