@@ -76,7 +76,7 @@ export function extractEvents({ tournament, participants }) {
       getMatchUpType(mainLegacyEvent.format) ||
       ((mainLegacyEvent.matchorder || tournament.type === 'dual') &&
         matchUpTypes.TEAM);
-    const ageCategoryDetail = utilities.parseAgeCategoryCode({
+    const ageCategoryDetail = utilities.getCategoryAgeDetails({
       category: mainLegacyEvent.category,
     });
     const category = { categoryName: mainLegacyEvent.category };
