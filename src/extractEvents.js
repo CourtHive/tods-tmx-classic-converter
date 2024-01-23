@@ -11,10 +11,8 @@ import {
 import {
   tournamentEngine,
   factoryConstants,
-  matchUpEngine,
   matchUpTypes,
-  drawEngine,
-  utilities,
+  tools,
 } from 'tods-competition-factory';
 
 export function extractEvents({ tournament, participants }) {
@@ -23,8 +21,8 @@ export function extractEvents({ tournament, participants }) {
   const legacyEvents = tournament.events || [];
   const tournamentId = tournament.tuid;
   const tournamentRecord = {
-    participants,
     tournamentId: tournamentId || 'foo',
+    participants,
   };
   tournamentEngine.setState(tournamentRecord);
 
@@ -39,7 +37,7 @@ export function extractEvents({ tournament, participants }) {
         const linkedEuid = legacyEvent.links[key];
         eventIds.push(linkedEuid);
       });
-    const groupEuid = utilities.intersection(
+    const groupEuid = tools.intersection(
       Object.keys(linkedStructures),
       eventIds
     );
@@ -58,9 +56,7 @@ export function extractEvents({ tournament, participants }) {
       event => event.draw_type
     );
     const mainDrawTypes = ['E', 'S'];
-    if (
-      !utilities.intersection(mainDrawTypes, structureGroupDrawTypes).length
-    ) {
+    if (!tools.intersection(mainDrawTypes, structureGroupDrawTypes).length) {
       if (structureGroupDrawTypes?.includes('R')) mainDrawTypes.push('R');
       else if (structureGroupDrawTypes?.includes('A')) mainDrawTypes.push('A');
       else if (structureGroupDrawTypes?.includes('C')) mainDrawTypes.push('C');
@@ -76,7 +72,7 @@ export function extractEvents({ tournament, participants }) {
       getMatchUpType(mainLegacyEvent.format) ||
       ((mainLegacyEvent.matchorder || tournament.type === 'dual') &&
         matchUpTypes.TEAM);
-    const ageCategoryDetail = utilities.getCategoryAgeDetails({
+    const ageCategoryDetail = tournamentEngine.getCategoryAgeDetails({
       category: mainLegacyEvent.category,
     });
     const category = { categoryName: mainLegacyEvent.category };
@@ -167,7 +163,7 @@ export function extractEvents({ tournament, participants }) {
       }
     }
 
-    drawEngine.addGoesTo({ drawDefinition });
+    tournamentEngine.addGoesTo({ drawDefinition });
 
     if (tieFormat) {
       drawDefinition.tieFormat = tieFormat;
@@ -250,8 +246,9 @@ export function extractEvents({ tournament, participants }) {
       drawDefinition.entries?.forEach(entry => {
         event.eventEntriesAccumulator[entry.participantId] = entry;
       });
-      const { matchUps } = drawEngine.setState(drawDefinition).allDrawMatchUps({
+      const { matchUps } = tournamentEngine.allDrawMatchUps({
         tournamentParticipants: participants,
+        drawDefinition,
       });
       drawDefinition.structures?.forEach(structure => {
         if (structure.structureType === 'CONTAINER') {
@@ -262,7 +259,7 @@ export function extractEvents({ tournament, participants }) {
             );
             const {
               participantResults,
-            } = matchUpEngine.tallyParticipantResults({
+            } = tournamentEngine.tallyParticipantResults({
               matchUpFormat: structure.matchUpFormat,
               matchUps: childMatchUps,
             });

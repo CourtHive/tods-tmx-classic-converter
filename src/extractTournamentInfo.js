@@ -1,10 +1,10 @@
 import { getIndoorOutdoor, getSurface } from './utilities';
+import { format } from 'date-fns';
 import {
   participantConstants,
   participantRoles,
-  utilities,
+  tools,
 } from 'tods-competition-factory';
-import { format } from 'date-fns';
 
 /*
 organisation = club
@@ -141,7 +141,7 @@ function getRefereeParticipant(referee) {
   if (!referee) return;
   const [standardGivenName, standardFamilyName] = referee.split(' ');
 
-  const participantId = utilities.UUID();
+  const participantId = tools.UUID();
   return {
     participantName: referee,
     participantId,

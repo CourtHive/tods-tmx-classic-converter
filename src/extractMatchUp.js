@@ -7,7 +7,6 @@ import {
   entryStatusConstants,
   matchUpStatusConstants,
   tournamentEngine,
-  mocksEngine,
 } from 'tods-competition-factory';
 
 const getId = p => p?.id || p?.puid;
@@ -192,7 +191,9 @@ export function extractMatchUp({
   const scoreStringSide2 = matchTiebreakTODS(
     !winner || winningSide === 1 ? reversedScoreString : scoreString
   );
-  const sets = mocksEngine.parseScoreString({ scoreString: scoreStringSide1 });
+  const sets = tournamentEngine.parseScoreString({
+    scoreString: scoreStringSide1,
+  });
   const score = {
     scoreStringSide1,
     scoreStringSide2,
