@@ -14,8 +14,8 @@ import {
   participantRoles,
   penaltyConstants,
   scaleConstants,
-  utilities,
   fixtures,
+  tools,
 } from 'tods-competition-factory';
 
 const dfx = drawFx();
@@ -37,7 +37,6 @@ export function extractParticipants({ tournament }) {
 
   extractPairParticipants({
     participants: individualParticipants,
-    tournamentEngine,
     tournament,
   });
 
@@ -52,9 +51,8 @@ export function extractParticipants({ tournament }) {
     });
   });
 
-  const {
-    tournamentParticipants,
-  } = tournamentEngine.getTournamentParticipants();
+  const tournamentParticipants = tournamentEngine.getParticipants()
+    .participants;
 
   const teamParticipants = extractTeamParticipants({
     tournament,
@@ -89,11 +87,7 @@ function extractTeamParticipants({ tournament }) {
   return teamParticipants;
 }
 
-function extractPairParticipants({
-  tournamentEngine,
-  tournament,
-  participants,
-}) {
+function extractPairParticipants({ participants, tournament }) {
   const pairParticipants = [];
   const legacyEvents = tournament.events || [];
   const legacyDual = tournament.type === 'dual';
@@ -218,7 +212,7 @@ function extractIndividualParticipants({ tournament }) {
           participantType: participantTypes.GROUP,
           participantRole: participantRoles.OTHER,
           participantRoleResponsibilities: ['CLUB'],
-          participantId: utilities.UUID(),
+          participantId: tools.UUID(),
           individualParticipantIds: [],
           participantName: club_code,
         };
@@ -238,7 +232,7 @@ function extractIndividualParticipants({ tournament }) {
           participantType: participantTypes.GROUP,
           participantRole: participantRoles.OTHER,
           participantRoleResponsibilities: ['CLUB'],
-          participantId: utilities.UUID(),
+          participantId: tools.UUID(),
           individualParticipantIds: [],
           participantName: club_name,
         };
@@ -262,7 +256,7 @@ function extractIndividualParticipants({ tournament }) {
           participantType: participantTypes.GROUP,
           participantRole: participantRoles.OTHER,
           participantRoleResponsibilities: ['SCHOOL'],
-          participantId: utilities.UUID(),
+          participantId: tools.UUID(),
           individualParticipantIds: [],
           participantName: school,
         };
@@ -476,13 +470,13 @@ function addTimeItems({ player, participant, tournamentStartDate }) {
 function addExtensions({ player, participant }) {
   if (player.suspended_until) {
     const date = new Date(player.suspended_until);
-    if (utilities.dateTime.isDate(date)) {
+    if (tools.dateTime.isDate(date)) {
       const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.SUSPENSION}.UNTIL`;
       const extension = {
-        value: utilities.dateTime.formatDate(date),
+        value: tools.dateTime.formatDate(date),
         name,
       };
-      utilities.addExtension({
+      tournamentEngine.addExtension({
         element: participant,
         creationTime: false,
         extension,
@@ -491,13 +485,13 @@ function addExtensions({ player, participant }) {
   }
   if (player.registered_until) {
     const date = new Date(player.registered_until);
-    if (utilities.dateTime.isDate(date)) {
+    if (tools.dateTime.isDate(date)) {
       const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.REGISTRATION}.UNTIL`;
       const extension = {
-        value: utilities.dateTime.formatDate(player.registered_until),
+        value: tools.dateTime.formatDate(player.registered_until),
         name,
       };
-      utilities.addExtension({
+      tournamentEngine.addExtension({
         element: participant,
         creationTime: false,
         extension,
@@ -506,13 +500,13 @@ function addExtensions({ player, participant }) {
   }
   if (player.right_to_play_until) {
     const date = new Date(player.right_to_play_until);
-    if (utilities.dateTime.isDate(date)) {
+    if (tools.dateTime.isDate(date)) {
       const name = `${timeItemConstants.ELIGIBILITY}.${timeItemConstants.MEDICAL}.UNTIL`;
       const extension = {
-        value: utilities.dateTime.formatDate(player.right_to_play_until),
+        value: tools.dateTime.formatDate(player.right_to_play_until),
         name,
       };
-      utilities.addExtension({
+      tournamentEngine.addExtension({
         element: participant,
         creationTime: false,
         extension,
@@ -546,7 +540,7 @@ function addPenalties({ player, participant, tournamentStartDate }) {
     player.penalties?.forEach(penalty => {
       const penaltyTime =
         (isValidDate(penalty.time) && penalty.time) || tournamentStartDate;
-      const penaltyId = utilities.UUID();
+      const penaltyId = tools.UUID();
       const penaltyItem = {
         penaltyId,
         matchUpId: penalty.muid,
