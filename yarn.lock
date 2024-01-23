@@ -9055,10 +9055,10 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
-tods-competition-factory@^1.8.26:
-  version "1.9.5"
-  resolved "https://registry.yarnpkg.com/tods-competition-factory/-/tods-competition-factory-1.9.5.tgz#f7f9a20c4af8dff87a4f71c2d2a2ef119556d9d5"
-  integrity sha512-xz2gAmcF80XynKp2Cb9Xfr2W5XWWtyRzIPRBu2KzLzjPSIvtr9sIVdXaQjsM//5pamH2R3VFZaGijeXVA2TNhQ==
+tods-competition-factory@^2.0.0:
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/tods-competition-factory/-/tods-competition-factory-2.0.7.tgz#2b0fdb5345a6aa36cfb368232dd3a2f07a78d94d"
+  integrity sha512-I+d+e0asi0/1Y9Jn4Y8VG3BwDDpp0NK1yQr8f8TWT1Jn9yVYd71Uj/ZO8qySYGgSegsQvxtCDZ0rsh4eQq9bZg==
 
 tough-cookie@^2.3.3, tough-cookie@~2.5.0:
   version "2.5.0"
