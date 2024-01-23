@@ -6,7 +6,6 @@ import {
   drawDefinitionConstants,
   entryStatusConstants,
   tournamentEngine,
-  drawEngine,
 } from 'tods-competition-factory';
 
 const {
@@ -113,7 +112,7 @@ export function extractStructures({
         entriesAccumulator[entry.participantId] = entry;
       });
 
-      drawEngine.addFinishingRounds({ matchUps });
+      tournamentEngine.addFinishingRounds({ matchUps });
 
       const structure = {
         structureName: legacyEvent.name,

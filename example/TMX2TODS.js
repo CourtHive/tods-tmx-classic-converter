@@ -1,4 +1,4 @@
-import { setDevContext } from 'tods-competition-factory';
+import { globalState } from 'tods-competition-factory';
 import { SingleBar, Presets } from 'cli-progress';
 import * as safeJSON from '../src/safeJSON';
 import { convertTMX2TODS } from '../dist';
@@ -14,7 +14,7 @@ export function TMX2TODS({
   start = 0,
   count,
 } = {}) {
-  setDevContext({ finishingRound: true });
+  globalState.setDevContext({ finishingRound: true });
 
   const sourcePath = sourceDir || '.';
   const targetPath = targetDir || '.';

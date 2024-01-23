@@ -6,7 +6,7 @@ import { getStage } from './utilities';
 import { matchFx } from './matchFx';
 import { drawFx } from './drawFx';
 
-import { drawDefinitionConstants, utilities } from 'tods-competition-factory';
+import { drawDefinitionConstants, tools } from 'tods-competition-factory';
 
 const {
   CONTAINER,
@@ -73,13 +73,13 @@ function getCompassComponents(props) {
   };
 
   const legacyDirections = Object.keys(props.legacyEvent.draw);
-  const directionsPresent = utilities.intersection(
+  const directionsPresent = tools.intersection(
     Object.keys(directions),
     legacyDirections.filter(key => props.legacyEvent.draw[key])
   );
 
   directionsPresent?.forEach(direction => {
-    directions[direction].structureId = utilities.UUID();
+    directions[direction].structureId = tools.UUID();
   });
 
   const compassStructures = directionsPresent

@@ -2,7 +2,11 @@ import { getPositionAssignmentHashes } from './getPositionAssignmentHashes';
 import { processLegacyMatch } from './processLegacyMatch';
 import { matchFx } from './matchFx';
 
-import { drawDefinitionConstants, utilities } from 'tods-competition-factory';
+import {
+  drawDefinitionConstants,
+  generationGovernor,
+  tools,
+} from 'tods-competition-factory';
 
 const { CONTAINER, ITEM, WIN_RATIO } = drawDefinitionConstants;
 
@@ -44,7 +48,7 @@ export function roundRobinStructure({
       bye: true,
     }));
 
-    const rounds = utilities.roundRobinGroups.groupRounds({
+    const rounds = generationGovernor.roundRobinGroups.groupRounds({
       drawPositionOffset,
       groupSize,
     });
@@ -77,9 +81,9 @@ export function roundRobinStructure({
           }
 
           if (drawPositions?.length === 1) {
-            matchUp.roundNumber = utilities.roundRobinGroups.determineRoundNumber(
+            matchUp.roundNumber = generationGovernor.roundRobinGroups.determineRoundNumber(
               {
-                hash: utilities.roundRobinGroups.drawPositionsHash(
+                hash: generationGovernor.roundRobinGroups.drawPositionsHash(
                   drawPositions
                 ),
                 rounds,
@@ -96,7 +100,7 @@ export function roundRobinStructure({
     positionAssignments.sort((a, b) => a.drawPosition - b.drawPosition);
     const structureName = bracket.name || `Group ${index + 1}`;
     const structure = {
-      structureId: utilities.UUID(),
+      structureId: tools.UUID(),
       structureType: ITEM,
       positionAssignments,
       stageSequence: 1,
@@ -107,11 +111,11 @@ export function roundRobinStructure({
   });
 
   return {
-    entries,
-    seedLimit,
-    structures,
-    seedAssignments: [],
-    structureType: CONTAINER,
     finishingPosition: WIN_RATIO,
+    structureType: CONTAINER,
+    seedAssignments: [],
+    structures,
+    seedLimit,
+    entries,
   };
 }
