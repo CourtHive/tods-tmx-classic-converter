@@ -7,7 +7,12 @@ import { extractEvents } from './extractEvents';
 // Compressed draw structures... with D3 visualizations works fine... may not work with React-draws
 // drawEngine.buildDrawHierarchy is not handling pre-round structures which have only one children[] attribute rather than true hierarchy
 
-export function convertTMX2TODS({ tournament }) {
+export function convertTMX2TODS({
+  excludeNoPlayers = true,
+  excludeNoEvents = true,
+  tournament,
+}) {
+  if (tournament?.doNotProcess) return {};
   const { tournamentInfo, organisationParticipants } = extractTournamentInfo({
     tournament,
   });
@@ -32,6 +37,9 @@ export function convertTMX2TODS({ tournament }) {
     participants,
     events,
   };
+
+  if (excludeNoPlayers && !tournamentRecord.participants.length) return {};
+  if (excludeNoEvents && !tournamentRecord.events.length) return {};
 
   return { tournamentRecord };
 }

@@ -6,6 +6,8 @@ import fs from 'fs';
 
 export function TMX2TODS({
   targetExtension = '.tods.json',
+  excludeNoPlayers = true,
+  excludeNoEvents = true,
   processParticipants,
   disableProgress,
   tournamentId,
@@ -49,7 +51,12 @@ export function TMX2TODS({
 
     if (!tournamentId || tournamentId === tournament.tuid) {
       try {
-        const { tournamentRecord } = convertTMX2TODS({ tournament });
+        const tournamentRecord = convertTMX2TODS({
+          excludeNoPlayers,
+          excludeNoEvents,
+          tournament,
+        }).tournamentRecord;
+        if (!tournamentRecord) return;
         if (typeof processParticipants === 'function')
           processParticipants(tournamentRecord);
 
