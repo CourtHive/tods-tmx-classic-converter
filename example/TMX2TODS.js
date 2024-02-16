@@ -3,7 +3,6 @@ import { SingleBar, Presets } from 'cli-progress';
 import * as safeJSON from '../src/safeJSON';
 import { convertTMX2TODS } from '../dist';
 import fs from 'fs';
-import e from 'cors';
 
 export function TMX2TODS({
   targetExtension = '.tods.json',
