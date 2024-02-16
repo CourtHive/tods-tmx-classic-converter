@@ -29,6 +29,7 @@ export function extractEvents({ tournament, participants }) {
   // linkedStructures are events which have explicit links
   const linkedStructures = {};
 
+  // TODO: capture legacyEvent.published and for each event add publishState timeItem
   legacyEvents?.forEach(legacyEvent => {
     const euid = legacyEvent.euid;
     const eventIds = [euid];
