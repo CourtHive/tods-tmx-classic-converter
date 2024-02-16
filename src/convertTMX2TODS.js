@@ -11,8 +11,12 @@ export function convertTMX2TODS({
   excludeNoPlayers = true,
   excludeNoEvents = true,
   tournament,
+  verbose,
 }) {
-  if (tournament?.doNotProcess) return {};
+  if (tournament?.doNotProcess) {
+    if (verbose) console.log('==> doNotProcess =>', tournament.tuid);
+    return {};
+  }
   const { tournamentInfo, organisationParticipants } = extractTournamentInfo({
     tournament,
   });
@@ -38,8 +42,14 @@ export function convertTMX2TODS({
     events,
   };
 
-  if (excludeNoPlayers && !tournamentRecord.participants.length) return {};
-  if (excludeNoEvents && !tournamentRecord.events.length) return {};
+  if (excludeNoPlayers && !tournamentRecord.participants.length) {
+    if (verbose) console.log('==> excludeNoPlayers =>', tournament.tuid);
+    return {};
+  }
+  if (excludeNoEvents && !tournamentRecord.events.length) {
+    if (verbose) console.log('==> excludeNoEvents =>', tournament.tuid);
+    return {};
+  }
 
   return { tournamentRecord };
 }

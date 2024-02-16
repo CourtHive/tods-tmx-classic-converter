@@ -54,9 +54,13 @@ export function TMX2TODS({
         const tournamentRecord = convertTMX2TODS({
           excludeNoPlayers,
           excludeNoEvents,
+          verbose: true,
           tournament,
         }).tournamentRecord;
-        if (!tournamentRecord) return;
+        if (!tournamentRecord) {
+          console.log('not converted', { filename });
+          return;
+        }
         if (typeof processParticipants === 'function')
           processParticipants(tournamentRecord);
 
