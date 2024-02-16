@@ -3,9 +3,12 @@ import { SingleBar, Presets } from 'cli-progress';
 import * as safeJSON from '../src/safeJSON';
 import { convertTMX2TODS } from '../dist';
 import fs from 'fs';
+import e from 'cors';
 
 export function TMX2TODS({
   targetExtension = '.tods.json',
+  excludeNoPlayers = true,
+  excludeNoEvents = true,
   processParticipants,
   disableProgress,
   tournamentId,
@@ -44,6 +47,8 @@ export function TMX2TODS({
       console.log({ err });
     }
 
+    if (tournament && tournament.doNotProcess) return;
+
     if (disableProgress && tournament)
       console.log(`${index + 1}: ${tournament.name}, ${tournament.tuid}`);
 
@@ -68,6 +73,9 @@ export function TMX2TODS({
         } else {
           orgs[organisationId].count += 1;
         }
+
+        if (excludeNoPlayers && !tournamentRecord.participants.length) return;
+        if (excludeNoEvents && !tournamentRecord.events.length) return;
 
         const orgPath = organisationId ? `/${organisationId}` : '';
         if (orgPath) {
