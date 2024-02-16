@@ -16,6 +16,8 @@ import {
 } from 'tods-competition-factory';
 
 export function extractEvents({ tournament, participants }) {
+  const legacyEventPublished = {};
+  const drawPublishingDetail = {};
   const eventCategories = {};
   const eventPairParticipants = [];
   const legacyEvents = tournament.events || [];
@@ -29,8 +31,8 @@ export function extractEvents({ tournament, participants }) {
   // linkedStructures are events which have explicit links
   const linkedStructures = {};
 
-  // TODO: capture legacyEvent.published and for each event add publishState timeItem
   legacyEvents?.forEach(legacyEvent => {
+    legacyEventPublished[legacyEvent.euid] = legacyEvent.published;
     const euid = legacyEvent.euid;
     const eventIds = [euid];
     legacyEvent.links &&
@@ -50,6 +52,7 @@ export function extractEvents({ tournament, participants }) {
   });
 
   Object.keys(linkedStructures).forEach(key => {
+    const published = legacyEventPublished[key];
     const structureGroup = linkedStructures[key];
     const structureGroupIds = Object.keys(structureGroup);
     const groupStructures = structureGroupIds.map(id => structureGroup[id]);
@@ -211,14 +214,15 @@ export function extractEvents({ tournament, participants }) {
 
     if (!eventCategories[categoryName]) {
       eventCategories[categoryName] = {
-        gender,
-        eventId,
-        category,
-        eventType,
-        eventRank,
-        eventName: categoryName,
         drawDefinitions: hasPopulatedMatchUps ? [drawDefinition] : undefined,
+        eventName: categoryName,
+        eventRank,
+        eventType,
+        category,
+        eventId,
+        gender,
       };
+      if (published) eventCategories[categoryName].published = published;
       if (indoorOutdoor)
         eventCategories[categoryName].indoorOutdoor = indoorOutdoor;
       if (surfaceCategory)
@@ -243,7 +247,9 @@ export function extractEvents({ tournament, participants }) {
   events?.forEach(event => {
     const eventId = event.eventId;
     event.drawDefinitions?.forEach((drawDefinition, i) => {
-      drawDefinition.drawId = `${eventId}-${i + 1}`;
+      const drawId = `${eventId}-${i + 1}`;
+      // drawPublishingDetail[drawId] = legacyEventPublished[eventId];
+      drawDefinition.drawId = drawId;
       drawDefinition.entries?.forEach(entry => {
         event.eventEntriesAccumulator[entry.participantId] = entry;
       });
@@ -284,6 +290,22 @@ export function extractEvents({ tournament, participants }) {
     });
     event.entries = Object.values(event.eventEntriesAccumulator);
     event.eventEntriesAccumulator = undefined;
+    if (event.published) {
+      // capture legacyEvent.published and for each event add publishState timeItem
+      const timeItem = {
+        itemType: 'PUBLISH.STATUS',
+        itemValue: {
+          PUBLIC: {
+            drawDetails: event.drawDefinitions?.map(({ drawId }) => ({
+              [drawId]: { published: true },
+            })),
+            published: true,
+          },
+        },
+      };
+      event.timeItems = [timeItem];
+      event.published = undefined;
+    }
   });
 
   return { events, eventPairParticipants };
