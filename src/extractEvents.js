@@ -296,9 +296,12 @@ export function extractEvents({ tournament, participants }) {
         itemType: 'PUBLISH.STATUS',
         itemValue: {
           PUBLIC: {
-            drawDetails: event.drawDefinitions?.map(({ drawId }) => ({
-              [drawId]: { published: true },
-            })),
+            drawDetails: Object.assign(
+              {},
+              ...event.drawDefinitions?.map(({ drawId }) => ({
+                [drawId]: { published: true },
+              }))
+            ),
             published: true,
           },
         },
