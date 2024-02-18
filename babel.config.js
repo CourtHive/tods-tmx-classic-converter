@@ -4,8 +4,8 @@ module.exports = {
   ],
   plugins: [
     // Adds syntax support for optional chaining (.?)
-    '@babel/plugin-proposal-optional-chaining',
+    // '@babel/plugin-transform-optional-chaining',
     // Adds syntax support for default value using ?? operator
-    '@babel/plugin-proposal-nullish-coalescing-operator',
+    // '@babel/plugin-proposal-nullish-coalescing-operator',
   ],
 };
