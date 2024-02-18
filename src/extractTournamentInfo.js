@@ -106,8 +106,7 @@ function getLocations(tournament) {
     const venueId = location.luid;
     const venueAbbreviation = location.abbreviation;
     const courts = range(0, parseInt(location.courts)).map(index => {
-      const identifiers =
-        location.identifiers && location.identifiers.split(',');
+      const identifiers = location?.identifiers.split(',');
       const identifier = identifiers[index] || index + 1;
       const courtName = `${venueAbbreviation} ${identifier}`;
       const courtNumber = index + 1;

@@ -12,17 +12,17 @@ import {
 const getId = p => p?.id || p?.puid;
 
 export function extractMatchUp({
+  drawPositionHashMap = {},
+  drawPositionOffset = 0,
+  participantIds,
+  matchUpFormat,
+  participants,
+  isAdhocEvent,
+  legacyMatch,
+  entryStage,
   eventType,
   seedLimit,
   tieFormat,
-  entryStage,
-  legacyMatch,
-  isAdhocEvent,
-  participants,
-  matchUpFormat,
-  participantIds,
-  drawPositionHashMap = {},
-  drawPositionOffset = 0,
 }) {
   const matchUpId = legacyMatch.match?.muid || legacyMatch.muid;
 
@@ -86,7 +86,9 @@ export function extractMatchUp({
   const winner = [0, 1].includes(parseInt(winner_index));
   let winningSide = (winner && winner_index + 1) || undefined;
 
+  let missingDrawPositions = 0;
   let isBye = false;
+
   if (Array.isArray(legacyMatch.teams)) {
     legacyMatch.teams?.forEach((team, index) => {
       if (!team?.length) return;
@@ -108,7 +110,7 @@ export function extractMatchUp({
       if (drawPosition) drawPosition += drawPositionOffset;
 
       if (winningSide && !drawPosition && !isAdhocEvent) {
-        console.log('missing drawPosition:', player1.id);
+        missingDrawPositions++;
       }
 
       const seed = player1?.seed;
@@ -244,11 +246,12 @@ export function extractMatchUp({
   }
 
   return {
-    matchUp,
-    entries,
-    seedAssignments,
+    missingDrawPositions,
     positionAssignments,
     missingParticipants,
+    seedAssignments,
+    matchUp,
+    entries,
   };
 }
 
