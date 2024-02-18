@@ -40,6 +40,7 @@ export function roundRobinStructure({
     matches,
   });
 
+  let missingDrawPositions = 0;
   legacyEvent.draw.brackets?.forEach((bracket, index) => {
     const groupSize = legacyEvent.draw.bracket_size || 0;
     const drawPositionOffset = index * groupSize;
@@ -74,6 +75,7 @@ export function roundRobinStructure({
 
         if (result) {
           const { matchUp, positionAssignments: matchUpAssignments } = result;
+          if (result.missingDrawPositions) missingDrawPositions++;
           const drawPositions = matchUp?.drawPositions;
 
           if (matchUpAssignments) {
@@ -109,6 +111,8 @@ export function roundRobinStructure({
     };
     structures.push(structure);
   });
+
+  if (missingDrawPositions) console.log({ missingDrawPositions });
 
   return {
     finishingPosition: WIN_RATIO,

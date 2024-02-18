@@ -68,25 +68,27 @@ export function processLegacyMatch({
     });
 
   const {
-    matchUp,
-    missingParticipants,
     positionAssignments: matchUpPositionAssignments,
     seedAssignments: matchUpSeedAssignments,
     entries: matchUpEntries,
+    missingDrawPositions,
+    missingParticipants,
+    matchUp,
   } = extractMatchUp({
-    info,
-    eventType,
-    seedLimit,
-    entryStage,
-    legacyMatch,
+    drawPositionHashMap,
+    drawPositionOffset,
+    tournamentEngine,
+    participantIds,
+    matchUpFormat,
     isAdhocEvent,
     participants,
-    matchUpFormat,
-    participantIds,
-    tournamentEngine,
-    drawPositionOffset,
-    drawPositionHashMap,
+    legacyMatch,
+    entryStage,
+    eventType,
+    seedLimit,
+    info,
   });
+
   if (missingParticipants?.filter(Boolean).length)
     console.log({ missingParticipants });
 
@@ -140,5 +142,5 @@ export function processLegacyMatch({
     }
   }
 
-  return { matchUp, positionAssignments };
+  return { matchUp, positionAssignments, missingDrawPositions };
 }

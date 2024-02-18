@@ -172,31 +172,35 @@ function eliminationStructure({
 
   const isAdhocEvent = legacyEvent.draw_type === 'A';
 
+  let missingDrawPositions = 0;
   const matchUps = matches
     .map(legacyMatch => {
       const result = processLegacyMatch({
-        entries,
-        tieFormat,
-        eventType,
-        isAdhocEvent,
-        matchUpFormat,
-        seedAssignments,
         drawPositionHashMap,
+        seedAssignments,
+        matchUpFormat,
+        isAdhocEvent,
+        eventType,
+        tieFormat,
+        entries,
 
         tournamentEngine,
-        tieMatches,
-        legacyMatch,
         participantIds,
         participants,
+        legacyMatch,
         entryStage,
+        tieMatches,
         seedLimit,
         info,
       });
+
       if (result) {
         const { matchUp, positionAssignments: matchUpAssignments } = result;
         if (matchUpAssignments) positionAssignments.push(...matchUpAssignments);
+        if (result.missingDrawPositions) missingDrawPositions++;
         return matchUp;
       }
+
       return undefined;
     })
     .filter(Boolean);
@@ -207,11 +211,11 @@ function eliminationStructure({
   seedAssignments.sort((a, b) => (a.seedNumber > b.seedNumber ? 1 : -1));
 
   const structureContent = {
-    entries,
-    matchUps,
-    seedAssignments,
-    positionAssignments,
     finishingPosition: ROUND_OUTCOME,
+    positionAssignments,
+    seedAssignments,
+    matchUps,
+    entries,
   };
 
   if (!isAdhocEvent) structureContent.seedLimit = seedLimit;
@@ -221,6 +225,10 @@ function eliminationStructure({
     structureContent.structureName = structureName;
     structureContent.structureAbbreviation = structureName[0];
     Object.assign(structureContent, directions[direction]);
+  }
+
+  if (missingDrawPositions) {
+    console.log({ missingDrawPositions });
   }
 
   return structureContent;
