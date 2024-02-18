@@ -302,7 +302,7 @@ export function extractEvents({ tournament, participants }) {
                 [drawId]: { published: true },
               }))
             ),
-            published: true,
+            publishingDetail: { published: true },
           },
         },
       };
