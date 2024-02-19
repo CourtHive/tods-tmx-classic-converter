@@ -13,3 +13,5 @@ dist
 example/output
 example/quarantine
 example/sourceFiles
+example/testFiles
+example/testOutput
