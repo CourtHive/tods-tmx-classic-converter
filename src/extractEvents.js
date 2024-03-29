@@ -299,10 +299,10 @@ export function extractEvents({ tournament, participants }) {
             drawDetails: Object.assign(
               {},
               ...(event.drawDefinitions ?? []).map(({ drawId }) => ({
-                [drawId]: { published: true },
+                [drawId]: { publishingDetail: { published: true } },
               }))
             ),
-            publishingDetail: { published: true },
+            published: true,
           },
         },
       };

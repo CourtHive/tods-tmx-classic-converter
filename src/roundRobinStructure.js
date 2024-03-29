@@ -82,7 +82,7 @@ export function roundRobinStructure({
             positionAssignments.push(...matchUpAssignments);
           }
 
-          if (drawPositions?.length === 1) {
+          if (drawPositions?.length === 2) {
             matchUp.roundNumber = generationGovernor.roundRobinGroups.determineRoundNumber(
               {
                 hash: generationGovernor.roundRobinGroups.drawPositionsHash(

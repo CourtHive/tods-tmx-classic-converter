@@ -26,10 +26,14 @@ export function extractTournamentInfo({ tournament, file }) {
     tournamentName: tournament.name,
     startDate:
       tournament.start &&
-      new Date(format(new Date(tournament.start), 'yyyy-MM-dd')).toISOString(),
+      new Date(format(new Date(tournament.start), 'yyyy-MM-dd'))
+        .toISOString()
+        .split('Z')[0],
     endDate:
       tournament.end &&
-      new Date(format(new Date(tournament.end), 'yyyy-MM-dd')).toISOString(),
+      new Date(format(new Date(tournament.end), 'yyyy-MM-dd'))
+        .toISOString()
+        .split('Z')[0],
     parentOrganisation: {
       organisationAbbreviation: tournament.org?.abbr,
       organisationName: tournament.org?.name,

@@ -1,6 +1,6 @@
 {
   "name": "tods-tmx-classic-converter",
-  "version": "3.0.0",
+  "version": "3.0.4",
   "keywords": [
     "TODS",
     "tournament",
@@ -53,10 +53,10 @@
     "tods-competition-factory": "^2.0.26"
   },
   "devDependencies": {
-    "@babel/core": "7.23.9",
-    "@babel/preset-env": "7.23.9",
+    "@babel/core": "7.24.3",
+    "@babel/preset-env": "7.24.3",
     "esm": "^3.2.25",
-    "np": "^9.0.0",
+    "np": "^10.0.0",
     "tsdx": "^0.14.1"
   }
 }
