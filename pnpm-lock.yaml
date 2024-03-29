@@ -19,7 +19,7 @@ dependencies:
     version: 1.2.8
   tods-competition-factory:
     specifier: ^2.0.26
-    version: 2.0.31
+    version: 2.1.0
 
 devDependencies:
   '@babel/core':
@@ -8319,8 +8319,8 @@ packages:
       safe-regex: 1.1.0
     dev: true
 
-  /tods-competition-factory@2.0.31:
-    resolution: {integrity: sha512-m4E5egq7Q7Zov656rTMJ7uCseRT61v6UzP3OawCCR8aug+wTK4T/nqJXUpAqZSG2oD6oWv4K2eshrumOQZhdaQ==}
+  /tods-competition-factory@2.1.0:
+    resolution: {integrity: sha512-zR/ibrI+JZetSFfzm0q2v9JRsiYKdxuJ76hdIhaWF1VkanWOGGZGG/S29BScJ582FVPIjD4LH17DJA+5Ggq+WQ==}
     engines: {node: '>=18.17.1 < 21'}
     dev: false
 
