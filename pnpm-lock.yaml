@@ -33,7 +33,7 @@ devDependencies:
     version: 3.2.25
   np:
     specifier: ^10.0.0
-    version: 10.0.2(typescript@3.9.10)
+    version: 10.0.3(typescript@3.9.10)
   tsdx:
     specifier: ^0.14.1
     version: 0.14.1
@@ -1301,7 +1301,7 @@ packages:
     resolution: {integrity: sha512-+xrD2BWLpvHKNmX2QbpdpsBaWnRxahMwJjO+KZk2JOElj5nSmKezyS1B4u+QbHMTX69t4ukm6hh9lsYQ7GHCKA==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/code-frame': 7.23.5
+      '@babel/code-frame': 7.24.2
       '@babel/parser': 7.23.9
       '@babel/types': 7.23.9
     dev: true
@@ -4899,8 +4899,8 @@ packages:
       through: 2.3.8
     dev: true
 
-  /inquirer@9.2.16:
-    resolution: {integrity: sha512-qzgbB+yNjgSzk2omeqMDtO9IgJet/UL67luT1MaaggRpGK73DBQct5Q4pipwFQcIKK1GbMODYd4UfsRCkSP1DA==}
+  /inquirer@9.2.17:
+    resolution: {integrity: sha512-Vr3Ia2ud5sGnioURkE69endl4SkeJcMzTF6SosKcX5GALJfId7C+JvO5ZZb6y1LOXnEofCPbwzoQ1q0e8Gaduw==}
     engines: {node: '>=18'}
     dependencies:
       '@ljharb/through': 2.3.13
@@ -6549,8 +6549,8 @@ packages:
     engines: {node: '>=14.16'}
     dev: true
 
-  /np@10.0.2(typescript@3.9.10):
-    resolution: {integrity: sha512-GVneZPeBZ/KSoVQyW9NjagM1KWFIheGcV2HtrCwYfe4L+z02lQq8lQXVw8eb8vM+weSdhqtzZ57ymaRwubvoTg==}
+  /np@10.0.3(typescript@3.9.10):
+    resolution: {integrity: sha512-JioZkOd7DtT1nkGnVOUrPfD7P3SlNbjsT2dHxMDsxpZcpd44iP4J4Nn9OTjCAhf9LK4EezTcIfU7QadyupEvxg==}
     engines: {git: '>=2.11.0', node: '>=18', npm: '>=9', pnpm: '>=8', yarn: '>=1.7.0'}
     hasBin: true
     dependencies:
@@ -6566,7 +6566,7 @@ packages:
       hosted-git-info: 7.0.1
       ignore-walk: 6.0.4
       import-local: 3.1.0
-      inquirer: 9.2.16
+      inquirer: 9.2.17
       is-installed-globally: 1.0.0
       is-interactive: 2.0.0
       is-scoped: 3.0.0
@@ -6605,7 +6605,7 @@ packages:
       ky: 1.2.3
       lodash.zip: 4.2.0
       org-regex: 1.0.0
-      p-map: 7.0.1
+      p-map: 7.0.2
       registry-auth-token: 5.0.2
       registry-url: 6.0.1
       validate-npm-package-name: 5.0.0
@@ -6877,8 +6877,8 @@ packages:
       aggregate-error: 4.0.1
     dev: true
 
-  /p-map@7.0.1:
-    resolution: {integrity: sha512-2wnaR0XL/FDOj+TgpDuRb2KTjLnu3Fma6b1ZUwGY7LcqenMcvP/YFpjpbPKY6WVGsbuJZRuoUz8iPrt8ORnAFw==}
+  /p-map@7.0.2:
+    resolution: {integrity: sha512-z4cYYMMdKHzw4O5UkWJImbZynVIo0lSGTXc7bzB1e/rrDqkgGUNysK/o4bTr+0+xKvvLoTyGqYC4Fgljy9qe1Q==}
     engines: {node: '>=18'}
     dev: true
 
@@ -6933,7 +6933,7 @@ packages:
     dependencies:
       '@babel/code-frame': 7.24.2
       index-to-position: 0.1.2
-      type-fest: 4.14.0
+      type-fest: 4.15.0
     dev: true
 
   /parse5@5.1.0:
@@ -7157,7 +7157,7 @@ packages:
     dependencies:
       find-up-simple: 1.0.0
       read-pkg: 9.0.1
-      type-fest: 4.14.0
+      type-fest: 4.15.0
     dev: true
 
   /read-pkg-up@7.0.1:
@@ -7186,7 +7186,7 @@ packages:
       '@types/normalize-package-data': 2.4.4
       normalize-package-data: 6.0.0
       parse-json: 8.1.0
-      type-fest: 4.14.0
+      type-fest: 4.15.0
       unicorn-magic: 0.1.0
     dev: true
 
@@ -8496,8 +8496,8 @@ packages:
     engines: {node: '>=14.16'}
     dev: true
 
-  /type-fest@4.14.0:
-    resolution: {integrity: sha512-on5/Cw89wwqGZQu+yWO0gGMGu8VNxsaW9SB2HE8yJjllEk7IDTwnSN1dUVldYILhYPN5HzD7WAaw2cc/jBfn0Q==}
+  /type-fest@4.15.0:
+    resolution: {integrity: sha512-tB9lu0pQpX5KJq54g+oHOLumOx+pMep4RaM6liXh2PKmVRFF+/vAtUP0ZaJ0kOySfVNjF6doBWPHhBhISKdlIA==}
     engines: {node: '>=16'}
     dev: true
 
