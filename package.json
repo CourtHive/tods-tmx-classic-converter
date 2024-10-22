@@ -53,8 +53,8 @@
     "tods-competition-factory": "^2.0.26"
   },
   "devDependencies": {
-    "@babel/core": "7.24.3",
-    "@babel/preset-env": "7.24.3",
+    "@babel/core": "7.25.9",
+    "@babel/preset-env": "7.25.9",
     "esm": "^3.2.25",
     "np": "^10.0.0",
     "tsdx": "^0.14.1"
