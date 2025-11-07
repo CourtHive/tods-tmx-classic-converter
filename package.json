@@ -1,6 +1,6 @@
 {
   "name": "tods-tmx-classic-converter",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "keywords": [
     "TODS",
     "tournament",
@@ -26,7 +26,7 @@
     "contents": "."
   },
   "engines": {
-    "node": ">=16.16.0 < 21"
+    "node": ">=16.16.0 < 25"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -53,8 +53,8 @@
     "tods-competition-factory": "^2.0.26"
   },
   "devDependencies": {
-    "@babel/core": "7.24.3",
-    "@babel/preset-env": "7.24.3",
+    "@babel/core": "7.28.5",
+    "@babel/preset-env": "7.28.5",
     "esm": "^3.2.25",
     "np": "^10.0.0",
     "tsdx": "^0.14.1"
